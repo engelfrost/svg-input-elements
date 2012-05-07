@@ -71,6 +71,7 @@ $.extend(SVGEditableTextBox, {
         var stopDefault = true,
             cancelUpdate = true;
         var selectedGroup = SVGSelectableGElement.selectedGroup();
+        var markall = false;
         
         if (selectedGroup 
           && selectedGroup.constructor === SVGEditableTextBox) {
@@ -82,8 +83,7 @@ $.extend(SVGEditableTextBox, {
               paragraph     = possi.paragraph,
               row           = possi.row;
               
-          if (e.shiftKey && !selectedGroup._selectStartCoord) { // CMD only
-            
+          if (e.shiftKey && !selectedGroup._selectStartCoord && e.which != 16 && e.which != 13) { // shift is down            
             selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
           }
@@ -107,7 +107,29 @@ $.extend(SVGEditableTextBox, {
                 break;
 
               
-              case 65: console.log('CMD/CTRL+A'); break;
+              case 65: // cmd/ctrl+a
+              	
+              	
+              	markall = true;
+              	
+              	var endpos = selectedGroup._getTextPosition(selectedGroup._text.length-1);
+              	var stopcoord = selectedGroup._getCoordInTextbox(selectedGroup._group, endpos.paragraph+1, endpos.row+1, 999999);
+              	
+              	selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, 1, 1, 0);
+              	
+              	selectedGroup._selection = {
+              		start: selectedGroup._selectStartCoord,
+              		stop: stopcoord
+              	};
+              	
+              	selectedGroup._drawMarking(selectedGroup._group, stopcoord);
+              	selectedGroup._selectStartCoord = null;
+              
+              	SVGTextMarker.hide();
+              	
+              	selectedGroup._textPosition = selectedGroup._textPositions[stopcoord.paragraph-1][stopcoord.row-1] + stopcoord.char;
+              	
+              	break;
               
               case 67: console.log('CMD/CTRL+C'); break;
               
@@ -406,7 +428,7 @@ $.extend(SVGEditableTextBox, {
           
           (cancelUpdate ? 0 : selectedGroup.update() );
           
-          if (cancelUpdate) {
+          if (cancelUpdate && !markall) {
             // keep marker visible if group was selected
             var lineHeight = int(StyleSheet.get('text', 'line-height'));
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
@@ -428,8 +450,6 @@ $.extend(SVGEditableTextBox, {
               if (e.shiftKey) { // shift only
                 
                 selectedGroup._drawMarking(selectedGroup._group, coord);
-                
-                console.log('mark');
                 
               } else {
                 selectedGroup._selectStartCoord = null;
