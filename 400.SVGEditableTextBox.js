@@ -127,7 +127,7 @@ $.extend(SVGEditableTextBox, {
               
               	SVGTextMarker.hide();
               	
-              	selectedGroup._textPosition = selectedGroup._textPositions[stopcoord.paragraph-1][stopcoord.row-1] + stopcoord.char;
+              	selectedGroup._textPosition = selectedGroup._text.length;
               	
               	break;
               
