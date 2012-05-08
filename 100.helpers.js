@@ -174,6 +174,7 @@ var types = [SVGGElement, SVGTextElement, SVGTSpanElement, SVGRectElement];
 var typeNames = types.map(function(e,i){ return e.name; });
 
 var StyleSheet = {
+  StyleCache: {}, 
   /** 
    * Returns the style value for given selector and style. Any style definitions
    * that require parents are ignored, since thier relevancy is ambiguous. We 
@@ -185,52 +186,67 @@ var StyleSheet = {
     var result = ''; 
     var ccStyle = $.camelCase(style);
     
-    $.each( document.styleSheets, function( i, styleSheet ) {
-      $.each( styleSheet.cssRules, function( i, ruleBundle ) {
-        $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
-          r = selectorRegExp.exec( rule.trim() );
-          s = selectorRegExp.exec( selector );
-          
-          // We ignore some stuff, like pseudo-elements, rules with parents etc. 
-          // We only handle what the regexp can handle. 
-          
-          if ( r != null && s != null ) {
+    if (this.StyleCache[selector] !== undefined && this.StyleCache[selector][style] !== undefined) {
+      return this.StyleCache[selector][style]; 
+    }
+    else {
+      $.each( document.styleSheets, function( i, styleSheet ) {
+        $.each( styleSheet.cssRules, function( i, ruleBundle ) {
+          $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
+            r = selectorRegExp.exec( rule.trim() );
+            s = selectorRegExp.exec( selector );
             
-            // Check if rule requires a specific tag
-            tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
+            // We ignore some stuff, like pseudo-elements, rules with parents etc. 
+            // We only handle what the regexp can handle. 
             
-            // Check if rule requires ID 
-            idOk = ( r[2] == undefined || r[2] == s[2] ); 
-            
-            // Check if rule requires class
-            classOk = ( r[3] == undefined || r[2] == s[2] ); 
-            
-            if ( tagOk && idOk && classOk ) {
-              // If this is a match, update result with any new stuff
+            if ( r != null && s != null ) {
               
-              if ( typeof ruleBundle.style[style] != 'undefined' 
-                && ruleBundle.style[style] !== '' ) {
+              // Check if rule requires a specific tag
+              tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
+              
+              // Check if rule requires ID 
+              idOk = ( r[2] == undefined || r[2] == s[2] ); 
+              
+              // Check if rule requires class
+              classOk = ( r[3] == undefined || r[2] == s[2] ); 
+              
+              if ( tagOk && idOk && classOk ) {
+                // If this is a match, update result with any new stuff
                 
-                // Save the result, but don't return it yet. Other rules may 
-                // overwrite it later, since the rules are cascading. 
-                result = ruleBundle.style[style];
-              }
-              else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
-                && ruleBundle.style[ccStyle] !== '' ) {
-                
-//                 console.log(ccStyle, ruleBundle.style[ccStyle]);
-                // Save the result, but don't return it yet. Other rules may 
-                // overwrite it later, since the rules are cascading. 
-                result = ruleBundle.style[ccStyle];
+                if ( typeof ruleBundle.style[style] != 'undefined' 
+                  && ruleBundle.style[style] !== '' ) {
+                  
+                  // Save the result, but don't return it yet. Other rules may 
+                  // overwrite it later, since the rules are cascading. 
+                  result = ruleBundle.style[style];
+                }
+                else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
+                  && ruleBundle.style[ccStyle] !== '' ) {
+                  
+  //                 console.log(ccStyle, ruleBundle.style[ccStyle]);
+                  // Save the result, but don't return it yet. Other rules may 
+                  // overwrite it later, since the rules are cascading. 
+                  result = ruleBundle.style[ccStyle];
+                }
               }
             }
-          }
+          });
         });
       });
-    });
-    
+    }
     // Return the final result. 
+    this.cache(selector, style, result);
     return result; 
+  }, 
+  
+  cache: function (selector, style, value) {
+    if (this.StyleCache[selector] === undefined) {
+      this.StyleCache[selector] = {}; 
+    }
+    if (this.StyleCache[selector][style] === undefined) {
+      this.StyleCache[selector][style] = value; 
+    }
+    return value; 
   }
 }
 

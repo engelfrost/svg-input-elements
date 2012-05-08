@@ -253,7 +253,7 @@ $.extend(SVGEditableTextBox, {
                         && 
                         ro > selectedGroup._selection.stop.row
                       ) || (
-                      	pa > selectedGroup._selection.stop.paragraph
+                      	 pa > selectedGroup._selection.stop.paragraph
                       )
                     ){
                     
@@ -593,12 +593,11 @@ $.extend(SVGEditableTextBox.prototype, {
   _render: function() {
     
     console.time("total time"); // timeing
-    
     var that = this; 
     var gSettings = {class: 'textbox', transform: 'translate(0,100)'}; // TODO: remove these hardcoded value
     
     var g = this.super._render.call(this, this._parent, gSettings);
-    var maxWidth = this._width;  
+    var maxWidth = this._width;
     
     // padding-top is applied through text elements,
     // padding-left is applied through tspan elements and 
@@ -609,7 +608,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var paddingRight  = int(StyleSheet.get( 'rect.textbox', 'padding-right' ));
     var paddingBottom = int(StyleSheet.get( 'rect.textbox', 'padding-bottom' ));
     var paddingLeft   = int(StyleSheet.get( 'rect.textbox', 'padding-left' ));
-
+    
     var textY = paddingTop; 
     var tspanDy = int( StyleSheet.get( 'text', 'line-height' ) );
     var tspanSettings = { 
@@ -706,7 +705,7 @@ $.extend(SVGEditableTextBox.prototype, {
                     
           
           // Search for cached word: 
-          cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]]
+          cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]];
           if(cachedWord === undefined) {
             // Measure the word length
             
@@ -715,8 +714,9 @@ $.extend(SVGEditableTextBox.prototype, {
             tmpText = that._wrapper.text( -1000, -1000, tmpTspans );
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
-              width: tmpText.getComputedTextLength(), 
-              timestamp: new Date().getTime()
+              width: tmpText.getComputedTextLength()
+              // Timestamp not needed unless we maintain the cache size
+//               timestamp: new Date().getTime()
             }; 
             
             $(tmpText).remove();
