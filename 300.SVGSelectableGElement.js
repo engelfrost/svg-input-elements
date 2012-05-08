@@ -96,14 +96,20 @@ $.extend(SVGSelectableGElement, {
 	
 	_mouseup: function(e){
 	
-		// find the parent grouping element to our approved element
-		var g = this._getGroupTarget(e);
+		if ($.inArray(e.target.constructor, types)!=-1){
 	
-		$.each(this._instances, function(i,el){
-		
-			el.mouseup(g,e);
-		})
-		
+			var g = this._getGroupTarget(e);
+			
+			$.each(this._instances, function(i,el){
+			
+				if (el.selected)
+					el.mouseup(g,e);
+			});
+		} else {
+			g = this.selectedGroup();
+			if (g)
+				g.mouseup(g,e);
+		}
 	},
 	
 	_mousedown: function(e){
@@ -146,6 +152,10 @@ $.extend(SVGSelectableGElement, {
 				if (el.selected)
 					el.mousemove(g,e);
 			});
+		} else {
+			g = this.selectedGroup();
+			if (g)
+				g.mousemove(g,e);
 		}
 	},
 	
