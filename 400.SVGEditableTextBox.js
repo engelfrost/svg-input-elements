@@ -666,7 +666,8 @@ $.extend(SVGEditableTextBox.prototype, {
     this._history[0] = {text: value.toString(), textPosition: null};
     this._width = width; // value -1 means "no maxwidth"
     this._height = height; // not used at the moment
-    this._settings = settings; 
+    this._id = 'textarea';
+    this._settings = settings;
     
     this._textPositions = []; 
   
@@ -774,7 +775,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var that = this; 
     var gSettings = {class: 'textbox', transform: 'translate(0,100)'}; // TODO: remove these hardcoded value
     
-    var g = this.super._render.call(this, this._parent, gSettings);
+    var g = this.super._render.call(this, this._parent, this._id, gSettings);
     var maxWidth = this._width;
     
     // padding-top is applied through text elements,

@@ -267,7 +267,7 @@ $.extend(SVGSelectableGElement.prototype, {
 				
       } 
       
-	    this._group = this._wrapper.group(arguments[0]);
+	    this._group = this._wrapper.group(arguments[0], arguments[1], arguments[2]);
 	    (classes ? this._group.setAttribute('class', classes) : 0); // add old classes if there are any
 			
       // extend g element with select capability
