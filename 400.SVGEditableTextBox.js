@@ -72,6 +72,7 @@ $.extend(SVGEditableTextBox, {
             cancelUpdate = true;
         var selectedGroup = SVGSelectableGElement.selectedGroup();
         var markall = false;
+        var unselect_marker = false;
         
         if (selectedGroup 
           && selectedGroup.constructor === SVGEditableTextBox) {
@@ -212,10 +213,11 @@ $.extend(SVGEditableTextBox, {
                 }
                 else if (selectedGroup._selection) {
                   $('.marking').remove();
-                  selectedGroup._selection = false;
+                  selectedGroup._selection = null;
                 }
                 else if (SVGTextMarker.isVisible()) {
-                  SVGTextMarker.hide();
+  	              SVGTextMarker.hide();
+                  unselect_marker = true;
                 }
                 else {
                   SVGSelectableGElement.deselectAll();
@@ -436,7 +438,7 @@ $.extend(SVGEditableTextBox, {
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
             var coord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
-            if (selectedGroup._group._selected) {
+            if (selectedGroup._group._selected && !unselect_marker) {
              
               var desx = ( selectedGroup._keepDesiredX ? SVGTextMarker.getDesiredX() : coord.x );
               
