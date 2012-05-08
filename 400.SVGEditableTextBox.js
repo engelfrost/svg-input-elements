@@ -34,7 +34,7 @@ $.extend(SVGEditableTextBox, {
           && selectedGroup.constructor === SVGEditableTextBox) {
           char = String.fromCharCode(e.which);
           
-           if (selectedGroup._selection) {
+          if (selectedGroup._selection) {
             selectedGroup.removeSelection();
             selectedGroup._selection = null;
           }
@@ -174,13 +174,13 @@ $.extend(SVGEditableTextBox, {
                   setTimeout(function(){
                     var newtxt = $(that).val();
                     if (selectedGroup._selection) {
-                      console.log()
-                      ;
-                    } else {
-                      selectedGroup._text = selectedGroup._text.substring(0,selectedGroup._textPosition) + newtxt + selectedGroup._text.substring(selectedGroup._textPosition, selectedGroup._text.length-1);
-                      
-                      selectedGroup._textPosition += newtxt.length;
+		                  selectedGroup.removeSelection();  
                     }
+                    
+                    selectedGroup._text = selectedGroup._text.substring(0,selectedGroup._textPosition) + newtxt + selectedGroup._text.substring(selectedGroup._textPosition, selectedGroup._text.length-1);
+                      
+                    selectedGroup._textPosition += newtxt.length;
+                    
                     dump.remove();
                     selectedGroup.update();
                   },0);
@@ -527,9 +527,8 @@ $.extend(SVGEditableTextBox, {
                 
                 selectedGroup._drawMarking(selectedGroup._group, coord);
                 
-              } else if (e.which != 91) {
+              } else if (!e.metaKey && !e.ctrlKey && !e.altKey) {
                 selectedGroup._selectStartCoord = null;
-//                selectedGroup._selection = null;
                 
                 $('.marking').remove();
                 
