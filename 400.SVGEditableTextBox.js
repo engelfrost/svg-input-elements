@@ -34,9 +34,10 @@ $.extend(SVGEditableTextBox, {
           && selectedGroup.constructor === SVGEditableTextBox) {
           char = String.fromCharCode(e.which);
           
-          if (selectedGroup._selection) {
+          if (e.shiftKey && e.which < 35 && e.which > 40) {
+            selectedGroup._selectStartCoord = null;
             selectedGroup.removeSelection();
-            selectedGroup._selection = null;
+            $('.marking').remove();
           }
             
           var charPosition  = selectedGroup._textPosition,
@@ -89,12 +90,9 @@ $.extend(SVGEditableTextBox, {
               paragraph     = possi.paragraph,
               row           = possi.row;
               
-          if (e.shiftKey && !selectedGroup._selectStartCoord 
-              && e.which != 16 
-              && e.which != 13
-              && !e.metaKey && !e.ctrlKey) { // shift is down            
+          if (e.shiftKey && e.keyCode==16 && !selectedGroup._selectStartCoord) { // shift is down            
             selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char); // set start position for new selection
-            
+            selectedGroup._selection = null;
           }
           
           if (e.metaKey || e.ctrlKey) { // CTRL/CMD
@@ -561,7 +559,7 @@ $.extend(SVGEditableTextBox, {
                 }));
             }
             
-            if (!e.which != 16) {
+            if (e.which != 16) {
             
               if (e.shiftKey) { // shift only
                 
@@ -1813,8 +1811,6 @@ $.extend(SVGEditableTextBox.prototype, {
       
       this.closeContextMenu();
       
-      this._selection = true;
-      
       this._drawWordMarking(g,e);
       
     }
@@ -1825,8 +1821,6 @@ $.extend(SVGEditableTextBox.prototype, {
     SVGTextMarker.hide();
     
     $('.marking').remove();
-    
-    this._selection = true;
     
     this._tplClickState = true;
     
