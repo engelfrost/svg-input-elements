@@ -108,7 +108,7 @@ $.extend(SVGSelectableGElement, {
 		} else {
 			g = this.selectedGroup();
 			if (g)
-				g.mouseup(g,e);
+				g.mouseup(g._group,e);
 		}
 	},
 	
@@ -155,7 +155,7 @@ $.extend(SVGSelectableGElement, {
 		} else {
 			g = this.selectedGroup();
 			if (g)
-				g.mousemove(g,e);
+				g.mousemove(g._group,e);
 		}
 	},
 	
