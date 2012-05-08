@@ -277,10 +277,11 @@ $.extend(SVGEditableTextBox, {
                   
                   paragraph = selectedGroup._selection.start.paragraph-1,
                   row = selectedGroup._selection.start.row-1;
+                  dscx = selectedGroup._selection.start.x;
                   
-                  if (row != selectedGroup._selection.start.row-1
-                  		&& paragraph != selectedGroup._selection.stop.paragraph-1) 
-	                  dscx = selectedGroup._selection.start.x;
+                  if (row == selectedGroup._selection.start.row-1
+                  		&& paragraph == selectedGroup._selection.stop.paragraph-1)
+	                  dscx = Math.min(selectedGroup._selection.stop.x, selectedGroup._selection.start.x);
                       
                   if (
                       (
@@ -293,7 +294,7 @@ $.extend(SVGEditableTextBox, {
                     ){
                     
                     paragraph = selectedGroup._selection.stop.paragraph-1,
-                    row = selectedGroup._selection.stop.row-1,
+                    row = selectedGroup._selection.stop.row-1;
                     dscx = selectedGroup._selection.stop.x;
                   }
                 }
@@ -363,10 +364,11 @@ $.extend(SVGEditableTextBox, {
                   
                   paragraph = selectedGroup._selection.stop.paragraph-1,
                   row = selectedGroup._selection.stop.row-1;
+                  dscx = selectedGroup._selection.stop.x;
                   
-                  if (row != selectedGroup._selection.start.row-1
-                  		&& paragraph != selectedGroup._selection.stop.paragraph-1)
-	                  dscx = selectedGroup._selection.stop.x;
+                  if (row == selectedGroup._selection.start.row-1
+                  		&& paragraph == selectedGroup._selection.stop.paragraph-1)
+	                  dscx = Math.max(selectedGroup._selection.stop.x, selectedGroup._selection.start.x);
                       
                   if (
                       (
