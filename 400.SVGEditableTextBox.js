@@ -304,10 +304,9 @@ $.extend(SVGEditableTextBox, {
                                          Math.max(0,charPosition - 1)
                   );
                   
-                  cancelUpdate = false;
-                  break;
-                  
                 }
+                cancelUpdate = false;
+                break;
                 
               case 27: // esc
               
