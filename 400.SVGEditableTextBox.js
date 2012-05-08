@@ -1322,6 +1322,7 @@ $.extend(SVGEditableTextBox.prototype, {
           {class: 'marking'});
     marking.parentNode.insertBefore(marking, marking.parentNode.firstChild.nextSibling);
     
+    this._selection = coords;    
   },
   
   _drawRowMarking: function(g,e){
@@ -1336,6 +1337,27 @@ $.extend(SVGEditableTextBox.prototype, {
           {class: 'marking'});
     marking.parentNode.insertBefore(marking, marking.parentNode.firstChild.nextSibling);
     
+    this._selection = {
+    	start: {
+    		parent: g,
+    		element: coords.element,
+    		x: pos.left,
+    		y: pos.top - height,
+    		paragraph: coords.paragraph,
+    		row: coords.row,
+    		char: 0
+    	},
+    	stop: {
+    		parent: g,
+    		element: coords.element,
+    		x: pos.left + width,
+    		y: pos.top - height,
+    		paragraph: coords.paragraph,
+    		row: coords.row,
+    		char: coords.element.firstChild.data.length-1
+    	}
+    }; 
+      
   },
   
   _drawMarking: function(g,e_or_pos) {
