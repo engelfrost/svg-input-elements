@@ -58,10 +58,9 @@ $.extend(SVGEditableTextBox, {
           selectedGroup._setText(
             selectedGroup._text.substring(0, charPosition) 
             + char 
-            + selectedGroup._text.substring(charPosition)
+            + selectedGroup._text.substring(charPosition), 
+            charPosition + 1
           );
-            
-          selectedGroup._textPosition = charPosition + 1;
           
           if (stopDefault) {
             e.preventDefault();
@@ -178,9 +177,18 @@ $.extend(SVGEditableTextBox, {
 		                  selectedGroup.removeSelection();  
                     }
                     
-                    selectedGroup._text = selectedGroup._text.substring(0,selectedGroup._textPosition) + newtxt + selectedGroup._text.substring(selectedGroup._textPosition, selectedGroup._text.length-1);
-                      
-                    selectedGroup._textPosition += newtxt.length;
+                    selectedGroup._setText(
+                      selectedGroup._text.substring(
+                          0,
+                          selectedGroup._textPosition
+                        ) 
+                        + newtxt 
+                        + selectedGroup._text.substring(
+                          selectedGroup._textPosition, 
+                          selectedGroup._text.length-1
+                        ), 
+                        selectedGroup._textPosition + newtxt.length
+                      );
                     
                     dump.remove();
                     selectedGroup.update();
@@ -222,10 +230,9 @@ $.extend(SVGEditableTextBox, {
                 } else {  
                   selectedGroup._setText(
                     selectedGroup._text.substring(0, selectedGroup._textPositions[paragraph][row]) 
-                    + selectedGroup._text.substring(charPosition)
+                    + selectedGroup._text.substring(charPosition), 
+                                         Math.max(0,selectedGroup._textPositions[paragraph][row])
                   );
-                  
-                  selectedGroup._textPosition =  Math.max(0,selectedGroup._textPositions[paragraph][row]);
                   
                   cancelUpdate = false;
                   
@@ -268,10 +275,9 @@ $.extend(SVGEditableTextBox, {
                 } else {
                   selectedGroup._setText( 
                     selectedGroup._text.substring(0, charPosition-1) 
-                    + selectedGroup._text.substring(charPosition)
+                    + selectedGroup._text.substring(charPosition), 
+                                         Math.max(0,charPosition - 1)
                   );
-                  
-                  selectedGroup._textPosition =  Math.max(0,charPosition - 1);
                   
                   cancelUpdate = false;
                   break;
@@ -488,10 +494,9 @@ $.extend(SVGEditableTextBox, {
                 } else {
                   selectedGroup._setText(
                     selectedGroup._text.substring(0, charPosition) 
-                    + selectedGroup._text.substring(charPosition+1)
+                    + selectedGroup._text.substring(charPosition+1), 
+                                         charPosition
                   );
-               
-                  selectedGroup._textPosition = charPosition; 
                   
                   cancelUpdate = false;
                   
@@ -595,17 +600,18 @@ $.extend(SVGEditableTextBox.prototype, {
   
   _history: [{}],
   _historyPos: 0,
-  _historyAdd: function(val) {
+  _historyAdd: function(val, textPosition) {
     this._history = this._history.slice(this._historyPos);
     this._historyPos = 0; 
-    this._history.unshift({text: val, textPosition: this._textPosition});
+    this._history.unshift({text: val, textPosition: textPosition});
     return val; 
   },
   _historyUndo: function() {
     this._historyPos = Math.min(this._historyPos+1, this._history.length-1); 
     if (this._history.length > -1) {
       this._text = this._history[this._historyPos].text;   
-      this._textPosition = this._history[this._historyPos].textPosition;  
+      this._textPosition = 
+        this._history[this._historyPos].textPosition || this._textPosition;  
     }
     this.update(); 
     return this._text;
@@ -613,21 +619,23 @@ $.extend(SVGEditableTextBox.prototype, {
   _historyRedo: function() {
     this._historyPos = Math.max(this._historyPos-1, 0); 
     this._text = this._history[this._historyPos].text; 
-    this._textPosition = this._history[this._historyPos].textPosition; 
+    this._textPosition = 
+      this._history[this._historyPos].textPosition || this._textPosition; 
     this.update(); 
     return this._text; 
   },
   
-  _setText: function(text) {
-    this._historyAdd(text); 
+  _setText: function(text, textPosition) {
+    this._historyAdd(text, textPosition); 
     this._text = text; 
+    this._textPosition = textPosition;
   },
   
   init: function(parent, value, width, height, settings) {
   
     this._parent = parent; 
     this._text = value.toString();
-    this._history[0] = {text: value.toString(), textPosition: 0};
+    this._history[0] = {text: value.toString(), textPosition: null};
     this._width = width; // value -1 means "no maxwidth"
     this._height = height; // not used at the moment
     this._settings = settings; 
