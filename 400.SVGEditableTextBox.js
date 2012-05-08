@@ -768,6 +768,9 @@ $.extend(SVGEditableTextBox.prototype, {
     while ((w = regex.exec(this._text)) != null) {
       paragraphs.push(w[0]); //.replace(/\n$/, ' '));
     }
+    if(paragraphs.length == 0) {
+      paragraphs = ['']; 
+    }
     
     // Special case: trailing empty paragraph
     var lastParagraphLength = paragraphs[paragraphs.length - 1].length; 
@@ -812,6 +815,9 @@ $.extend(SVGEditableTextBox.prototype, {
       regex = /[^\r]+\r?|\r/g;
       while ((w = regex.exec(paragraph)) != null) {
         sections.push(w[0]);
+      }
+      if (sections.length == 0) {
+        sections = [' ']; 
       }
       
       // Special case: trailing empty new line
