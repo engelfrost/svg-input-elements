@@ -84,7 +84,10 @@ $.extend(SVGEditableTextBox, {
               paragraph     = possi.paragraph,
               row           = possi.row;
               
-          if (e.shiftKey && !selectedGroup._selectStartCoord && e.which != 16 && e.which != 13) { // shift is down            
+          if (e.shiftKey && !selectedGroup._selectStartCoord 
+          		&& e.which != 16 
+          		&& e.which != 13
+          		&& e.which != 91) { // shift is down            
             selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
           }
@@ -132,11 +135,52 @@ $.extend(SVGEditableTextBox, {
               	
               	break;
               
-              case 67: console.log('CMD/CTRL+C'); break;
+              case 67: // cmd/ctrl+c 
+              	tx = $('<textarea>' + selectedGroup.getSelectedText().replace(/\r/g, String.fromCharCode(11)) + '</textarea>');
+              	dump = $('<div class="dump">').prepend(tx);
+              	$('body').prepend(dump);
+								tx.bind('change', function(e){
+									console.log('change');
+								});
+								tx.bind('copy', function(e){
+									setTimeout(function(){
+										dump.remove();
+									}, 100);
+								});
+								tx.focus();
+								tx.select();
+              	
+              	stopDefault = false;
+              	
+              	break;
               
               case 83: e.preventDefault(); console.log('CMD/CTRL+S'); break;
               
-              case 86: console.log('CMD/CTRL+V'); break;
+              case 86: // cmd/ctrl+v
+              	
+              	tx = $('<textarea></textarea>');
+              	dump = $('<div class="dump">').prepend(tx);
+              	$('body').prepend(dump);
+								tx.bind('change', function(e){
+									console.log('change');
+								});
+								tx.bind('paste', function(e){
+									that = this;
+									setTimeout(function(){
+										if (selectedGroup._selection) {
+											;
+										} else {
+											selectedGroup._text = selectedGroup._text.substring(0,selectedGroup._textPosition) + $(that).val() + selectedGroup._text.substring(selectedGroup._textPosition, selectedGroup._text.length-1);
+										}
+										dump.remove();
+										selectedGroup.update();
+									},0);
+								});
+								tx.focus();
+              	
+              	stopDefault = false; 
+              	
+              	break;
               
               case 88: console.log('CMD/CTRL+X'); cancelUpdate = false; break;
               
@@ -455,12 +499,14 @@ $.extend(SVGEditableTextBox, {
                 
                 selectedGroup._drawMarking(selectedGroup._group, coord);
                 
-              } else {
+              } else if (e.which != 91) {
                 selectedGroup._selectStartCoord = null;
                 selectedGroup._selection = null;
                 
                 $('.marking').remove();
                 
+              } else {
+              	SVGTextMarker.hide();
               }
             } else {
             	SVGTextMarker.hide();
@@ -584,6 +630,17 @@ $.extend(SVGEditableTextBox.prototype, {
   
   openSelectionContextMenu: function() {
     // TODO: Implement context menu for the group
+  },
+  
+  getSelectedText: function() {
+  	var txt;
+  	if (this._selection) {
+  		p1 = this._getTextCharPosition(this._selection.start);
+  		p2 = this._getTextCharPosition(this._selection.stop);
+  		
+			txt = this._text.substring(Math.min(p1,p2), Math.max(p1,p2));
+  	} 
+  	return txt;
   },
   
   update: function() {
@@ -1129,6 +1186,11 @@ $.extend(SVGEditableTextBox.prototype, {
 //     }
     
     return c; 
+  },
+  
+  _getTextCharPosition: function(coord)
+  {
+			return this._textPositions[coord.paragraph-1][coord.row-1] + coord.char;
   },
   
   _getTextPosition: function(pos) {

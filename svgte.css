@@ -11,3 +11,5 @@ g.textbox.selected text {
 svg {
 	border: solid 1px #ddd;
 }
+
+.dump {position: absolute; top: -9999; left: -9999}
