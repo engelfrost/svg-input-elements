@@ -717,7 +717,7 @@ $.extend(SVGEditableTextBox.prototype, {
       p1 = this._getTextCharPosition(this._selection.start);
       p2 = this._getTextCharPosition(this._selection.stop);
       
-      this._text = this._text.substring(0, Math.min(p1,p2)) + this._text.substring(Math.max(p1,p2), this._text.length-1);
+      this._text = this._text.substring(0, Math.min(p1,p2)) + this._text.substring(Math.max(p1,p2), this._text.length);
       
       this._textPosition = Math.min(p1,p2);
       this.update();
