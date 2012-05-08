@@ -1,0 +1,13 @@
+g.textbox, 
+g.textbox text {
+	cursor: default;
+}
+
+g.textbox.selected,
+g.textbox.selected text {
+	cursor: text;
+}
+
+svg {
+	border: solid 1px #ddd;
+}
