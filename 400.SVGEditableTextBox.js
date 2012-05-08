@@ -90,10 +90,10 @@ $.extend(SVGEditableTextBox, {
               row           = possi.row;
               
           if (e.shiftKey && !selectedGroup._selectStartCoord 
-              && !e.shiftKey 
+              && e.which != 16 
               && e.which != 13
               && !e.metaKey && !e.ctrlKey) { // shift is down            
-            selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
+            selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char); // set start position for new selection
             
           }
           
@@ -561,11 +561,8 @@ $.extend(SVGEditableTextBox, {
                 }));
             }
             
-            console.log(e.which)
+            if (!e.which != 16) {
             
-            if (!e.shiftKey) {
-            
-              console.log("e=", e.which);
               if (e.shiftKey) { // shift only
                 
                 selectedGroup._drawMarking(selectedGroup._group, coord);
