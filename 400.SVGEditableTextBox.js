@@ -534,11 +534,12 @@ $.extend(SVGEditableTextBox, {
             
             if (e.which != 16) {
             
+              console.log("e=", e.which);
               if (e.shiftKey) { // shift only
                 
                 selectedGroup._drawMarking(selectedGroup._group, coord);
                 
-              } else if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+              } else if (!e.metaKey && !e.ctrlKey && !e.altKey && e.which !== 17 && e.which !== 18) {
                 selectedGroup._selectStartCoord = null;
                 
                 $('.marking').remove();
