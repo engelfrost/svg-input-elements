@@ -200,7 +200,28 @@ $.extend(SVGEditableTextBox, {
                 
                 break;
               
-              case 88: console.log('CMD/CTRL+X'); cancelUpdate = false; break;
+              case 88: // cmd/ctrl+x 
+              	if (selectedGroup._selection) {
+	                tx = $('<textarea>' + selectedGroup.getSelectedText().replace(/\r/g, String.fromCharCode(11)) + '</textarea>');
+	               	selectedGroup.removeSelection();
+	               	
+	                dump = $('<div class="dump">').css({position:'absolute',top:'-9999px',left:'-9999px'}).prepend(tx);
+	                $('body').prepend(dump);
+	                tx.bind('change', function(e){
+	                  console.log('change');
+	                });
+	                tx.bind('copy', function(e){
+	                  setTimeout(function(){
+	                    dump.remove();
+	                  }, 100);
+	                });
+	                tx.focus();
+	                tx.select();
+	                
+	                stopDefault = false;
+                }
+              	
+              	cancelUpdate = false; break;
               
               case 90: // cmd/ctrl(+shift)+z
                 if (e.shiftKey) {
@@ -727,6 +748,7 @@ $.extend(SVGEditableTextBox.prototype, {
       p2 = this._getTextCharPosition(this._selection.stop);
       
       this._text = this._text.substring(0, Math.min(p1,p2)) + this._text.substring(Math.max(p1,p2), this._text.length);
+      this._selection = null;
       
       this._textPosition = Math.min(p1,p2);
       this.update();
