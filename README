@@ -1,5 +1,15 @@
-This is an Aplpha relese, meaning that parts of it work but it is not feature complete and documentation on how to use it is incomplete. 
+This is an Alpha release, meaning that parts of it work but it is not feature complete and documentation on how to use it is incomplete.
+
+You can test it out in ./demo.html (just add jQuery and jQuery SVG, and make sure the href are correct)
+
+Feel free to join in and develop, just contact us:
+Tim: info@sypreme.se,
 
 
+This project requires jQuery and the jQuery SVG plugin, which can be downloaded from here:
+http://docs.jquery.com/Downloading_jQuery (we've used 1.7.2)
+http://keith-wood.name/svg.html
 
-This project requires jQuery and the jQuery SVG plugin. 
+
+And in a future version, we would build it both for JQuery SVG and Raphael, we would love some help implementing this. About choosing which to build for, we refer to this thread (for now):
+http://stackoverflow.com/questions/588718/jquery-svg-vs-raphael
