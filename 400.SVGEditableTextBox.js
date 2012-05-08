@@ -205,7 +205,7 @@ $.extend(SVGEditableTextBox, {
                   tx = $('<textarea>' + selectedGroup.getSelectedText().replace(/\r/g, String.fromCharCode(11)) + '</textarea>');
                   selectedGroup.removeSelection();
                   
-                  selectedGroup._setText(selectedGroup._text);
+                  selectedGroup._setText(selectedGroup._text, selectedGroup._textPosition);
                   
                   dump = $('<div class="dump">').css({position:'absolute',top:'-9999px',left:'-9999px'}).prepend(tx);
                   $('body').prepend(dump);
@@ -295,7 +295,7 @@ $.extend(SVGEditableTextBox, {
                 if (selectedGroup._selection) {
                   selectedGroup.removeSelection();
                   
-                  selectedGroup._setText(selectedGroup._text);
+                  selectedGroup._setText(selectedGroup._text, selectedGroup._textPosition);
                   
                 } else {
                   selectedGroup._setText( 
