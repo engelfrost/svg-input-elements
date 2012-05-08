@@ -91,9 +91,9 @@ $.extend(SVGEditableTextBox, {
               row           = possi.row;
               
           if (e.shiftKey && !selectedGroup._selectStartCoord 
-              && e.which != 16 
+              && !e.shiftKey 
               && e.which != 13
-              && e.which != 91) { // shift is down            
+              && !e.metaKey && !e.ctrlKey) { // shift is down            
             selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
           }
@@ -175,10 +175,10 @@ $.extend(SVGEditableTextBox, {
                   setTimeout(function(){
                     var newtxt = $(that).val();
                     if (selectedGroup._selection) {
-		                  selectedGroup.removeSelection();  
+                      selectedGroup.removeSelection(); 
                     }
                     
-                    selectedGroup._text = selectedGroup._text.substring(0,selectedGroup._textPosition) + newtxt + selectedGroup._text.substring(selectedGroup._textPosition, selectedGroup._text.length-1);
+                    selectedGroup._setText(selectedGroup._text.substring(0,selectedGroup._textPosition) + newtxt + selectedGroup._text.substring(selectedGroup._textPosition, selectedGroup._text.length-1));
                       
                     selectedGroup._textPosition += newtxt.length;
                     
@@ -193,27 +193,29 @@ $.extend(SVGEditableTextBox, {
                 break;
               
               case 88: // cmd/ctrl+x 
-              	if (selectedGroup._selection) {
-	                tx = $('<textarea>' + selectedGroup.getSelectedText().replace(/\r/g, String.fromCharCode(11)) + '</textarea>');
-	               	selectedGroup.removeSelection();
-	               	
-	                dump = $('<div class="dump">').css({position:'absolute',top:'-9999px',left:'-9999px'}).prepend(tx);
-	                $('body').prepend(dump);
-	                tx.bind('change', function(e){
-	                  console.log('change');
-	                });
-	                tx.bind('copy', function(e){
-	                  setTimeout(function(){
-	                    dump.remove();
-	                  }, 100);
-	                });
-	                tx.focus();
-	                tx.select();
-	                
-	                stopDefault = false;
+                if (selectedGroup._selection) {
+                  tx = $('<textarea>' + selectedGroup.getSelectedText().replace(/\r/g, String.fromCharCode(11)) + '</textarea>');
+                  selectedGroup.removeSelection();
+                  
+                  selectedGroup._setText(selectedGroup._text);
+                  
+                  dump = $('<div class="dump">').css({position:'absolute',top:'-9999px',left:'-9999px'}).prepend(tx);
+                  $('body').prepend(dump);
+                  tx.bind('change', function(e){
+                    console.log('change');
+                  });
+                  tx.bind('copy', function(e){
+                    setTimeout(function(){
+                      dump.remove();
+                    }, 100);
+                  });
+                  tx.focus();
+                  tx.select();
+                  
+                  stopDefault = false;
                 }
-              	
-              	cancelUpdate = false; break;
+                
+                cancelUpdate = false; break;
               
               case 90: // cmd/ctrl(+shift)+z
                 if (e.shiftKey) {
@@ -286,6 +288,8 @@ $.extend(SVGEditableTextBox, {
                 if (selectedGroup._selection) {
                   selectedGroup.removeSelection();
                   
+                  selectedGroup._setText(selectedGroup._text);
+                  
                 } else {
                   selectedGroup._setText( 
                     selectedGroup._text.substring(0, charPosition-1) 
@@ -294,10 +298,10 @@ $.extend(SVGEditableTextBox, {
                   
                   selectedGroup._textPosition =  Math.max(0,charPosition - 1);
                   
-                  cancelUpdate = false;
-                  break;
-                  
                 }
+                
+                cancelUpdate = false;
+                break;
                 
               case 27: // esc
               
@@ -553,7 +557,9 @@ $.extend(SVGEditableTextBox, {
                 }));
             }
             
-            if (e.which != 16) {
+            console.log(e.which)
+            
+            if (!e.shiftKey) {
             
               console.log("e=", e.which);
               if (e.shiftKey) { // shift only
@@ -569,9 +575,10 @@ $.extend(SVGEditableTextBox, {
                 SVGTextMarker.hide();
               }
             } else {
-              SVGTextMarker.hide();
-              if (selectedGroup._selection)
+              if (selectedGroup._selection) {
+                SVGTextMarker.hide();
                 selectedGroup._selectStartCoord = selectedGroup._selection.start;
+              }
             }
             
           }
