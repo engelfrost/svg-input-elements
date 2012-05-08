@@ -55,10 +55,11 @@ $.extend(SVGEditableTextBox, {
             default: stopDefault = false;
           }
           
-          selectedGroup._text = 
+          selectedGroup._setText(
             selectedGroup._text.substring(0, charPosition) 
             + char 
-            + selectedGroup._text.substring(charPosition);
+            + selectedGroup._text.substring(charPosition)
+          );
             
           selectedGroup._textPosition = charPosition + 1;
           
@@ -215,14 +216,17 @@ $.extend(SVGEditableTextBox, {
               	cancelUpdate = false; break;
               
               case 90: // cmd/ctrl(+shift)+z
-                
-                if (e.shiftKey)
+                if (e.shiftKey) {
+                  selectedGroup._historyRedo();
                   console.log('CMD/CTRL+SHIFT+Z'); 
-                else
+                }
+                else {
+                  selectedGroup._historyUndo();
                   console.log('CMD/CTRL+Z'); 
+                }
                 break;
-                
-              default: stopDefault = false; break;
+              default: 
+                stopDefault = false; 
             }
           }
           
@@ -237,9 +241,10 @@ $.extend(SVGEditableTextBox, {
                   selectedGroup.removeSelection();
                 
                 } else {  
-                  selectedGroup._text = 
+                  selectedGroup._setText(
                     selectedGroup._text.substring(0, selectedGroup._textPositions[paragraph][row]) 
-                    + selectedGroup._text.substring(charPosition);
+                    + selectedGroup._text.substring(charPosition)
+                  );
                   
                   selectedGroup._textPosition =  Math.max(0,selectedGroup._textPositions[paragraph][row]);
                   
@@ -269,7 +274,8 @@ $.extend(SVGEditableTextBox, {
                 selectedGroup._textPosition = selectedGroup._text.length;
                 break;
                 
-              default: stopDefault = false; break;
+              default: 
+                stopDefault = false;
             }
           }
           
@@ -281,9 +287,10 @@ $.extend(SVGEditableTextBox, {
                   selectedGroup.removeSelection();
                   
                 } else {
-                  selectedGroup._text = 
+                  selectedGroup._setText( 
                     selectedGroup._text.substring(0, charPosition-1) 
-                    + selectedGroup._text.substring(charPosition);
+                    + selectedGroup._text.substring(charPosition)
+                  );
                   
                   selectedGroup._textPosition =  Math.max(0,charPosition - 1);
                   
@@ -500,9 +507,10 @@ $.extend(SVGEditableTextBox, {
                   selectedGroup.removeSelection();
                   
                 } else {
-                  selectedGroup._text = 
+                  selectedGroup._setText(
                     selectedGroup._text.substring(0, charPosition) 
-                    + selectedGroup._text.substring(charPosition+1);
+                    + selectedGroup._text.substring(charPosition+1)
+                  );
                
                   selectedGroup._textPosition = charPosition; 
                   
@@ -512,6 +520,9 @@ $.extend(SVGEditableTextBox, {
                   
                 }
                 
+                cancelUpdate = false;
+                
+                break;
               default: stopDefault = false;
             }
           }
@@ -544,11 +555,12 @@ $.extend(SVGEditableTextBox, {
             
             if (e.which != 16) {
             
+              console.log("e=", e.which);
               if (e.shiftKey) { // shift only
                 
                 selectedGroup._drawMarking(selectedGroup._group, coord);
                 
-              } else if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+              } else if (!e.metaKey && !e.ctrlKey && !e.altKey && e.which !== 17 && e.which !== 18) {
                 selectedGroup._selectStartCoord = null;
                 
                 $('.marking').remove();
@@ -602,10 +614,41 @@ $.extend(SVGEditableTextBox.prototype, {
   _renderTimer: -1,
   _contextMenu: false,
   
+  _history: [{}],
+  _historyPos: 0,
+  _historyAdd: function(val) {
+    this._history = this._history.slice(this._historyPos);
+    this._historyPos = 0; 
+    this._history.unshift({text: val, textPosition: this._textPosition});
+    return val; 
+  },
+  _historyUndo: function() {
+    this._historyPos = Math.min(this._historyPos+1, this._history.length-1); 
+    if (this._history.length > -1) {
+      this._text = this._history[this._historyPos].text;   
+      this._textPosition = this._history[this._historyPos].textPosition;  
+    }
+    this.update(); 
+    return this._text;
+  },
+  _historyRedo: function() {
+    this._historyPos = Math.max(this._historyPos-1, 0); 
+    this._text = this._history[this._historyPos].text; 
+    this._textPosition = this._history[this._historyPos].textPosition; 
+    this.update(); 
+    return this._text; 
+  },
+  
+  _setText: function(text) {
+    this._historyAdd(text); 
+    this._text = text; 
+  },
+  
   init: function(parent, value, width, height, settings) {
   
     this._parent = parent; 
     this._text = value.toString();
+    this._history[0] = {text: value.toString(), textPosition: 0};
     this._width = width; // value -1 means "no maxwidth"
     this._height = height; // not used at the moment
     this._settings = settings; 
@@ -747,6 +790,9 @@ $.extend(SVGEditableTextBox.prototype, {
     while ((w = regex.exec(this._text)) != null) {
       paragraphs.push(w[0]); //.replace(/\n$/, ' '));
     }
+    if(paragraphs.length == 0) {
+      paragraphs = ['']; 
+    }
     
     // Special case: trailing empty paragraph
     var lastParagraphLength = paragraphs[paragraphs.length - 1].length; 
@@ -791,6 +837,9 @@ $.extend(SVGEditableTextBox.prototype, {
       regex = /[^\r]+\r?|\r/g;
       while ((w = regex.exec(paragraph)) != null) {
         sections.push(w[0]);
+      }
+      if (sections.length == 0) {
+        sections = [' ']; 
       }
       
       // Special case: trailing empty new line
