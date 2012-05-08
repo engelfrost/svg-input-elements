@@ -1,17 +1,17 @@
 rect.textbox {
-	padding: 6pt; /* Custom CSS for TextBox SVG */
-	padding-left: 8pt;
-	padding-right: 8pt;
+  padding: 6pt; /* Custom CSS for TextBox SVG */
+  padding-left: 8pt;
+  padding-right: 8pt;
 }
 
 text { /* Paragrafs */
-  font-family: "Georgia";
-  font-size: 8pt;
-  font-style: italic;
-  line-height: 12pt; /* Custom CSS for TextBox SVG */
-  fill: #515359;
-  text-rendering: geometricprecision;
-  padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
+font-family: "Georgia";
+font-size: 8pt;
+font-style: italic;
+line-height: 12pt; /* Custom CSS for TextBox SVG */
+fill: #515359;
+text-rendering: geometricprecision;
+padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
 }
 
 rect#select {
@@ -35,9 +35,9 @@ rect.marking {
 }
 
 g.contextmenu rect.marking {
-	fill: #E3E3E3;
+  fill: #E3E3E3;
 }
 
 rect.textbox {
-	fill: #FFFFFF;
+  fill: #FFFFFF;
 }
