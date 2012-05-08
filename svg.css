@@ -1,0 +1,43 @@
+rect.textbox {
+	padding: 6pt; /* Custom CSS for TextBox SVG */
+	padding-left: 8pt;
+	padding-right: 8pt;
+}
+
+text { /* Paragrafs */
+  font-family: "Georgia";
+  font-size: 8pt;
+  font-style: italic;
+  line-height: 12pt; /* Custom CSS for TextBox SVG */
+  fill: #515359;
+  text-rendering: geometricprecision;
+  padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
+}
+
+rect#select {
+  stroke: #FFAA00;
+  fill: none;
+  stroke-opacity: 0.6;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-meterlimit: 10;
+}
+
+rect.marker {
+  fill: #666;
+  shape-rendering: crispEdges;
+}
+
+rect.marking {
+  fill: #CCE6FF;
+  shape-rendering: crispEdges;
+}
+
+g.contextmenu rect.marking {
+	fill: #E3E3E3;
+}
+
+rect.textbox {
+	fill: #FFFFFF;
+}
