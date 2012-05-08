@@ -935,17 +935,17 @@ $.extend(SVGEditableTextBox.prototype, {
                   // Measure the word length
                   
                   tmpTspans = that._wrapper.createText(); 
-                  tmpTspans.span( newTmpWord, tspanSettings );
-                  tmpText = that._wrapper.text( -1000, -1000, tmpTspans );
+                  tmpTspans.span(newTmpWord, tspanSettings);
+                  tmpText = that._wrapper.text(-1000, -1000, tmpTspans);
                   
                   cachedWord = 
                     SVGEditableTextBox._wordCache[fontSettings][newTmpWord] = 
                     {
-                      width: tmpText.getComputedTextLength(), 
+                      width: tmpText.getComputedTextLength() 
+                        + paddingLeft 
+                        + paddingRight, 
                       timestamp: new Date().getTime()
                     }; 
-                  
-                  $(tmpText).remove();
                 }
                 
                 if (cachedWord.width <= maxWidth) {
@@ -1023,7 +1023,7 @@ $.extend(SVGEditableTextBox.prototype, {
     console.timeEnd("loop");
     
     var bgRect = this._wrapper.rect( g, 0, 0, 
-                                   int(g.width()) + int(paddingRight) + int(paddingLeft), 
+                                   int(maxWidth) + int(paddingRight) + int(paddingLeft), 
                                    int(g.height()) + int(paddingBottom), 
                                    {class: 'textbox'} 
                                  );
