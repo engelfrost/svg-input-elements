@@ -1,9 +1,9 @@
 SVG Input Elements
 ==================
 
-Currently this project implements text areas, similar to HTML `<textarea>`s. 
-You can try it out with ./demo.html (just add jQuery and jQuery SVG and 
-adjust the href values). 
+Currently this project implements text areas, similar in behaviour to HTML 
+`<textarea>` tags. You can try it out with ./demo.html (just add jQuery and 
+jQuery SVG and adjust the href values). 
 
 The goal is to implement input elements that feel and behave naturally (i.e. 
 as corresponding HTML input elements etc). 
@@ -15,7 +15,7 @@ Features
 * Copy/cut/paste
 * Text selection with mouse and keyboard
 * Change cursor position with left/right/up/down/home/end etc
-* Handles both paragraphs (`enter`) and manual line breaks (`shift+enter`)
+* Handles both paragraphs (_enter_) and manual line breaks (_shift+enter_)
 * Undo/redo
 * ...
 
