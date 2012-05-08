@@ -1022,7 +1022,7 @@ $.extend(SVGEditableTextBox.prototype, {
     console.timeEnd("loop");
     
     var bgRect = this._wrapper.rect( g, 0, 0, 
-                                   int(g.width()) + int(paddingRight) + int(paddingLeft), 
+                                   int(maxWidth) + int(paddingRight) + int(paddingLeft), 
                                    int(g.height()) + int(paddingBottom), 
                                    {class: 'textbox'} 
                                  );
