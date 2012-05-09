@@ -355,7 +355,7 @@ $.extend(SVGEditableTextBox, {
                         && 
                         ro > selectedGroup._selection.stop.row
                       ) || (
-                         pa > selectedGroup._selection.stop.paragraph
+                        pa > selectedGroup._selection.stop.paragraph
                       )
                     ){
                     
