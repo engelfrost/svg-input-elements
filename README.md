@@ -10,6 +10,11 @@ Chrome/Chromium but does not have all the latest fixes) on
 The goal is to implement input elements that feel and behave naturally (i.e. 
 as corresponding HTML input elements etc). 
 
+* [Features](#features)
+* [Requirements](#requirements)
+* [Versions](#versions)
+* [Development](#development)
+
 Features 
 --------
 * Line wrapping
