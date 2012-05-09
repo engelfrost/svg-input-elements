@@ -627,7 +627,7 @@ $.extend(SVGEditableTextBox.prototype, {
       || (this._history[this._historyPos+1] 
         && val.length != this._history[this._historyPos+1].length)
       ) {
-      this._history = this._history.slice(this._historyPos);
+      this._history = this._history.slice(this._historyPos, this._historyPos+100);
       this._historyPos = 0; 
       this._history.unshift({text: val, textPosition: textPosition});
     }
