@@ -3,8 +3,8 @@ SVG Input Elements
 
 Currently this project implements text areas, similar in behaviour to HTML 
 `<textarea>` tags. You can try it out with ./demo.html (just add jQuery and 
-jQuery SVG and adjust the href values) or see the 0.1 release (might not have 
-all the latest fixes) on 
+jQuery SVG and adjust the href values) or see the 0.1 release (which works in 
+Chrome/Chromium but does not have all the latest fixes) on 
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/)
 
 The goal is to implement input elements that feel and behave naturally (i.e. 
@@ -27,10 +27,30 @@ This project requires [jQuery](http://docs.jquery.com/Downloading_jQuery)
 (we're using 1.7.2) and the 
 [jQuery SVG plugin](http://keith-wood.name/svg.html)
 
+Versions
+--------
+###v0.1
+Released 9 May 2012. 
+This is a rather limited release which is only properly tested in 
+Chrome/Chromium. It should not be seen as something that is ready to be put 
+in use.
+
+###v0.2
+Not released
+This release will provide additional input elements and should work much 
+better in Firefox. 
+
+...
+
+###v1.0
+Not released - expected in early June
+This release will be ready for real use. It will also have better 
+documentation and examples. 
+
 Development
 -----------
-Next in line to be implemented are select boxes and variations of the text 
-area (like a list box, for example). 
+Next in line to be implemented are variations of the text area (like a list 
+box, for example) and an image input element. 
 
 Feel free to join in and develop, if you want to contact us please e-mail 
 Tim at [info@sypreme.se](mailto:info@sypreme.se) or Josef at 
