@@ -3,7 +3,9 @@ SVG Input Elements 0.1
 
 Currently this project implements text areas, similar in behaviour to HTML 
 `<textarea>` tags. You can try it out with ./demo.html (just add jQuery and 
-jQuery SVG and adjust the href values). 
+jQuery SVG and adjust the href values) or see the 0.1 release (might not have 
+all the latest fixes) on 
+[josf.se/svg-input-elements/](http://josf.se/svg-input-elements/)
 
 The goal is to implement input elements that feel and behave naturally (i.e. 
 as corresponding HTML input elements etc). 
