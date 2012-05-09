@@ -30,21 +30,18 @@ This project requires [jQuery](http://docs.jquery.com/Downloading_jQuery)
 Versions
 --------
 ###v0.1
-Released 9 May 2012. 
-This is a rather limited release which is only properly tested in 
+__Released 9 May 2012.__ This is a rather limited release which is only properly tested in 
 Chrome/Chromium. It should not be seen as something that is ready to be put 
 in use.
 
 ###v0.2
-Not released
-This release will provide additional input elements and should work much 
+__Not released.__ This release will provide additional input elements and should work much 
 better in Firefox. 
 
 ...
 
-###v1.0
-Not released - expected in early June
-This release will be ready for real use. It will also have better 
+###v1.0 
+__Not released - expected in early June__ This release will be ready for real use. It will also have better 
 documentation and examples. 
 
 Development
