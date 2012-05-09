@@ -1389,8 +1389,11 @@ $.extend(SVGEditableTextBox.prototype, {
         
         if (rEl && rEl.firstChild) {
           var len;
-          if (rEl.firstChild.data.length >= char) {
+          if (rEl.firstChild.data.length >= char && char>0) {
             len = rEl.getSubStringLength(0,char);
+          }
+          else if (char==0) {
+          	len = 0;
           }
           else {
             len = rEl.getComputedTextLength();
