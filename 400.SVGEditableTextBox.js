@@ -34,11 +34,13 @@ $.extend(SVGEditableTextBox, {
           && selectedGroup.constructor === SVGEditableTextBox) {
           char = String.fromCharCode(e.which);
           
-          if (e.shiftKey && e.which < 35 && e.which > 40) {
+          /*
+if (e.shiftKey && e.which < 35 && e.which > 40) {
             selectedGroup._selectStartCoord = null;
             selectedGroup.removeSelection();
             $('.marking').remove();
           }
+*/
             
           var charPosition  = selectedGroup._textPosition,
               pos           = selectedGroup._getTextPosition(charPosition),
@@ -90,10 +92,12 @@ $.extend(SVGEditableTextBox, {
               paragraph     = possi.paragraph,
               row           = possi.row;
               
-          if (e.shiftKey && e.keyCode==16 && !selectedGroup._selectStartCoord) { // shift is down            
+          /*
+if (e.shiftKey && e.keyCode==16 && !selectedGroup._selectStartCoord) { // shift is down            
             selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char); // set start position for new selection
             selectedGroup._selection = null;
           }
+*/
           
           if (e.metaKey || e.ctrlKey) { // CTRL/CMD
             stopDefault = true;
@@ -559,7 +563,8 @@ $.extend(SVGEditableTextBox, {
                 }));
             }
             
-            if (e.which != 16) {
+            /*
+if (e.which != 16) {
             
               if (e.shiftKey) { // shift only
                 
@@ -579,8 +584,9 @@ $.extend(SVGEditableTextBox, {
                 selectedGroup._selectStartCoord = selectedGroup._selection.start;
               }
             }
-            
+ */           
           }
+
         }
         
       });
