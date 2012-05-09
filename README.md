@@ -1,5 +1,5 @@
-SVG Input Elements
-==================
+SVG Input Elements 0.1
+======================
 
 Currently this project implements text areas, similar in behaviour to HTML 
 `<textarea>` tags. You can try it out with ./demo.html (just add jQuery and 
@@ -13,11 +13,14 @@ Features
 * Line wrapping
 * Word wrapping of long words
 * Copy/cut/paste
-* Text selection with mouse and keyboard
+* Text selection with mouse
 * Change cursor position with left/right/up/down/home/end etc
 * Handles both paragraphs (_enter_) and manual line breaks (_shift+enter_)
 * Undo/redo
 * ...
+
+Text selection using _shift_ and arrow keys does not work in version 0.1, and 
+there is no proper way of accessing the value from the outside. 
 
 Requirements
 ------------
