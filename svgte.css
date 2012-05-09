@@ -1,13 +1,14 @@
 g.textbox, 
 g.textbox text {
-	cursor: default;
+  cursor: default;
 }
 
 g.textbox.selected,
 g.textbox.selected text {
-	cursor: text;
+  cursor: text;
 }
 
 svg {
-	border: solid 1px #ddd;
+  border: solid 1px #ddd;
 }
+
