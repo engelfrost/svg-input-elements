@@ -124,7 +124,6 @@ $.extend(SVGEditableTextBox, {
           }
           else if (e.keyCode > 34 && e.keyCode < 41) {
             selectedGroup._selectStartCoord = null;
-            selectedGroup._selection = null;
             
             console.log('arrows/home/end')
           }
@@ -604,6 +603,7 @@ $.extend(SVGEditableTextBox, {
             			((e.keyCode >= 37 && e.keyCode <= 40) && e.metaKey)) { // MAC HOME/END-TOP/BOTTOM
 	              
 	              $('.marking').remove();
+	              selectedGroup._selection = null;
 	              
 	            } else {
 	            	SVGTextMarker.hide();
