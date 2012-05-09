@@ -623,14 +623,14 @@ $.extend(SVGEditableTextBox.prototype, {
   _history: [{}],
   _historyPos: 0,
   _historyAdd: function(val, textPosition) {
-    if (this._history[this._historyPos+1] !== undefined) {
-      if (val != this._history[this._historyPos+1].text) {
-        this._history = this._history.slice(this._historyPos);
-        this._historyPos = 0; 
-        this._history.unshift({text: val, textPosition: textPosition});
-      }
+    if (!this._history[this._historyPos+1] 
+      || (this._history[this._historyPos+1] 
+        && val.length != this._history[this._historyPos+1].length)
+      ) {
+      this._history = this._history.slice(this._historyPos);
+      this._historyPos = 0; 
+      this._history.unshift({text: val, textPosition: textPosition});
     }
-    console.log(this._history);
     return val; 
   },
   _historyUndo: function() {
