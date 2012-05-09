@@ -12,6 +12,9 @@ and jQuery SVG and adjust the href values).
 The goal is to implement input elements that feel and behave naturally (i.e. 
 as corresponding HTML input elements etc). 
 
+This project started out as a sub-project to a master thesis project, 
+[Personas in Real Life](http://personasinreallife.tumblr.com).
+
 __Go to:__ [Features](#features-), [Requirements](#requirements), 
 [Versions](#versions) or [Development](#development)
 
