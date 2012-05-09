@@ -804,7 +804,7 @@ $.extend(SVGEditableTextBox.prototype, {
     
     console.time("total time"); // timeing
     var that = this; 
-    var gSettings = {class: 'textbox', transform: 'translate(0,100)'}; // TODO: remove these hardcoded value
+    var gSettings = {class: 'textbox', transform: 'translate(10,10)'}; // TODO: remove these hardcoded value
     
     var g = this.super._render.call(this, this._parent, this._id, gSettings);
     var maxWidth = this._width;
