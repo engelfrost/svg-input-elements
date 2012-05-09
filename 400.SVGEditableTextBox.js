@@ -34,13 +34,13 @@ $.extend(SVGEditableTextBox, {
           && selectedGroup.constructor === SVGEditableTextBox) {
           char = String.fromCharCode(e.which);
           
-          /*
-if (e.shiftKey && e.which < 35 && e.which > 40) {
+          if (!(e.shiftKey
+              && ((e.keyCode > 36 && e.keyCode < 41 && !e.ctrlKey)
+                || (e.keyCode > 34 && e.keyCode < 37))
+              )){
             selectedGroup._selectStartCoord = null;
             selectedGroup.removeSelection();
-            $('.marking').remove();
           }
-*/
             
           var charPosition  = selectedGroup._textPosition,
               pos           = selectedGroup._getTextPosition(charPosition),
@@ -91,13 +91,42 @@ if (e.shiftKey && e.which < 35 && e.which > 40) {
               possi         = selectedGroup._getTextPosition(charPosition),
               paragraph     = possi.paragraph,
               row           = possi.row;
-              
-          /*
-if (e.shiftKey && e.keyCode==16 && !selectedGroup._selectStartCoord) { // shift is down            
-            selectedGroup._selectStartCoord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char); // set start position for new selection
-            selectedGroup._selection = null;
+          
+          if (e.shiftKey && (e.keyCode < 35 || e.keyCode > 40)){
+            if (selectedGroup._selection) {
+              selectedGroup._selectStartCoord = selectedGroup._selection.start;
+              console.log('existing-1')
+            }
           }
-*/
+          else if (e.shiftKey
+              && ((e.keyCode > 36 && e.keyCode < 41 && !e.ctrlKey)
+                || (e.keyCode > 34 && e.keyCode < 37))
+              ) {
+            
+            if (!selectedGroup._selectStartCoord) {
+            // set start position for new selection            
+              selectedGroup._selectStartCoord = 
+                selectedGroup._getCoordInTextbox(
+                  selectedGroup._group, 
+                  possi.paragraph+1, 
+                  possi.row+1, 
+                  possi.char
+                );
+               
+              selectedGroup._selection = null;
+              
+              console.log('non-existing')
+            
+            }
+            
+            console.log('shift+arrows/home/end')
+            
+          }
+          else if (e.keyCode > 34 && e.keyCode < 41) {
+            selectedGroup._selectStartCoord = null;
+            
+            console.log('arrows/home/end')
+          }
           
           if (e.metaKey || e.ctrlKey) { // CTRL/CMD
             stopDefault = true;
@@ -563,28 +592,25 @@ if (e.shiftKey && e.keyCode==16 && !selectedGroup._selectStartCoord) { // shift 
                 }));
             }
             
-            /*
-if (e.which != 16) {
-            
-              if (e.shiftKey) { // shift only
-                
-                selectedGroup._drawMarking(selectedGroup._group, coord);
-                
-              } else if (!e.metaKey && !e.ctrlKey && !e.altKey && e.which !== 17 && e.which !== 18) {
-                selectedGroup._selectStartCoord = null;
-                
-                $('.marking').remove();
-                
-              } else {
-                SVGTextMarker.hide();
-              }
-            } else {
-              if (selectedGroup._selection) {
-                SVGTextMarker.hide();
-                selectedGroup._selectStartCoord = selectedGroup._selection.start;
-              }
+            if (selectedGroup._selectStartCoord) {
+              selectedGroup._drawMarking(selectedGroup._group, coord);
+            } 
+            else if (!e.shiftKey) { // NOT SHIFT
+            	if ((e.keyCode >= 35 && e.keyCode <= 40) && !(e.ctrlKey || e.metaKey) // (NOT CMD/CTRL) + ARROWS/HOME/END
+            			||
+            			((e.keyCode >= 35 && e.keyCode <= 36) && (e.ctrlKey || e.metaKey)) // (CTRL)HOME-END
+            			|| 
+            			((e.keyCode >= 37 && e.keyCode <= 40) && e.metaKey)) { // MAC HOME/END-TOP/BOTTOM
+	              
+	              $('.marking').remove();
+	              selectedGroup._selection = null;
+	              
+	            } else {
+	            	SVGTextMarker.hide();
+	            }
+	                          
             }
- */           
+                      
           }
 
         }
@@ -1393,7 +1419,7 @@ $.extend(SVGEditableTextBox.prototype, {
             len = rEl.getSubStringLength(0,char);
           }
           else if (char==0) {
-          	len = 0;
+            len = 0;
           }
           else {
             len = rEl.getComputedTextLength();
