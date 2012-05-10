@@ -7,14 +7,10 @@ var loaded = false;
 $(document).ready(function(){
   var settings = {
     viewBox: '0 0 400 400', 
-    xmlns: "http://www.w3.org/2000/svg", 
-    'xmlns:xlink': "http://www.w3.org/1999/xlink",
-    width: '100%', 
-    height: '100%', 
 //     clear: true, // What is this? 
     version: '1.1'
   };
-  var svg = $('body').svg({onLoad: init, settings: settings});
+  var svg = $('#svg').svg({onLoad: init, settings: settings});
 	
 	domReady = true;
 	

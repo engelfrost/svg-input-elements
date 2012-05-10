@@ -1051,7 +1051,7 @@ $.extend(SVGEditableTextBox.prototype, {
       paragraphCount.push(rowCount); 
       
       // Append the text to its group: 
-      t = that._wrapper.text( g, 0, int(textY), tspans, { 'class': 'paragraph' } );
+      t = that._wrapper.text(g, 0, int(textY), tspans, {class: 'paragraph'});
       
     });
     
