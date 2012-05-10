@@ -688,7 +688,6 @@ $.extend(SVGEditableTextBox.prototype, {
   },
   
   init: function(parent, value, width, height, settings) {
-//     console.log("initparams", parent, value, width, height, settings, this); 
   
     this._parent = parent; 
     this._text = value.toString();
@@ -800,7 +799,6 @@ $.extend(SVGEditableTextBox.prototype, {
   },
   
   _getGPadding: function() {
-    console.log('textarea padding'); 
     var padding = {
       'top'    : int(StyleSheet.get( 'rect.textbox', 'padding-top' ))*1.2,
       'right'  : int(StyleSheet.get( 'rect.textbox', 'padding-right' )),
@@ -821,6 +819,8 @@ $.extend(SVGEditableTextBox.prototype, {
     var padding = this._getGPadding();
     var maxWidth = this._width - padding['left'] - padding['right'];
     
+    console.log("maxWidth", maxWidth);
+    
     // padding-top is applied through text elements,
     // padding-left is applied through tspan elements and 
     // padding bottom and padding right is applied through the background rect.
@@ -835,8 +835,6 @@ $.extend(SVGEditableTextBox.prototype, {
       'dx': int(padding['left']), 
       'xml:space': 'preserve' 
     };
-    
-    console.log("Padding left", padding['left']);
     
     var paragraphCount = []; // 
     var rowCount = []; 
@@ -947,6 +945,7 @@ $.extend(SVGEditableTextBox.prototype, {
           }
           
           wordWidth = cachedWord.width; 
+          console.log("wordWidth",remainingWords[0], wordWidth);
           
           if ( ( tmpRowWidth + wordWidth ) <= maxWidth || maxWidth == -1 ) {
             // We're OK, add the word to the row
@@ -1545,8 +1544,6 @@ $.extend(SVGEditableTextBox.prototype, {
     var coords = this._getWordCoordsInText(g,e),
         width  = coords.stop.x - coords.start.x,
         height = int(StyleSheet.get('text', 'line-height'));
-      
-/*    console.log(coords.start.x, coords.stop.x); */
     
     var marking = this._wrapper.rect(
           coords.stop.parent, 

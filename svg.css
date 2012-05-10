@@ -5,7 +5,7 @@ rect.textbox {
 }
 rect.list {
   padding: 6pt; /* Custom CSS for TextBox SVG */
-  padding-left: 60pt;
+  padding-left: 8pt;
   padding-right: 8pt;
 }
 

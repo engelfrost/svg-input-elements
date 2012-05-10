@@ -199,7 +199,6 @@ var StyleSheet = {
             
             r = selectorRegExp.exec( rule.trim() );
             s = selectorRegExp.exec( selector );
-            console.log(selector);
             
             // We ignore some stuff, like pseudo-elements, rules with parents etc. 
             // We only handle what the regexp can handle. 
