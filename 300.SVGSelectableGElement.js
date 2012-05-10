@@ -122,8 +122,10 @@ $.extend(SVGSelectableGElement, {
 			
 			if (g) { // selection occured
 			
-				if (!g._selected)
+				if (!g._selected) {
+					$(g).parent().append(g);
 					g.select(e);
+				}
 				
 			}
 			else {
