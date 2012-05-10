@@ -27,9 +27,8 @@ text { /* Paragrafs */
   padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
 }
 .heading text {
-  font-size: 10pt;
-  font-family: "Verdana";
-	line-height: 16pt; /* Custom CSS for TextBox SVG */
+  font-size: 12pt;
+	line-height: 17pt; /* Custom CSS for TextBox SVG */
 }
 
 rect#select {
