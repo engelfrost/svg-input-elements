@@ -184,7 +184,6 @@ var StyleSheet = {
     
     var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
     var result = ''; 
-    
     var ccStyle = $.camelCase(style);
     
     if (this.StyleCache[selector] !== undefined && this.StyleCache[selector][style] !== undefined) {
