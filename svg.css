@@ -15,7 +15,7 @@ text { /* Paragrafs */
   font-style: italic;
   line-height: 12pt; /* Custom CSS for TextBox SVG */
   fill: #515359;
-  text-rendering: geometricprecision;
+  text-rendering: geometricPrecision;
   padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
 }
 

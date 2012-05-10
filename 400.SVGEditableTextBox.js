@@ -818,8 +818,6 @@ $.extend(SVGEditableTextBox.prototype, {
     var padding = this._getGPadding();
     var maxWidth = this._width - padding['left'] - padding['right'];
     
-    console.log("maxWidth", maxWidth);
-    
     // padding-top is applied through text elements,
     // padding-left is applied through tspan elements and 
     // padding bottom and padding right is applied through the background rect.
@@ -935,7 +933,7 @@ $.extend(SVGEditableTextBox.prototype, {
             tmpText = that._wrapper.text( -1000, -1000, tmpTspans );
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
-              width: tmpText.getComputedTextLength()
+              width: tmpText.width() // TODO: Trying width
               // Timestamp not needed unless we maintain the cache size
 //               timestamp: new Date().getTime()
             }; 
@@ -978,7 +976,7 @@ $.extend(SVGEditableTextBox.prototype, {
                   cachedWord = 
                     SVGEditableTextBox._wordCache[fontSettings][newTmpWord] = 
                     {
-                      width: tmpText.getComputedTextLength() 
+                      width: tmpText.width() //TODO: testing width
                         + padding['left']
                         + padding['right'], 
                       timestamp: new Date().getTime()
