@@ -26,10 +26,6 @@ text { /* Paragrafs */
   text-rendering: geometricprecision;
   padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
 }
-
-#textarea-1 text {
-  font-family: verdana; 
-}
 .heading text {
 	font-size: 10pt;
 	line-height: 16pt; /* Custom CSS for TextBox SVG */
