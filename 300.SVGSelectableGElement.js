@@ -260,10 +260,10 @@ $.extend(SVGSelectableGElement.prototype, {
 				
 				this._group.setAttribute('transform','translate(-9999,-9999)');
 				
-				destroyElem(this._group);
-				
 				classes = this._group.getAttribute('class');
-				this._group.removeAttribute('class');
+        this._group.removeAttribute('class');
+        
+        destroyElem(this._group);
 				
       } 
       else {
@@ -288,7 +288,7 @@ $.extend(SVGSelectableGElement.prototype, {
           this._selected = true;
           
           // set the class of the element to selected, so we can find it later
-          this.setAttribute('class', 'textbox selected');
+          this.setAttribute('class', this.getAttribute('class') + ' selected');
           
           this._render();
             
