@@ -180,7 +180,12 @@ var StyleSheet = {
    * that require parents are ignored, since thier relevancy is ambiguous. We 
    * only handle the structure 'tag#id.class, tag#id.class...'
    */ 
-  get: function ( selector, style ) {
+  get: function ( selector, style, parent ) {
+    
+    if (parent !== undefined) {
+      heritage = selector.split(" ").pop().; 
+      if (StyleSheet.get(selector, style, parent)
+    }
     
     var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
     var result = ''; 
