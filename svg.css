@@ -1,3 +1,10 @@
+
+
+/*@font-face {
+  font-family: "Alba Super";
+  src: url('albas.svg#AlbaSuper') format('svg');
+}*/
+
 rect.textbox {
   padding: 6pt; /* Custom CSS for TextBox SVG */
   padding-left: 8pt;

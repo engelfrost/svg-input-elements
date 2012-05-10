@@ -692,7 +692,7 @@ $.extend(SVGEditableTextBox.prototype, {
     this._text = value.toString();
     this._history = [{text: value.toString(), textPosition: null}];
     this._width = width; // value -1 means "no maxwidth"
-    this._height = height; // TODO: not used at the moment
+    this._height = height; // not used at the moment
     SVGEditableTextBox._textareaCount++; 
     this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
     this._class = (settings.class || '') + ' textbox';
@@ -819,8 +819,6 @@ $.extend(SVGEditableTextBox.prototype, {
     var padding = this._getGPadding();
     var maxWidth = this._width - padding['left'] - padding['right'];
     
-    console.log("maxWidth", maxWidth);
-    
     // padding-top is applied through text elements,
     // padding-left is applied through tspan elements and 
     // padding bottom and padding right is applied through the background rect.
@@ -833,8 +831,13 @@ $.extend(SVGEditableTextBox.prototype, {
       'dy': int(tspanDy), 
       'x': 0, 
       'dx': int(padding['left']), 
-      'xml:space': 'preserve' 
+      'xml:space': 'preserve'
     };
+    var textSettings = {
+      //TODO: Make sure this styling is complete!!!
+      'style': "font-family: "+StyleSheet.get( 'text', 'font-family' )+"; "
+    }
+    console.log(textSettings);
     
     var paragraphCount = []; // 
     var rowCount = []; 
@@ -859,8 +862,8 @@ $.extend(SVGEditableTextBox.prototype, {
     // Make sure caching is set up: 
     testText = this._wrapper.createText();
     testText.span( "test", tspanSettings ); 
-    fontSettings = $(tmp = that._wrapper.text( -1000, -1000, testText )).css('font');
-    
+    fontSettings = $(tmp = that._wrapper.text(-1000, -1000, testText, textSettings))[0].style.fontFamily; //TODO: I AM HERE
+        
     $(tmp).remove();
     
     if (!(fontSettings in SVGEditableTextBox._wordCache)) {
@@ -933,10 +936,10 @@ $.extend(SVGEditableTextBox.prototype, {
             
             tmpTspans = that._wrapper.createText(); 
             tmpTspans.span( remainingWords[0], tspanSettings );
-            tmpText = that._wrapper.text( -1000, -1000, tmpTspans );
+            tmpText = that._wrapper.text( -1000, -1000, tmpTspans, textSettings );
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
-              width: tmpText.getComputedTextLength()
+              width: tmpText.width() 
               // Timestamp not needed unless we maintain the cache size
 //               timestamp: new Date().getTime()
             }; 
@@ -945,7 +948,6 @@ $.extend(SVGEditableTextBox.prototype, {
           }
           
           wordWidth = cachedWord.width; 
-          console.log("wordWidth",remainingWords[0], wordWidth);
           
           if ( ( tmpRowWidth + wordWidth ) <= maxWidth || maxWidth == -1 ) {
             // We're OK, add the word to the row
@@ -974,12 +976,12 @@ $.extend(SVGEditableTextBox.prototype, {
                   
                   tmpTspans = that._wrapper.createText(); 
                   tmpTspans.span(newTmpWord, tspanSettings);
-                  tmpText = that._wrapper.text(-1000, -1000, tmpTspans);
+                  tmpText = that._wrapper.text(-1000, -1000, tmpTspans, textSettings);
                   
                   cachedWord = 
                     SVGEditableTextBox._wordCache[fontSettings][newTmpWord] = 
                     {
-                      width: tmpText.getComputedTextLength() 
+                      width: tmpText.width() 
                         + padding['left']
                         + padding['right'], 
                       timestamp: new Date().getTime()
@@ -1054,7 +1056,7 @@ $.extend(SVGEditableTextBox.prototype, {
       paragraphCount.push(rowCount); 
       
       // Append the text to its group: 
-      t = that._wrapper.text( g, 0, int(textY), tspans, { 'class': 'paragraph' } );
+      t = that._wrapper.text(g, 0, int(textY), tspans, textSettings);
       
     });
     
