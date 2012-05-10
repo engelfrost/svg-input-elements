@@ -146,7 +146,6 @@ $.extend(SVGEditableTextBox, {
               
               case 65: // cmd/ctrl+a
                 
-                
                 markall = true;
                 
                 var endpos = selectedGroup._getTextPosition(selectedGroup._text.length-1);
