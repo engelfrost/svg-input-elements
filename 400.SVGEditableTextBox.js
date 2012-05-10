@@ -573,7 +573,7 @@ $.extend(SVGEditableTextBox, {
           
           if (cancelUpdate && !markall) {
             // keep marker visible if group was selected
-            var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+            var lineHeight = int(StyleSheet.get('text', 'line-height'));  // Find and pass parent here for all style rules!
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
             var coord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
@@ -814,7 +814,8 @@ $.extend(SVGEditableTextBox.prototype, {
     var that = this; 
     var x = this._settings.x; 
     var y = this._settings.y; 
-    var gSettings = {class: 'textbox', transform: 'translate('+x+','+y+')'};
+//     console.log("this class", this._class);
+    var gSettings = {class: this._class, transform: 'translate('+x+','+y+')'};
     var g = this.super._render.call(this, this._parent, this._id, gSettings);
     var padding = this._getGPadding(g);
     var maxWidth = this._width - padding['left'] - padding['right'];
@@ -861,7 +862,16 @@ $.extend(SVGEditableTextBox.prototype, {
     // Make sure caching is set up: 
     testText = this._wrapper.createText();
     testText.span( "test", tspanSettings ); 
-    fontSettings = $(tmp = that._wrapper.text(-1000, -1000, testText, textSettings))[0].style.fontFamily; 
+    var style = $(tmp = that._wrapper.text(-1000, -1000, testText, textSettings))[0].style; 
+    fontSettings = style.fontFamily + ','
+      + style.fontSize + ','
+      + style.fontWeight + ','
+      + style.fontStretch + ','
+      + style.fontStyle + ','
+      + style.fontVariant + ','
+      + style.letterSpacing; 
+    
+//     console.log(fontSettings, this._text); I AM HERE
         
     $(tmp).remove();
     
