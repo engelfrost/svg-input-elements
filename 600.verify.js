@@ -20,10 +20,11 @@ $(document).ready(function(){
 
 // wait until all page content is loaded (css, images, etc.)
 $(window).load(function () {
-	
+// 	setTimeout(function(){
 	loaded = true;
 	
 	goReady();
+//   },1000);
 	
 });
 
