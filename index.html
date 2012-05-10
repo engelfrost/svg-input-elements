@@ -4,14 +4,15 @@
 <meta http-equiv="Content-Type" content="charset=iso-8859-1" />
 
 <!-- Requirements, you need these libraries for SVG Input Elements to work -->
-<script type="text/javascript" src="jquery-1.7.2.js"></script>
-<script type="text/javascript" src="jquery.svg.js"></script>
+<script type="text/javascript" src="../jquery-1.7.2.js"></script>
+<script type="text/javascript" src="../jquery.svg.js"></script>
 
 
 <script type="text/javascript" src="100.helpers.js"></script>
 <script type="text/javascript" src="200.SVGInputElements.js"></script>
 <script type="text/javascript" src="300.SVGSelectableGElement.js"></script>
 <script type="text/javascript" src="400.SVGEditableTextBox.js"></script>
+<script type="text/javascript" src="450.SVGEditableList.js"></script>
 <script type="text/javascript" src="500.SVGTextMarker.js"></script>
 <script type="text/javascript" src="600.verify.js"></script>
 <link rel="stylesheet" href="svgte.css" \>
@@ -40,10 +41,10 @@
 <h1 style="margin: auto; width: 800px;  margin-bottom: 12px; margin-top: 25px; ">SVG Input Elements</h1>
 <p style="margin: auto; width: 800px; margin-bottom: 10px;  "><a href="#textarea">Textarea</a>, text input (coming...), list input (coming...) and image input (coming...)</p>
 
-<a id="textarea"></a>
-<div id="svg-container" style="width: 800px; height: 400px; margin: auto; "></div>
+<div style="margin: auto; width: 800px;">
+  <svg id="svg" version="1.1" width="800" height="400"></svg>
+</div>
 
 <p style="margin: auto; width: 800px; margin-top: 10px; ">This is a simple demonstration of a textarea written in JavaScript and SVG. It handles text input, line wrapping, word wrapping, selection, copy/paste and undo/redo. None of these features are natively supported in SVG 1.1. It can be styled using a subset of CSS. </p>
-
 </body>
 </html>

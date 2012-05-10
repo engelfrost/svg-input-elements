@@ -6,7 +6,9 @@ var loaded = false;
 // init svg when DOM is ready
 $(document).ready(function(){
 
-	var svg = $('body').svg({onLoad: init, clear: true, settings: {viewBox: '0 0 400 400'}});
+	//var svg = $('body').svg({onLoad: init, clear: true, settings: {viewBox: '0 0 400 400'}});
+	
+	var svg = $('#svg').svg({onLoad: init, clear: true, settings: {viewBox: '0 0 400 200'}});
 	
 	domReady = true;
 	

@@ -10,7 +10,7 @@ rect.list {
 }
 
 text { /* Paragrafs */
-  font-family: "Georgia";
+  font-family: "Alba Super";
   font-size: 8pt;
   font-style: italic;
   line-height: 12pt; /* Custom CSS for TextBox SVG */
@@ -45,4 +45,9 @@ g.contextmenu rect.marking {
 
 rect.textbox {
   fill: #FFFFFF;
+}
+
+@font-face {
+	font-family: "Alba Super";
+	src: url(albas.svg#AlbaSuper);
 }

@@ -194,6 +194,7 @@ var StyleSheet = {
         // parse all stylesheets
         $.each( styleSheet.cssRules, function( i, ruleBundle ) {
           // parse all rules
+          if (ruleBundle.selectorText) {
           $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
             // split all grouped styles
             
@@ -233,6 +234,7 @@ var StyleSheet = {
               }
             }
           });
+          }
         });
       });
     }
