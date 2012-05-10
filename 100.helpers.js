@@ -176,22 +176,22 @@ var typeNames = types.map(function(e,i){ return e.name; });
 var StyleSheet = {
   StyleCache: {}, 
   /** 
+   * selector:  CSS selector without parents and pseudo-classes. Only tag, id, and class. 
+   * style:     The style wanted
+   * parent:    The parent object, for matching inheritance
+   * 
    * Returns the style value for given selector and style. Any style definitions
    * that require parents are ignored, since thier relevancy is ambiguous. We 
    * only handle the structure 'tag#id.class, tag#id.class...'
    */ 
-  get: function ( selector, style, parent ) {
-    
-    if (parent !== undefined) {
-      heritage = selector.split(" ").pop().; 
-      if (StyleSheet.get(selector, style, parent)
-    }
+  get: function (selector, style, parent) {
     
     var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
+    var heritageRegExp = /^(.*[^>])(\s+|\s*\>\s*)([\w\.\#]+)$/; 
     var result = ''; 
     var ccStyle = $.camelCase(style);
     
-    if (this.StyleCache[selector] !== undefined && this.StyleCache[selector][style] !== undefined) {
+    if (this.StyleCache[selector] !== undefined && this.StyleCache[selector][style] !== undefined && parent === undefined) {
       return this.StyleCache[selector][style]; 
     }
     else {
@@ -203,12 +203,26 @@ var StyleSheet = {
             $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
               // split all grouped styles
               
+              var heritageOk = true; 
+              if (heritageRegExp.test(rule.trim())) {
+                // The rule uses parents, check if parent qualifies
+                
+                var heritage = heritageRegExp.exec(rule.trim()); 
+                
+                // Does parent match the rule? 
+                heritageOk = $(parent).is(heritage[1]);
+                
+                // Still got to make sure the child qualifies
+                rule = heritage[3];
+              }
+              
               r = selectorRegExp.exec( rule.trim() );
               s = selectorRegExp.exec( selector );
               
               // We ignore some stuff, like pseudo-elements, rules with parents etc. 
-              // We only handle what the regexp can handle. 
+              // We only handle what the regexp can handle.
               
+              // This can probably be re-written with jQuery .is()...
               if ( r != null && s != null ) {
                 
                 // Check if rule requires a specific tag
@@ -220,7 +234,10 @@ var StyleSheet = {
                 // Check if rule requires class
                 classOk = ( r[3] == undefined || r[3] == s[3] ); 
                 
-                if ( tagOk && idOk && classOk ) {
+                // Check that 
+                bloodline = $(parent).is(heritage);
+                
+                if ( tagOk && idOk && classOk && heritageOk ) {
                   // If this is a match, update result with any new stuff
                   
                   if ( typeof ruleBundle.style[style] != 'undefined' 
