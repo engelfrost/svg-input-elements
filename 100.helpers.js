@@ -184,6 +184,7 @@ var StyleSheet = {
     
     var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
     var result = ''; 
+    
     var ccStyle = $.camelCase(style);
     
     if (this.StyleCache[selector] !== undefined && this.StyleCache[selector][style] !== undefined) {
@@ -195,45 +196,45 @@ var StyleSheet = {
         $.each( styleSheet.cssRules, function( i, ruleBundle ) {
           // parse all rules
           if (ruleBundle.selectorText) {
-          $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
-            // split all grouped styles
-            
-            r = selectorRegExp.exec( rule.trim() );
-            s = selectorRegExp.exec( selector );
-            
-            // We ignore some stuff, like pseudo-elements, rules with parents etc. 
-            // We only handle what the regexp can handle. 
-            
-            if ( r != null && s != null ) {
+            $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
+              // split all grouped styles
               
-              // Check if rule requires a specific tag
-              tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
+              r = selectorRegExp.exec( rule.trim() );
+              s = selectorRegExp.exec( selector );
               
-              // Check if rule requires ID 
-              idOk = ( r[2] == undefined || r[2] == s[2] ); 
+              // We ignore some stuff, like pseudo-elements, rules with parents etc. 
+              // We only handle what the regexp can handle. 
               
-              // Check if rule requires class
-              classOk = ( r[3] == undefined || r[3] == s[3] ); 
-              
-              if ( tagOk && idOk && classOk ) {
-                // If this is a match, update result with any new stuff
+              if ( r != null && s != null ) {
                 
-                if ( typeof ruleBundle.style[style] != 'undefined' 
-                  && ruleBundle.style[style] !== '' ) {
+                // Check if rule requires a specific tag
+                tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
+                
+                // Check if rule requires ID 
+                idOk = ( r[2] == undefined || r[2] == s[2] ); 
+                
+                // Check if rule requires class
+                classOk = ( r[3] == undefined || r[3] == s[3] ); 
+                
+                if ( tagOk && idOk && classOk ) {
+                  // If this is a match, update result with any new stuff
                   
-                  // Save the result, but don't return it yet. Other rules may 
-                  // overwrite it later, since the rules are cascading. 
-                  result = ruleBundle.style[style];
-                }
-                else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
-                  && ruleBundle.style[ccStyle] !== '' ) {
-                  
-                  // Some browsers use camelCase
-                  result = ruleBundle.style[ccStyle];
+                  if ( typeof ruleBundle.style[style] != 'undefined' 
+                    && ruleBundle.style[style] !== '' ) {
+                    
+                    // Save the result, but don't return it yet. Other rules may 
+                    // overwrite it later, since the rules are cascading. 
+                    result = ruleBundle.style[style];
+                  }
+                  else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
+                    && ruleBundle.style[ccStyle] !== '' ) {
+                    
+                    // Some browsers use camelCase
+                    result = ruleBundle.style[ccStyle];
+                  }
                 }
               }
-            }
-          });
+            });
           }
         });
       });

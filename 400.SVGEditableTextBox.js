@@ -836,7 +836,6 @@ $.extend(SVGEditableTextBox.prototype, {
       //TODO: Make sure this styling is complete!!!
       'style': "font-family: "+StyleSheet.get( 'text', 'font-family' )+"; "
     }
-    console.log(textSettings);
     
     var paragraphCount = []; // 
     var rowCount = []; 
