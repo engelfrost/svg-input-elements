@@ -694,7 +694,8 @@ $.extend(SVGEditableTextBox.prototype, {
     this._width = width; // value -1 means "no maxwidth"
     this._height = height; // TODO: not used at the moment
     SVGEditableTextBox._textareaCount++; 
-    this._id = 'textarea-' + SVGEditableTextBox._textareaCount.toString();
+    this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
+    this._class = (settings.class || '') + ' textbox';
     this._settings = settings;
     
     this._textPositions = []; 

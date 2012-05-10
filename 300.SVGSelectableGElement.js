@@ -266,6 +266,9 @@ $.extend(SVGSelectableGElement.prototype, {
 				this._group.removeAttribute('class');
 				
       } 
+      else {
+      	classes = this._class;
+      }
       
 	    this._group = this._wrapper.group(arguments[0], arguments[1], arguments[2]);
 	    (classes ? this._group.setAttribute('class', classes) : 0); // add old classes if there are any

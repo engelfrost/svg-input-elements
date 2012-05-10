@@ -19,9 +19,11 @@ $(document).ready(function(){
 // wait until all page content is loaded (css, images, etc.)
 $(window).load(function () {
 	
+	setTimeout(function(){
 	loaded = true;
 	
 	goReady();
+	},100);
 	
 });
 
@@ -44,10 +46,12 @@ function readyStart(svg){
 	
   /* svg.input.textArea(0, 20, '   Hej  din galna gubbebeb sd fs df sd fs df sd fs df sd f sdf sd f sdf sd f sdf s df sdfsdfsdfsd fs df sd fs df sd f sdf sd f sdf sd fssdf sd fs dfebebebebebebebebeb\nhej\rhej  hej\nhej\nhejheje\rsdfjhkd', {width: '100'}); */
 
-  svg.input.textArea(0, 0, 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. \nAliquam erat volutpat. \nSed nibh tortor, venenatis non scelerisque ut, consequat vitae lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.', {width: '300'});
+  svg.input.textArea(18, 10, "It Takes Carbon Fiber and Kevlar to Make the Best Basketball Shoes in the World", {width: '200', class: 'heading'});
+  
+  svg.input.textArea(18, 100, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
 
-  svg.input.list(300, 0, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '300'});
-  svg.input.list(300, 100, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '300'});
+  svg.input.list(228, 10, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '150'});
+  svg.input.list(228, 100, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '150'});
 
 
   /*
