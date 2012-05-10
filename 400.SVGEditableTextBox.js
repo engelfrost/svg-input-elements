@@ -27,7 +27,6 @@ $.extend(SVGEditableTextBox, {
       $(window).bind('keypress.' + this.name, function(e) {
         // Catch all characters and insert into any selected text box
         
-        var stopDefault = true; 
         var selectedGroup = SVGSelectableGElement.selectedGroup();
         var that = this; 
         
@@ -56,7 +55,7 @@ $.extend(SVGEditableTextBox, {
             case 32: // space
               break;
               
-            default: stopDefault = false;
+            default: 
           }
           
           selectedGroup._setText(
@@ -66,10 +65,7 @@ $.extend(SVGEditableTextBox, {
             charPosition + 1
           );
           
-          if (stopDefault) {
-            e.preventDefault();
-          }
-          
+          e.preventDefault();
           selectedGroup.update();
         }
       });
