@@ -5,6 +5,7 @@
   src: url('albas.svg#AlbaSuper') format('svg');
 }*/
 
+
 rect.textbox {
   padding: 6pt; /* Custom CSS for TextBox SVG */
   padding-left: 8pt;
@@ -25,10 +26,10 @@ text { /* Paragrafs */
   text-rendering: geometricprecision;
   padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
 }
-
 .heading text {
-	font-size: 10pt;
-	line-height: 16pt; /* Custom CSS for TextBox SVG */
+  font-size: 4pt;
+  font-family: "Verdana";
+	line-height: 32pt; /* Custom CSS for TextBox SVG */
 }
 
 rect#select {
