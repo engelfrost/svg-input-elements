@@ -22,7 +22,6 @@ $.extend(SVGEditableList.prototype, {
     padding['right']  = int(StyleSheet.get( 'rect.list', 'padding-right' ));
     padding['bottom'] = int(StyleSheet.get( 'rect.list', 'padding-bottom' ));
     padding['left']   = int(StyleSheet.get( 'rect.list', 'padding-left' ));
-    console.log("rendering list", padding);
     return padding; 
   },
 });
