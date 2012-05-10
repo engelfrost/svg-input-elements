@@ -1,0 +1,75 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  background: #ededed url('images/background.jpg');
+}
+
+header nav {
+  background-color:  #fff;
+  border-bottom: solid 1px #dcdcdc;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+header div.braid {
+	height: 12px;
+	background-color: #ffe607;
+	box-shadow: 0 1px 0 #ffeb31, 0 2px 0 #d7bf00, 0 3px 0 #baa600;
+}
+
+div svg {
+  background-color:  #fff;
+  box-shadow: 0 0 3px #bbb;
+}
+
+div.svg-container {
+	margin: auto;
+	max-width: 800px;
+	padding: 15% 20px;
+	background: url(images/shadow.png) no-repeat center bottom;
+}
+
+header nav ul li {
+  float: left;
+  margin: 0 10px 0 0;
+  padding: 3px;
+}
+
+section.sidebar {
+  width: 320px;
+  height: 100%;
+  float: right;
+  
+  background-color:  #fff;
+  border-left: solid 1px #dcdcdc;
+}
+
+section.view {
+	width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+} 
+
+section.view .message {
+	position: relative; 
+	top: 50px;
+	height: 28px;
+}
+
+section.view .message.loading {
+	background: url(images/load.gif) no-repeat center top;
+}
+
+section.view .content {
+	padding-right: 320px;
+	padding-top:  50px;
+}
+
+.clearfix {
+  clear: both;
+}

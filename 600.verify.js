@@ -16,6 +16,8 @@ $(document).ready(function(){
 	
 	goReady();
 	
+	$('.svg-container').transition({ x: '-2000px', y: '0', height: '500px' }, 0);
+	
 });
 
 // wait until all page content is loaded (css, images, etc.)
@@ -51,8 +53,10 @@ function readyStart(svg){
 
   svg.input.list(228, 10, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '150'});
   svg.input.list(228, 100, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '150'});
-
-
+	
+	$('.svg-container').transition({ x: '0', y: '20px', height: '400px'}, 1000, 'snap');
+	
+	$('.view .message').removeClass('loading');
 
 	
 }
