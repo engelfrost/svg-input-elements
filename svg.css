@@ -3,15 +3,20 @@ rect.textbox {
   padding-left: 8pt;
   padding-right: 8pt;
 }
+rect.list {
+  padding: 6pt; /* Custom CSS for TextBox SVG */
+  padding-left: 60pt;
+  padding-right: 8pt;
+}
 
 text { /* Paragrafs */
-font-family: "Georgia";
-font-size: 8pt;
-font-style: italic;
-line-height: 12pt; /* Custom CSS for TextBox SVG */
-fill: #515359;
-text-rendering: geometricprecision;
-padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
+  font-family: "Georgia";
+  font-size: 8pt;
+  font-style: italic;
+  line-height: 12pt; /* Custom CSS for TextBox SVG */
+  fill: #515359;
+  text-rendering: geometricprecision;
+  padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
 }
 
 rect#select {

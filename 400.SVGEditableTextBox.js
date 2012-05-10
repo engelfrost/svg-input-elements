@@ -2,7 +2,7 @@
  *  SVGEditableTextBox
 **/
 
-$.svg.addExtension('textbox', SVGEditableTextBox);
+// $.svg.addExtension('textbox', SVGEditableTextBox);
 
 function SVGEditableTextBox(wrapper){
   this._wrapper = wrapper; // The attached SVG wrapper object
@@ -14,6 +14,7 @@ SVGEditableTextBox.inheritsFrom( SVGSelectableGElement );
 $.extend(SVGEditableTextBox, {
   once: false,
   _wordCache: {}, 
+  _textareaCount: 0, 
   
   setup: function(){
     
@@ -26,7 +27,6 @@ $.extend(SVGEditableTextBox, {
       $(window).bind('keypress.' + this.name, function(e) {
         // Catch all characters and insert into any selected text box
         
-        var stopDefault = true; 
         var selectedGroup = SVGSelectableGElement.selectedGroup();
         var that = this; 
         
@@ -55,7 +55,7 @@ $.extend(SVGEditableTextBox, {
             case 32: // space
               break;
               
-            default: stopDefault = false;
+            default: 
           }
           
           selectedGroup._setText(
@@ -65,10 +65,7 @@ $.extend(SVGEditableTextBox, {
             charPosition + 1
           );
           
-          if (stopDefault) {
-            e.preventDefault();
-          }
-          
+          e.preventDefault();
           selectedGroup.update();
         }
       });
@@ -690,13 +687,15 @@ $.extend(SVGEditableTextBox.prototype, {
   },
   
   init: function(parent, value, width, height, settings) {
+//     console.log("initparams", parent, value, width, height, settings, this); 
   
     this._parent = parent; 
     this._text = value.toString();
-    this._history[0] = {text: value.toString(), textPosition: null};
+    this._history = [{text: value.toString(), textPosition: null}];
     this._width = width; // value -1 means "no maxwidth"
-    this._height = height; // not used at the moment
-    this._id = 'textarea';
+    this._height = height; // TODO: not used at the moment
+    SVGEditableTextBox._textareaCount++; 
+    this._id = 'textarea-' + SVGEditableTextBox._textareaCount.toString();
     this._settings = settings;
     
     this._textPositions = []; 
@@ -799,33 +798,44 @@ $.extend(SVGEditableTextBox.prototype, {
     this._renderTimer = setTimeout(function(){that._render()},0);
   },
   
+  _getGPadding: function() {
+    console.log('textarea padding'); 
+    var padding = {
+      'top'    : int(StyleSheet.get( 'rect.textbox', 'padding-top' ))*1.2,
+      'right'  : int(StyleSheet.get( 'rect.textbox', 'padding-right' )),
+      'bottom' : int(StyleSheet.get( 'rect.textbox', 'padding-bottom' )),
+      'left'   : int(StyleSheet.get( 'rect.textbox', 'padding-left' ))
+    }
+    return padding; 
+  },
+  
   _render: function() {
     
     console.time("total time"); // timeing
     var that = this; 
-    var gSettings = {class: 'textbox', transform: 'translate(0,100)'}; // TODO: remove these hardcoded value
-    
+    var x = this._settings.x; 
+    var y = this._settings.y; 
+    var gSettings = {class: 'textbox', transform: 'translate('+x+','+y+')'};
     var g = this.super._render.call(this, this._parent, this._id, gSettings);
-    var maxWidth = this._width;
+    var padding = this._getGPadding();
+    var maxWidth = this._width - padding['left'] - padding['right'];
     
     // padding-top is applied through text elements,
     // padding-left is applied through tspan elements and 
     // padding bottom and padding right is applied through the background rect.
     // (padding-left must also be applied to the rect to compensate)
     // Confusing, but it works. 
-    var paddingTop    = int(StyleSheet.get( 'rect.textbox', 'padding-top' ))*1.2;
-    var paddingRight  = int(StyleSheet.get( 'rect.textbox', 'padding-right' ));
-    var paddingBottom = int(StyleSheet.get( 'rect.textbox', 'padding-bottom' ));
-    var paddingLeft   = int(StyleSheet.get( 'rect.textbox', 'padding-left' ));
     
-    var textY = paddingTop; 
+    var textY = padding['top']; 
     var tspanDy = int( StyleSheet.get( 'text', 'line-height' ) );
     var tspanSettings = { 
       'dy': int(tspanDy), 
       'x': 0, 
-      'dx': int(paddingLeft), 
+      'dx': int(padding['left']), 
       'xml:space': 'preserve' 
     };
+    
+    console.log("Padding left", padding['left']);
     
     var paragraphCount = []; // 
     var rowCount = []; 
@@ -970,8 +980,8 @@ $.extend(SVGEditableTextBox.prototype, {
                     SVGEditableTextBox._wordCache[fontSettings][newTmpWord] = 
                     {
                       width: tmpText.getComputedTextLength() 
-                        + paddingLeft 
-                        + paddingRight, 
+                        + padding['left']
+                        + padding['right'], 
                       timestamp: new Date().getTime()
                     }; 
                 }
@@ -1049,8 +1059,8 @@ $.extend(SVGEditableTextBox.prototype, {
     });
     
     var bgRect = this._wrapper.rect( g, 0, 0, 
-                                   int(maxWidth) + int(paddingRight) + int(paddingLeft), 
-                                   int(g.height()) + int(paddingBottom), 
+                                   int(maxWidth) + int(padding['right']) + int(padding['left']), 
+                                   int(g.height()) + int(padding['bottom']), 
                                    {class: 'textbox'} 
                                  );
     g.insertBefore( bgRect, g.firstChild );
