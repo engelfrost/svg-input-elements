@@ -151,13 +151,14 @@ $.extend(SVGSelectableGElement, {
 			
 			$.each(this._instances, function(i,el){
 			
-				if (el.selected)
+				if (el.selected && el._group == g)
 					el.mousemove(g,e);
 			});
 		} else {
 			g = this.selectedGroup();
-			if (g)
+			if (g) {
 				g.mousemove(g._group,e);
+			}
 		}
 	},
 	
