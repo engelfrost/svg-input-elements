@@ -16,12 +16,17 @@
     
     usort($paths, compare_filenames);
     
+    $js = ''; 
+    
     foreach ($paths as $path) {
       if ($path['extension'] == 'js') {
-//         echo $path['basename']; 
-        echo file_get_contents("../src/".$path['basename']);
+        $js .= file_get_contents("../src/".$path['basename']);
       }
     }
+    
+    file_put_contents("../jquery.svg.input.js", $js);
+    
+    echo $js; 
   }
     
 ?>
