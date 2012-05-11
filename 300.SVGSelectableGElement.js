@@ -61,7 +61,8 @@ $.extend(SVGSelectableGElement, {
 		// clear all selected boxes
 		select = $('#select');
 		if (select) {
-			select.parent().attr('class', 'textbox');
+      classes = (s = select.parent().attr('class')) ? s.replace('selected', '') : ''; 
+      select.parent().attr('class', classes);
 			select.remove();	
 			$('#textbox-marker').css({display: 'none'});
 		}
@@ -271,7 +272,7 @@ $.extend(SVGSelectableGElement.prototype, {
 				
       } 
       else {
-      	classes = this._class;
+        classes = this._class;
       }
       
 	    this._group = this._wrapper.group(arguments[0], arguments[1], arguments[2]);
