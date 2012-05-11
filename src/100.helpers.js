@@ -1,20 +1,20 @@
 // Function.inheritsFrom
 Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
-	if ( parentClassOrObject.constructor == Function ) 
-	{ 
-		//Normal Inheritance 
-		this.prototype = new parentClassOrObject;
-		this.prototype.constructor = this;
-		this.prototype.parent = parentClassOrObject.prototype;
-	} 
-	else 
-	{ 
-		//Pure Virtual Inheritance 
-		this.prototype = parentClassOrObject;
-		this.prototype.constructor = this;
-		this.prototype.parent = parentClassOrObject;
-	} 
-	return this;
+  if ( parentClassOrObject.constructor == Function ) 
+  { 
+    //Normal Inheritance 
+    this.prototype = new parentClassOrObject;
+    this.prototype.constructor = this;
+    this.prototype.parent = parentClassOrObject.prototype;
+  } 
+  else 
+  { 
+    //Pure Virtual Inheritance 
+    this.prototype = parentClassOrObject;
+    this.prototype.constructor = this;
+    this.prototype.parent = parentClassOrObject;
+  } 
+  return this;
 }
 
 function isNumber(input){
@@ -52,17 +52,17 @@ if (!Array.prototype.indexOf)
 $.fn.disableSelection = function() {
   return this.each(function() {           
     $(this).attr('unselectable', 'on')
-			.css({
-				'-moz-user-select'		:'none',
-				'-webkit-user-select'	:'none',
-				'user-select'					:'none',
-				'-ms-user-select'			:'none'
-			})
-			.each(function() {
-				this.onselectstart = function() { return false; 
-			};
-		});
-	});
+      .css({
+        '-moz-user-select'    :'none',
+        '-webkit-user-select' :'none',
+        'user-select'         :'none',
+        '-ms-user-select'     :'none'
+      })
+      .each(function() {
+        this.onselectstart = function() { return false; 
+      };
+    });
+  });
 };
 
 // Tripple click events
@@ -86,35 +86,35 @@ $.event.special.tripleclick = {
         clicks += 1;
         clearTimeout(tId);
         tId = setTimeout(function(){ 
-        	clicks=0;
-        	
-        	$elem.data('tclickpos', {x: -1, y: -1});
-        	
-        	$elem.data('tclicks', 0);
-        	 
+          clicks=0;
+          
+          $elem.data('tclickpos', {x: -1, y: -1});
+          
+          $elem.data('tclicks', 0);
+           
         }, 350);
         
         if ( clicks === 2 ) {
-        	$elem.data('tclickpos', {x: event.clientX, y: event.clientY});
+          $elem.data('tclickpos', {x: event.clientX, y: event.clientY});
         }
         else if ( clicks === 3 ) {
-        		
-        	var dist = Math.sqrt(Math.pow(clickpos.x - event.clientX, 2) 
-        								+ Math.pow(clickpos.y - event.clientY,2));
-        								
-        	clicks = 0;
+            
+          var dist = Math.sqrt(Math.pow(clickpos.x - event.clientX, 2) 
+                        + Math.pow(clickpos.y - event.clientY,2));
+                        
+          clicks = 0;
             
           clearTimeout(tId);
-        								
-        	if (dist < 5) {	
+                        
+          if (dist < 5) { 
 
 
-	            // set event type to "tripleclick"
-	            event.type = "tripleclick";
-	
-	            // let jQuery handle the triggering of "tripleclick" event handlers
-	            jQuery.event.handle.apply(this, arguments);
-	            
+              // set event type to "tripleclick"
+              event.type = "tripleclick";
+  
+              // let jQuery handle the triggering of "tripleclick" event handlers
+              jQuery.event.handle.apply(this, arguments);
+              
             }
             
             $elem.data('tclickpos', {x: -1, y: -1});
@@ -144,30 +144,30 @@ $.event.special.doubleclick = {
         clickpos = $elem.data('dclickpos') || -1;
         
         if (clicktime < 0 || (clicktime > 0 && new Date().getTime() - clicktime > 500)) {
-        	clicktime = new Date().getTime();
-        	$elem.data('dclickstime', clicktime);
-        	$elem.data('dclickpos', {x: event.clientX, y: event.clientY});
+          clicktime = new Date().getTime();
+          $elem.data('dclickstime', clicktime);
+          $elem.data('dclickpos', {x: event.clientX, y: event.clientY});
         }
         else {
         
-        	if (new Date().getTime() - clicktime < 500) {
-        	
-        		var dist = Math.sqrt(Math.pow(clickpos.x - event.clientX, 2) 
-        								+ Math.pow(clickpos.y - event.clientY,2));
-        								
-        		if (dist < 5) {
-        	
-	        		// set event type to "doubleclick"
-	            event.type = "doubleclick";
-	
-	            // let jQuery handle the triggering of "doubleclick" event handlers
-	            jQuery.event.handle.apply(this, arguments);
-	            
-	          }
-        	}
-        	
-        	$elem.data('dclickstime', -1);
-        	$elem.data('dclickpos', {x: -1, y: -1});
+          if (new Date().getTime() - clicktime < 500) {
+          
+            var dist = Math.sqrt(Math.pow(clickpos.x - event.clientX, 2) 
+                        + Math.pow(clickpos.y - event.clientY,2));
+                        
+            if (dist < 5) {
+          
+              // set event type to "doubleclick"
+              event.type = "doubleclick";
+  
+              // let jQuery handle the triggering of "doubleclick" event handlers
+              jQuery.event.handle.apply(this, arguments);
+              
+            }
+          }
+          
+          $elem.data('dclickstime', -1);
+          $elem.data('dclickpos', {x: -1, y: -1});
         }
     }
 
@@ -516,122 +516,122 @@ var StyleSheet = {
 }
 
 function num(val){ num
-	return val != null && typeof(val) != 'undefined' ? parseInt(val) : 0;
+  return val != null && typeof(val) != 'undefined' ? parseInt(val) : 0;
 }
 
 var elems = [], destroyerId;
 function destroyElem(element){
-	elems.push(element);
-	clearTimeout(destroyerId);
-	destroyerId = setTimeout("destroyer()", 100);
+  elems.push(element);
+  clearTimeout(destroyerId);
+  destroyerId = setTimeout("destroyer()", 100);
 }
 
 function destroyer() {
-	if (elems.length>0) {
-		element = elems.pop();
-		
-		/*
+  if (elems.length>0) {
+    element = elems.pop();
+    
+    /*
 while (element.hasChildNodes()) {
-		  element.removeChild(element.lastChild);
-		}
+      element.removeChild(element.lastChild);
+    }
 */
-		element.innerHTML = '';
-		$(element).remove();
-		
-		destroyerId = setTimeout("destroyer()", 10);
-	}
+    element.innerHTML = '';
+    $(element).remove();
+    
+    destroyerId = setTimeout("destroyer()", 10);
+  }
 }
 
 /* Extend TextBox SVG types with more locatability functionality */
 $.each(types, function(i,t){
-	$.extend(t.prototype, {
-		width: function() {
-			if (t === SVGTSpanElement){ 
-				var len = this.getSubStringLength(0, this.firstChild.data.length);
-				
-				if ($.browser.mozilla) { // Mozilla(FF)
-					len = Math.max(0,Math.ceil(len-8)); // Ugly-fix!!
-				}		
-			
-				return len;
-			} else {
-				return this.getBBox().width;
-			}
-		},
-		height: function() {
+  $.extend(t.prototype, {
+    width: function() {
+      if (t === SVGTSpanElement){ 
+        var len = this.getSubStringLength(0, this.firstChild.data.length);
+        
+        if ($.browser.mozilla) { // Mozilla(FF)
+          len = Math.max(0,Math.ceil(len-8)); // Ugly-fix!!
+        }   
+      
+        return len;
+      } else {
+        return this.getBBox().width;
+      }
+    },
+    height: function() {
       if (t === SVGTSpanElement){ 
         g = SVGSelectableGElement._getGroupTarget(this);
-				return num(StyleSheet.get('text', 'line-height', g));
-			} else {
-				var height = this.getBBox().height;
-				
-				if ($.browser.mozilla && t === SVGGElement) {
+        return num(StyleSheet.get('text', 'line-height', g));
+      } else {
+        var height = this.getBBox().height;
+        
+        if ($.browser.mozilla && t === SVGGElement) {
           var tpad = num(StyleSheet.get( 'text', 'padding-bottom', this ));
-					height += Math.min(num(StyleSheet.get( 'rect.textbox', 'padding-bottom', this )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
-				}
-			
-				return height;
-			}
-		},
-		offset: function() { // position within parentNode element
-			if (t === SVGTSpanElement){ 
-				
-				var dx = num(this.getAttribute('dx'));
-				var dy = num(this.getAttribute('dy'));
-				dy += num(this.parentNode.getAttribute('y'));
+          height += Math.min(num(StyleSheet.get( 'rect.textbox', 'padding-bottom', this )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
+        }
+      
+        return height;
+      }
+    },
+    offset: function() { // position within parentNode element
+      if (t === SVGTSpanElement){ 
+        
+        var dx = num(this.getAttribute('dx'));
+        var dy = num(this.getAttribute('dy'));
+        dy += num(this.parentNode.getAttribute('y'));
 
-				// iterate through sibling-tspans above and grab their relative position
-				var prev = this.previousSibling;
-				while(prev != null) {
-					dy 	+= num(prev.getAttribute('dy'));
-					prev = prev.previousSibling;
-				}
-				
-				return {
-					left	: dx, 
-					top		: dy}
-			} else if (t !== SVGTSpanElement) {
-				return {
-					left	: this.getCTM().e + num(this.getAttribute('x')), // not verified
-					top		: this.getCTM().f + num(this.getAttribute('y'))} // not verified
-			}
-			return {
-				left	: this.getCTM().e - this.parentNode.getCTM().e + num(this.getAttribute('x')),
-				top		: this.getCTM().f - this.parentNode.getCTM().f + num(this.getAttribute('y'))}
-		},
-		position: function() { // position within screenSpace
-			if (t === SVGTSpanElement){
-				var screenCTM = this.parentNode.getScreenCTM();
-				
-				var x = num(this.parentNode.getAttribute('x'));
-				var y = num(this.parentNode.getAttribute('y'));
-				
-				var dx = num(this.getAttribute('dx'));
-				var dy = num(this.getAttribute('dy'));
+        // iterate through sibling-tspans above and grab their relative position
+        var prev = this.previousSibling;
+        while(prev != null) {
+          dy  += num(prev.getAttribute('dy'));
+          prev = prev.previousSibling;
+        }
+        
+        return {
+          left  : dx, 
+          top   : dy}
+      } else if (t !== SVGTSpanElement) {
+        return {
+          left  : this.getCTM().e + num(this.getAttribute('x')), // not verified
+          top   : this.getCTM().f + num(this.getAttribute('y'))} // not verified
+      }
+      return {
+        left  : this.getCTM().e - this.parentNode.getCTM().e + num(this.getAttribute('x')),
+        top   : this.getCTM().f - this.parentNode.getCTM().f + num(this.getAttribute('y'))}
+    },
+    position: function() { // position within screenSpace
+      if (t === SVGTSpanElement){
+        var screenCTM = this.parentNode.getScreenCTM();
+        
+        var x = num(this.parentNode.getAttribute('x'));
+        var y = num(this.parentNode.getAttribute('y'));
+        
+        var dx = num(this.getAttribute('dx'));
+        var dy = num(this.getAttribute('dy'));
 
-				// iterate through siblings above and grab their relative position
-				var prev = this.previousSibling;
-				while(prev != null) {
-					dy 	+= num(prev.getAttribute('dy'));
-					prev = prev.previousSibling;
-				}
-				
-				return {
-					left	: Math.round( screenCTM.e + (x + dx) * screenCTM.a ), 
-					top		: Math.round( screenCTM.f + (y + dy) * screenCTM.d )}
-			}
-			var pos;
-			if (typeof this.getScreenCTM == 'function'){ // Webkit
-				var pos = this.getScreenCTM();
-			}
-			else { // firefox
-				var pos = $(this).position();
-			}
-			return {
-				left	: Math.round( pos.e ), 
-				top		: Math.round( pos.f )};
-		}
-	});
+        // iterate through siblings above and grab their relative position
+        var prev = this.previousSibling;
+        while(prev != null) {
+          dy  += num(prev.getAttribute('dy'));
+          prev = prev.previousSibling;
+        }
+        
+        return {
+          left  : Math.round( screenCTM.e + (x + dx) * screenCTM.a ), 
+          top   : Math.round( screenCTM.f + (y + dy) * screenCTM.d )}
+      }
+      var pos;
+      if (typeof this.getScreenCTM == 'function'){ // Webkit
+        var pos = this.getScreenCTM();
+      }
+      else { // firefox
+        var pos = $(this).position();
+      }
+      return {
+        left  : Math.round( pos.e ), 
+        top   : Math.round( pos.f )};
+    }
+  });
 });
 
 /*
