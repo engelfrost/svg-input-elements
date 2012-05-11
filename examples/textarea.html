@@ -27,7 +27,17 @@ $(document).ready(function(){
 
 function init(svg){
 
+	try {
 	svg.input.textArea(18, 97, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
+	} catch(e) {
+		var err = e;
+		var caller_line = err.stack.split("\n")[4];
+		var index = caller_line.indexOf("at ");
+		var clean = caller_line.slice(index+2, caller_line.length);
+
+		console.log(caller_line)
+		
+	}
 	
 }
 
