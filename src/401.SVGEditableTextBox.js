@@ -200,7 +200,7 @@ $.extend(SVGEditableTextBox.prototype, {
     };
     var textSettings = {
       //TODO: Make sure this styling is complete!!!
-//       'style': "font-family: "+StyleSheet.get('text', 'font-family', g)+"; font-size: "+StyleSheet.get('text', 'font-size', g)+"; "
+      'style': StyleSheet.getAllTextStyles('text', g);
     }
     
     var paragraphCount = []; // 
