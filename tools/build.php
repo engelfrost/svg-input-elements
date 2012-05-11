@@ -53,8 +53,7 @@
    THE SOFTWARE. */
    
 '; 
-
-     $js = '(function($) { // Hide scope, no $ conflict
+   $js = '(function($) { // Hide scope, no $ conflict
 
 ';
     
@@ -64,7 +63,7 @@
       }
     }
     
-    $js .= "\n})(jQuery);";
+    $js .= "\n\n})(jQuery);";
     
     file_put_contents("../jquery.svg.input.js", $license . $js);
     file_put_contents("../jquery.svg.input.min.js", $license . JSMin::minify($js));
