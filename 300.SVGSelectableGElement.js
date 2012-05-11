@@ -155,9 +155,17 @@ $.extend(SVGSelectableGElement, {
 			
 				if (el.selected && el._group == g)
 					el.mousemove(g,e);
+				else {
+					// when another g element that is not selected is below the mouse
+					g2 = SVGSelectableGElement.selectedGroup();
+					if (g2) {
+						e.target = g2;
+						g2.mousemove(g2._group,e);
+					}
+				}
 			});
 		} else {
-			g = this.selectedGroup();
+			g = SVGSelectableGElement.selectedGroup();
 			if (g) {
 				g.mousemove(g._group,e);
 			}
