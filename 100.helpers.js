@@ -184,12 +184,220 @@ var StyleSheet = {
    * that require parents are ignored, since thier relevancy is ambiguous. We 
    * only handle the structure 'tag#id.class, tag#id.class...'
    */ 
-  get: function (selector, style, parent) {
+  getAllStyles: function(selector, parent) {
+    var styles = [
+      'alignmentBaseline', 
+      'background', 
+      'backgroundAttachment', 
+      'backgroundClip', 
+      'backgroundColor', 
+      'backgroundImage', 
+      'backgroundOrigin', 
+      'backgroundPosition', 
+      'backgroundPositionX', 
+      'backgroundPositionY', 
+      'backgroundRepeat', 
+      'backgroundRepeatX', 
+      'backgroundRepeatY', 
+      'backgroundSize', 
+      'baselineShift', 
+      'border', 
+      'borderBottom', 
+      'borderBottomColor', 
+      'borderBottomLeftRadius', 
+      'borderBottomRightRadius', 
+      'borderBottomStyle', 
+      'borderBottomWidth', 
+      'borderCollapse', 
+      'borderColor', 
+      'borderImage', 
+      'borderImageOutset', 
+      'borderImageRepeat', 
+      'borderImageSlice', 
+      'borderImageSource', 
+      'borderImageWidth', 
+      'borderLeft', 
+      'borderLeftColor', 
+      'borderLeftStyle', 
+      'borderLeftWidth', 
+      'borderRadius', 
+      'borderRight', 
+      'borderRightColor', 
+      'borderRightStyle', 
+      'borderRightWidth', 
+      'borderSpacing', 
+      'borderStyle', 
+      'borderTop', 
+      'borderTopColor', 
+      'borderTopLeftRadius', 
+      'borderTopRightRadius', 
+      'borderTopStyle', 
+      'borderTopWidth', 
+      'borderWidth', 
+      'bottom', 
+      'boxShadow', 
+      'boxSizing', 
+      'captionSide', 
+      'clear', 
+      'clip', 
+      'clipPath', 
+      'clipRule', 
+      'color', 
+      'colorInterpolation', 
+      'colorInterpolationFilters', 
+      'colorProfile', 
+      'colorRendering', 
+      'content', 
+      'counterIncrement', 
+      'counterReset', 
+      'cursor', 
+      'direction', 
+      'display'', 
+      'dominantBaseline', 
+      'emptyCells', 
+      'enableBackground', 
+      'fill', 
+      'fillOpacity', 
+      'fillRule', 
+      'filter', 
+      'float', 
+      'floodColor', 
+      'floodOpacity', 
+      'font', 
+      'fontFamily', 
+      'fontSize', 
+      'fontStretch', 
+      'fontStyle', 
+      'fontVariant', 
+      'fontWeight', 
+      'glyphOrientationHorizontal', 
+      'glyphOrientationVertical', 
+      'height', 
+      'imageRendering', 
+      'kerning', 
+      'left', 
+      'length: 2
+      'letterSpacing', 
+      'lightingColor', 
+      'lineHeight', 
+      'listStyle', 
+      'listStyleImage', 
+      'listStylePosition', 
+      'listStyleType', 
+      'margin', 
+      'marginBottom', 
+      'marginLeft', 
+      'marginRight', 
+      'marginTop', 
+      'marker', 
+      'markerEnd', 
+      'markerMid', 
+      'markerStart', 
+      'mask', 
+      'maxHeight', 
+      'maxWidth', 
+      'minHeight', 
+      'minWidth', 
+      'opacity', 
+      'orphans', 
+      'outline', 
+      'outlineColor', 
+      'outlineOffset', 
+      'outlineStyle', 
+      'outlineWidth', 
+      'overflow', 
+      'overflowX', 
+      'overflowY', 
+      'padding', 
+      'paddingBottom', 
+      'paddingLeft', 
+      'paddingRight', 
+      'paddingTop', 
+      'page', 
+      'pageBreakAfter', 
+      'pageBreakBefore', 
+      'pageBreakInside', 
+      'pointerEvents', 
+      'position', 
+      'quotes', 
+      'resize', 
+      'right', 
+      'shapeRendering', 
+      'size', 
+      'speak', 
+      'src', 
+      'stopColor', 
+      'stopOpacity', 
+      'stroke', 
+      'strokeDasharray', 
+      'strokeDashoffset', 
+      'strokeLinecap', 
+      'strokeLinejoin', 
+      'strokeMiterlimit', 
+      'strokeOpacity', 
+      'strokeWidth', 
+      'tableLayout', 
+      'textAlign', 
+      'textAnchor', 
+      'textDecoration', 
+      'textIndent', 
+      'textLineThrough', 
+      'textLineThroughColor', 
+      'textLineThroughMode', 
+      'textLineThroughStyle', 
+      'textLineThroughWidth', 
+      'textOverflow', 
+      'textOverline', 
+      'textOverlineColor', 
+      'textOverlineMode', 
+      'textOverlineStyle', 
+      'textOverlineWidth', 
+      'textRendering', 
+      'textShadow', 
+      'textTransform', 
+      'textUnderline', 
+      'textUnderlineColor', 
+      'textUnderlineMode', 
+      'textUnderlineStyle', 
+      'textUnderlineWidth', 
+      'top', 
+      'unicodeBidi', 
+      'unicodeRange', 
+      'vectorEffect', 
+      'verticalAlign', 
+      'visibility', 
+      'whiteSpace', 
+      'widows', 
+      'width', 
+      'wordBreak', 
+      'wordSpacing', 
+      'wordWrap', 
+      'writingMode', 
+      'zIndex', 
+      'zoom'
+    ];
+    var that = this; 
+    var results = [];
+//     Stackoverflow question
+//     I'm using getComputedTextLength() on SVG text elements to wrap text lines. However, I get different results in Firefox and Chrome. Here is an example that gives different results using Chromium 18.0 and Firefox 12.0: http://jsfiddle.net/cBSp4/2/
+//     
+//     How come the result is different and, more importantly, is it fixable? 
+    $.each(ccStyles, function(key, ccStyle) {
+      res = that.get(
+        selector, 
+        ccStyle.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase(), 
+        parent
+      ); 
+      
+      if (res) {
+        results.unshift(res);
+      }; 
+    });
     
-    var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
-    var heritageRegExp = /^(.*[^>])(\s+|\s*\>\s*)([\w\.\#]+)$/; 
-    var result = ''; 
-    var ccStyle = $.camelCase(style);
+    return results; 
+  }
+  
+  get: function (selector, style, parent) {
     
     strParent = this._parentToString(parent); 
     
@@ -200,6 +408,11 @@ var StyleSheet = {
       return this.StyleCache[strParent][selector][style]; 
     }
     else {
+      var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
+      var heritageRegExp = /^(.*[^>])(\s+|\s*\>\s*)([\w\.\#]+)$/; 
+      var result = ''; 
+      var ccStyle = $.camelCase(style);
+      
       $.each( document.styleSheets, function( i, styleSheet ) {
         // parse all stylesheets
         $.each( styleSheet.cssRules, function( i, ruleBundle ) {
@@ -251,24 +464,25 @@ var StyleSheet = {
                     // Save the result, but don't return it yet. Other rules may 
                     // overwrite it later, since the rules are cascading. 
                     result = ruleBundle.style[style];
-                  }
-                  else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
-                    && ruleBundle.style[ccStyle] !== '' ) {
-                    
-                    // Some browsers use camelCase
-                    result = ruleBundle.style[ccStyle];
-                  }
+                    }
+                    else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
+                      && ruleBundle.style[ccStyle] !== '' ) {
+                      
+                      // Some browsers use camelCase
+                      result = ruleBundle.style[ccStyle];
+                      }
                 }
               }
             });
           }
         });
       });
+      
+      // Return the final result. 
+      this.cache(selector, style, result, parent);
+      return result; 
     }
-    // Return the final result. 
-    this.cache(selector, style, result, parent);
-    return result; 
-  }, 
+  },
   
   _parentToString: function(parent) {
     if (parent) {
