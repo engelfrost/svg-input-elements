@@ -1,8 +1,13 @@
 <?php
-  
-  require("./jsmin.php"); 
+ 
   header("Content-type: text/javascript");
-  
+  header( "Expires: " . gmdate( 'D, d M Y H:i:s' ) . ' GMT' ); 
+	header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' ); 
+	header( 'Cache-Control: no-cache, must-revalidate' ); 
+	header( 'Pragma: no-cache' ); 
+	  
+	require("./jsmin.php");  
+	
   function compare_filenames($a, $b) {
     return strcmp($a['basename'], $b['basename']);
   }
@@ -47,8 +52,10 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
    THE SOFTWARE. */
    
-   '; 
-    $js = '(function($) { // Hide scope, no $ conflict';
+'; 
+    $js = '(function($) { // Hide scope, no $ conflict
+
+';
     
     foreach ($paths as $path) {
       if ($path['extension'] == 'js') {

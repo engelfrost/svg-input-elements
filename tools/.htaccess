@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+  
+  # to parse as .json
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule (.*)\.js $1.php
+  
+</IfModule>
