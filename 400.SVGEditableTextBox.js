@@ -829,7 +829,6 @@ $.extend(SVGEditableTextBox.prototype, {
     
     var textY = padding['top']; 
     var tspanDy = int( StyleSheet.get( 'text', 'line-height', g ) );
-    console.log("line-height", tspanDy); 
     var tspanSettings = { 
       'dy': int(tspanDy), 
       'x': 0, 
@@ -1246,7 +1245,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return null;
   },
   
-  _getWordCoordsInText: function(g,e){
+  _getWordCoordsInText: function(g, e) {
   
     var pos = this._coordInText(g,e);
   
@@ -1363,8 +1362,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return c; 
   },
   
-  _getTextCharPosition: function(coord)
-  {
+  _getTextCharPosition: function(coord) {
       return this._textPositions[coord.paragraph-1][coord.row-1] + coord.char;
   },
   
@@ -1425,8 +1423,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return result; // Should not be necessary, here as a precaution. 
   },
   
-  
-  _getCoordInTextbox: function(g, paragraph, row, char){
+  _getCoordInTextbox: function(g, paragraph, row, char) {
   
     if (g !== undefined && g !== null) {
       
@@ -1473,7 +1470,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return null;
   },
   
-  _getCoordInRowNearX: function(g,paragraph,row,x) {
+  _getCoordInRowNearX: function(g, paragraph, row, x) {
   
     if (g){
     
@@ -1552,9 +1549,9 @@ $.extend(SVGEditableTextBox.prototype, {
     return null;
   },
   
-  _drawWordMarking: function(g,e){
+  _drawWordMarking: function(g, e) {
   
-    var coords = this._getWordCoordsInText(g,e),
+    var coords = this._getWordCoordsInText(g, e),
         width  = coords.stop.x - coords.start.x,
         height = int(StyleSheet.get('text', 'line-height', g));
     
@@ -1567,8 +1564,8 @@ $.extend(SVGEditableTextBox.prototype, {
     this._selection = coords;    
   },
   
-  _drawRowMarking: function(g,e){
-    var coords = this._coordInText(g,e),
+  _drawRowMarking: function(g, e){
+    var coords = this._coordInText(g, e),
         pos = coords.element.offset(),
         width  = coords.element.width(),
         height = coords.element.height();
@@ -1602,7 +1599,7 @@ $.extend(SVGEditableTextBox.prototype, {
       
   },
   
-  _drawMarking: function(g,e_or_pos) {
+  _drawMarking: function(g, e_or_pos) {
   
     var lineHeight = int(StyleSheet.get('text', 'line-height', g));
     

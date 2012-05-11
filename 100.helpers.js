@@ -320,14 +320,15 @@ $.each(types, function(i,t){
 			}
 		},
 		height: function() {
-			if (t === SVGTSpanElement){ 
-				return int(StyleSheet.get('text', 'line-height'));
+      if (t === SVGTSpanElement){ 
+        g = SVGSelectableGElement._getGroupTarget(this);
+				return int(StyleSheet.get('text', 'line-height', g));
 			} else {
 				var height = this.getBBox().height;
-				var tpad = int(StyleSheet.get( 'text', 'padding-bottom' ));
 				
 				if ($.browser.mozilla && t === SVGGElement) {
-					height += Math.min(int(StyleSheet.get( 'rect.textbox', 'padding-bottom' )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
+          var tpad = int(StyleSheet.get( 'text', 'padding-bottom', this ));
+					height += Math.min(int(StyleSheet.get( 'rect.textbox', 'padding-bottom', this )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
 				}
 			
 				return height;

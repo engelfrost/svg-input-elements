@@ -99,7 +99,7 @@ $.extend(SVGSelectableGElement, {
 	
 		if ($.inArray(e.target.constructor, types)!=-1){
 	
-			var g = this._getGroupTarget(e);
+      var g = this._getGroupTarget(e.target);
 			
 			$.each(this._instances, function(i,el){
 			
@@ -120,7 +120,7 @@ $.extend(SVGSelectableGElement, {
 		if ($.inArray(e.target.constructor, types)!=-1){
 			
 			// find the parent grouping element to our approved element
-			var g = this._getGroupTarget(e);
+			var g = this._getGroupTarget(e.target);
 			
 			if (g) { // selection occured
 			
@@ -149,7 +149,7 @@ $.extend(SVGSelectableGElement, {
 	
 		if ($.inArray(e.target.constructor, types)!=-1){
 	
-			var g = this._getGroupTarget(e);
+      var g = this._getGroupTarget(e.target);
 			
 			$.each(this._instances, function(i,el){
 			
@@ -168,7 +168,7 @@ $.extend(SVGSelectableGElement, {
 	
 		if ($.inArray(e.target.constructor, types)!=-1){
 	
-			var g = this._getGroupTarget(e);
+      var g = this._getGroupTarget(e.target);
 			
 			$.each(this._instances, function(i,el){
 			
@@ -181,7 +181,7 @@ $.extend(SVGSelectableGElement, {
 	
 		if ($.inArray(e.target.constructor, types)!=-1){
 	
-			var g = this._getGroupTarget(e);
+      var g = this._getGroupTarget(e.target);
 			
 			$.each(this._instances, function(i,el){
 			
@@ -194,7 +194,7 @@ $.extend(SVGSelectableGElement, {
 	
 		if ($.inArray(e.target.constructor, types)!=-1){
 	
-			var g = this._getGroupTarget(e);
+      var g = this._getGroupTarget(e.target);
 			
 			$.each(this._instances, function(i,el){
 			
@@ -206,7 +206,7 @@ $.extend(SVGSelectableGElement, {
 	_contextmenu: function(e) {
 		if ($.inArray(e.target.constructor, types)!=-1){
 	
-			var g = this._getGroupTarget(e);
+			var g = this._getGroupTarget(e.target);
 			
 			$.each(this._instances, function(i,el){
 			
@@ -215,18 +215,20 @@ $.extend(SVGSelectableGElement, {
 		}
 	},
 	
-	_getGroupTarget: function(e){
+	_getGroupTarget: function(i){
 		// find the parent grouping element to our approved element
 		
-		var g, i = e.target;
+		var g;
 		while( g == null){
-			if (i.constructor === SVGGElement)
+			if (i.constructor === SVGGElement) {
 				g = i 
+      }
 			else if (i.parentNode) {
 				i = i.parentNode;
 			}
-			else
+			else {
 				break;
+      }
 		}
 		
 		return g;
