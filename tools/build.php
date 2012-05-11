@@ -18,7 +18,7 @@
     closedir($handle);
     
     usort($paths, compare_filenames);
-    $js = '';
+    
     $license = '/* SVG Input Elements for SVG jQuery (1.4.4).
    https://github.com/silence150/SVG-Input-Elements
    
@@ -46,10 +46,9 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
    THE SOFTWARE. */
-
-(function($) { // Hide scope, no $ conflict
-
-'; 
+   
+   '; 
+    $js = '(function($) { // Hide scope, no $ conflict';
     
     foreach ($paths as $path) {
       if ($path['extension'] == 'js') {
@@ -62,7 +61,7 @@
     file_put_contents("../jquery.svg.input.js", $license . $js);
     file_put_contents("../jquery.svg.input.min.js", $license . JSMin::minify($js));
     
-    echo $js; 
+    echo $license . $js; 
   }
   
 ?>
