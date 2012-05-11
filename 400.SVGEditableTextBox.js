@@ -120,6 +120,7 @@ $.extend(SVGEditableTextBox, {
             
           }
           else if (e.keyCode > 34 && e.keyCode < 41) {
+            //arrows, home, end
             selectedGroup._selectStartCoord = null;
             
             console.log('arrows/home/end')
@@ -573,7 +574,7 @@ $.extend(SVGEditableTextBox, {
           
           if (cancelUpdate && !markall) {
             // keep marker visible if group was selected
-            var lineHeight = int(StyleSheet.get('text', 'line-height'));  // Find and pass parent here for all style rules!
+            var lineHeight = int(StyleSheet.get('text', 'line-height', selectedGroup));  // Find and pass parent here for all style rules!
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
             var coord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
@@ -1101,7 +1102,7 @@ $.extend(SVGEditableTextBox.prototype, {
     console.log('goal:', (1/24)*1000);
   },
   
-  _coordInText: function(g,e,no_space_end){
+  _coordInText: function(g,e,no_space_end){    
     // find nearest line if click was outside any line but still inside the grouping element
     var row = e.target,
         nearestDist = 999999, 
@@ -1805,7 +1806,7 @@ $.extend(SVGEditableTextBox.prototype, {
       
       row = coord.row-1;
       paragraph = coord.paragraph-1; 
-      this._textPosition = this._textPositions[paragraph][row] + coord.char;
+      this._textPosition = this._textPositions[paragraph][row] + coord.char; //TODO: produces undefined errors
     
       this._selectStartCoord = this._coordInText(g,e);
       
