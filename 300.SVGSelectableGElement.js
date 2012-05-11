@@ -102,8 +102,9 @@ $.extend(SVGSelectableGElement, {
 			
 			$.each(this._instances, function(i,el){
 			
-				if (el.selected)
+				if (el.selected) {
 					el.mouseup(g,e);
+				}
 			});
 		} else {
 			g = this.selectedGroup();
@@ -124,7 +125,7 @@ $.extend(SVGSelectableGElement, {
 			
 				if (!g._selected) {
 					$(g).parent().append(g);
-					g.select(e);
+					g.select(g,e);
 				}
 				
 			}

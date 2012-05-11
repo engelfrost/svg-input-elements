@@ -1777,24 +1777,6 @@ $.extend(SVGEditableTextBox.prototype, {
     
     if (this._contextMenu)
       this.openContextMenu(g,e);
-      
-    if (!this._selectStartCoord) {
-      var lineHeight = int(StyleSheet.get('text', 'line-height', g));
-      var coord = this._coordInText(g,e,true);
-      
-      SVGTextMarker.show(this._wrapper, $.extend(coord, {
-        width   : 2 / g.getCTM().a,
-        height  : lineHeight * 1.2,
-        desx    : coord.x
-      }));
-      
-      SVGTextMarker.hide();
-      
-      //this._textposition = this._getCoordInTextbox(g,coord.paragraph,coord.row,coord.char);
-      row = coord.row-1;
-      paragraph = coord.paragraph-1; 
-      this._textPosition = this._textPositions[paragraph][row] + coord.char;
-    }
     
   },
   
@@ -1805,6 +1787,24 @@ $.extend(SVGEditableTextBox.prototype, {
     
       if (this._contextMenu)
         this.closeContextMenu();
+        
+      if (this._selection) {
+      	this._selection = null;
+      	$('.marking').remove();
+      }
+      	        
+      var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+      var coord = this._coordInText(g,e,true);
+      
+      SVGTextMarker.show(this._wrapper, $.extend(coord, {
+        width   : 2 / g.getCTM().a,
+        height  : lineHeight * 1.2,
+        desx    : coord.x
+      }));
+      
+      row = coord.row-1;
+      paragraph = coord.paragraph-1; 
+      this._textPosition = this._textPositions[paragraph][row] + coord.char;
     
       this._selectStartCoord = this._coordInText(g,e);
       
@@ -1812,6 +1812,10 @@ $.extend(SVGEditableTextBox.prototype, {
   },
   
   mousemove: function(g,e) {
+  
+	  if (this._selectStartCoord && SVGTextMarker.isVisible()) {
+	  	SVGTextMarker.hide();
+	  }
     
     this._drawMarking(g,e);
     
