@@ -120,6 +120,7 @@ $.extend(SVGEditableTextBox, {
             
           }
           else if (e.keyCode > 34 && e.keyCode < 41) {
+            //arrows, home, end
             selectedGroup._selectStartCoord = null;
             
             console.log('arrows/home/end')
@@ -573,7 +574,7 @@ $.extend(SVGEditableTextBox, {
           
           if (cancelUpdate && !markall) {
             // keep marker visible if group was selected
-            var lineHeight = int(StyleSheet.get('text', 'line-height'));  // Find and pass parent here for all style rules!
+            var lineHeight = int(StyleSheet.get('text', 'line-height', selectedGroup));  // Find and pass parent here for all style rules!
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
             var coord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
@@ -592,19 +593,19 @@ $.extend(SVGEditableTextBox, {
               selectedGroup._drawMarking(selectedGroup._group, coord);
             } 
             else if (!e.shiftKey) { // NOT SHIFT
-            	if ((e.keyCode >= 35 && e.keyCode <= 40) && !(e.ctrlKey || e.metaKey) // (NOT CMD/CTRL) + ARROWS/HOME/END
-            			||
-            			((e.keyCode >= 35 && e.keyCode <= 36) && (e.ctrlKey || e.metaKey)) // (CTRL)HOME-END
-            			|| 
-            			((e.keyCode >= 37 && e.keyCode <= 40) && e.metaKey)) { // MAC HOME/END-TOP/BOTTOM
-	              
-	              $('.marking').remove();
-	              selectedGroup._selection = null;
-	              
-	            } else {
-	            	SVGTextMarker.hide();
-	            }
-	                          
+              if ((e.keyCode >= 35 && e.keyCode <= 40) && !(e.ctrlKey || e.metaKey) // (NOT CMD/CTRL) + ARROWS/HOME/END
+                  ||
+                  ((e.keyCode >= 35 && e.keyCode <= 36) && (e.ctrlKey || e.metaKey)) // (CTRL)HOME-END
+                  || 
+                  ((e.keyCode >= 37 && e.keyCode <= 40) && e.metaKey)) { // MAC HOME/END-TOP/BOTTOM
+                
+                $('.marking').remove();
+                selectedGroup._selection = null;
+                
+              } else {
+                SVGTextMarker.hide();
+              }
+                            
             }
                       
           }
@@ -828,7 +829,6 @@ $.extend(SVGEditableTextBox.prototype, {
     
     var textY = padding['top']; 
     var tspanDy = int( StyleSheet.get( 'text', 'line-height', g ) );
-    console.log("line-height", tspanDy); 
     var tspanSettings = { 
       'dy': int(tspanDy), 
       'x': 0, 
@@ -1101,7 +1101,7 @@ $.extend(SVGEditableTextBox.prototype, {
     console.log('goal:', (1/24)*1000);
   },
   
-  _coordInText: function(g,e,no_space_end){
+  _coordInText: function(g,e,no_space_end){    
     // find nearest line if click was outside any line but still inside the grouping element
     var row = e.target,
         nearestDist = 999999, 
@@ -1245,7 +1245,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return null;
   },
   
-  _getWordCoordsInText: function(g,e){
+  _getWordCoordsInText: function(g, e) {
   
     var pos = this._coordInText(g,e);
   
@@ -1362,8 +1362,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return c; 
   },
   
-  _getTextCharPosition: function(coord)
-  {
+  _getTextCharPosition: function(coord) {
       return this._textPositions[coord.paragraph-1][coord.row-1] + coord.char;
   },
   
@@ -1424,8 +1423,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return result; // Should not be necessary, here as a precaution. 
   },
   
-  
-  _getCoordInTextbox: function(g, paragraph, row, char){
+  _getCoordInTextbox: function(g, paragraph, row, char) {
   
     if (g !== undefined && g !== null) {
       
@@ -1472,7 +1470,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return null;
   },
   
-  _getCoordInRowNearX: function(g,paragraph,row,x) {
+  _getCoordInRowNearX: function(g, paragraph, row, x) {
   
     if (g){
     
@@ -1551,9 +1549,9 @@ $.extend(SVGEditableTextBox.prototype, {
     return null;
   },
   
-  _drawWordMarking: function(g,e){
+  _drawWordMarking: function(g, e) {
   
-    var coords = this._getWordCoordsInText(g,e),
+    var coords = this._getWordCoordsInText(g, e),
         width  = coords.stop.x - coords.start.x,
         height = int(StyleSheet.get('text', 'line-height', g));
     
@@ -1566,8 +1564,8 @@ $.extend(SVGEditableTextBox.prototype, {
     this._selection = coords;    
   },
   
-  _drawRowMarking: function(g,e){
-    var coords = this._coordInText(g,e),
+  _drawRowMarking: function(g, e){
+    var coords = this._coordInText(g, e),
         pos = coords.element.offset(),
         width  = coords.element.width(),
         height = coords.element.height();
@@ -1601,7 +1599,7 @@ $.extend(SVGEditableTextBox.prototype, {
       
   },
   
-  _drawMarking: function(g,e_or_pos) {
+  _drawMarking: function(g, e_or_pos) {
   
     var lineHeight = int(StyleSheet.get('text', 'line-height', g));
     
@@ -1783,38 +1781,39 @@ $.extend(SVGEditableTextBox.prototype, {
     // if target inside / or the group element
     if (g && g._selectable && g._selectable.selected){
     
-    	if (e.button != 2) { // contextmenu
-    	
-    		this.closeContextMenu();
+      if (e.button != 2) { // contextmenu
         
-	      if (this._selection) {
-	      	this._selection = null;
-	      	$('.marking').remove();
-	      }
-	      	        
-	      var lineHeight = int(StyleSheet.get('text', 'line-height', g));
-	      var coord = this._coordInText(g,e,true);
-	      
-	      SVGTextMarker.show(this._wrapper, $.extend(coord, {
-	        width   : 2 / g.getCTM().a,
-	        height  : lineHeight * 1.2,
-	        desx    : coord.x
-	      }));
-	      
-	      row = coord.row-1;
-	      paragraph = coord.paragraph-1; 
-	      this._textPosition = this._textPositions[paragraph][row] + coord.char;
-	    
-	      this._selectStartCoord = this._coordInText(g,e);
-	    }
+        this.closeContextMenu();
+          
+        if (this._selection) {
+          this._selection = null;
+          $('.marking').remove();
+        }
+                  
+        var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+        var coord = this._coordInText(g,e,true);
+        
+        SVGTextMarker.show(this._wrapper, $.extend(coord, {
+          width   : 2 / g.getCTM().a,
+          height  : lineHeight * 1.2,
+          desx    : coord.x
+        }));
+        
+        row = coord.row-1;
+        paragraph = coord.paragraph-1; 
+        this._textPosition = this._textPositions[paragraph][row] + coord.char;
+      
+        this._selectStartCoord = this._coordInText(g,e);
+        
+      }
     } 
   },
   
   mousemove: function(g,e) {
   
-	  if (this._selectStartCoord && SVGTextMarker.isVisible()) {
-	  	SVGTextMarker.hide();
-	  }
+    if (this._selectStartCoord && SVGTextMarker.isVisible()) {
+      SVGTextMarker.hide();
+    }
     
     this._drawMarking(g,e);
     

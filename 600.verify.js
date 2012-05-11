@@ -16,7 +16,7 @@ $(document).ready(function(){
 	
 	goReady();
 	
-	$('.svg-container').transition({ x: '-2000px', y: '0', height: '500px' }, 0);
+	$('.svg-container').transition({ x: '-2000px', y: '0', height: ($(window).height()*.6)+'px' }, 0);
 	
 });
 
