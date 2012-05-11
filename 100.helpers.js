@@ -191,8 +191,13 @@ var StyleSheet = {
     var result = ''; 
     var ccStyle = $.camelCase(style);
     
-    if (this.StyleCache[selector] !== undefined && this.StyleCache[selector][style] !== undefined && parent === undefined) {
-      return this.StyleCache[selector][style]; 
+    strParent = this._parentToString(parent); 
+    
+    if (this.StyleCache[strParent]                   !== undefined 
+      && this.StyleCache[strParent][selector]        !== undefined 
+      && this.StyleCache[strParent][selector][style] !== undefined 
+    ) {
+      return this.StyleCache[strParent][selector][style]; 
     }
     else {
       $.each( document.styleSheets, function( i, styleSheet ) {
@@ -265,12 +270,28 @@ var StyleSheet = {
     return result; 
   }, 
   
-  cache: function (selector, style, value, parent) {  //TODO: Do something with parent!
-    if (this.StyleCache[selector] === undefined) {
-      this.StyleCache[selector] = {}; 
+  _parentToString: function(parent) {
+    if (parent) {
+      return $(parent).tagName 
+        + $(parent).attr('id') || ""
+        + ($(parent).attr('class') || "").replace(" ", ",");
     }
-    if (this.StyleCache[selector][style] === undefined) {
-      this.StyleCache[selector][style] = value; 
+    else {
+      return ""; 
+    }
+  },
+  
+  cache: function (selector, style, value, parent) {  //TODO: Do something with parent!
+    parent = this._parentToString(parent); 
+    
+    if (this.StyleCache[parent] === undefined) {
+      this.StyleCache[parent] = {};
+    }
+    if (this.StyleCache[parent][selector] === undefined) {
+      this.StyleCache[parent][selector] = {}; 
+    }
+    if (this.StyleCache[parent][selector][style] === undefined) {
+      this.StyleCache[parent][selector][style] = value; 
     }
     return value; 
   }
