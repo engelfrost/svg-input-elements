@@ -9,7 +9,7 @@
 <script type="text/javascript" src="libs/jquery.transit.min.js"></script>
 
 
-<script type="text/javascript" src="../tools/build.php"></script>
+<script type="text/javascript" src="../tools/build.js"></script>
 <link rel="stylesheet" href="css/svgte.css" \>
 <link rel="stylesheet" href="css/svg.css" \>
 
@@ -17,16 +17,19 @@
 
 $(document).ready(function(){
   
-  $('#svg').svg({onLoad: function( svg ){
-  		
-  		svg.input.textArea(18, 97, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
-  		
-  	}, settings: {
+  $('#svg').svg({onLoad: init, settings: {
 	    viewBox: '0 0 400 200', 
 	    version: '1.1'
   	}
   });
+  
 });
+
+function init(svg){
+
+	svg.input.textArea(18, 97, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
+	
+}
 
 </script>
 

@@ -201,8 +201,8 @@ $.extend(SVGEditableTextBox.prototype, {
     
     var textSettings = {
       //TODO: Make sure this styling is complete!!!
-      'style': StyleSheet.getAllTextStyles('text', g);
-    }
+      'style': StyleSheet.getAllStyles('text', g)
+    };
     
     var paragraphCount = []; // 
     var rowCount = []; 

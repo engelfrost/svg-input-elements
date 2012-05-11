@@ -26,21 +26,35 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
    THE SOFTWARE. */
    
+<<<<<<< HEAD
+(function($) { // Hide scope, no $ conflict
+
+// Function.inheritsFrom
+=======
    (function($) { // Hide scope, no $ conflict// Function.inheritsFrom
+>>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
 Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
   if ( parentClassOrObject.constructor == Function ) 
   { 
     //Normal Inheritance 
     this.prototype = new parentClassOrObject;
     this.prototype.constructor = this;
+<<<<<<< HEAD
+    this.prototype.super = parentClassOrObject.prototype;
+=======
     this.prototype.parent = parentClassOrObject.prototype;
+>>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
   } 
   else 
   { 
     //Pure Virtual Inheritance 
     this.prototype = parentClassOrObject;
     this.prototype.constructor = this;
+<<<<<<< HEAD
+    this.prototype.super = parentClassOrObject;
+=======
     this.prototype.parent = parentClassOrObject;
+>>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
   } 
   return this;
 }
@@ -483,9 +497,21 @@ $.svg.addExtension('input', SVGInputElements);
 
 function SVGInputElements(wrapper) {
   this._wrapper = wrapper; // The attached SVG wrapper object
+  this._eventmanager;
 }
 
-$.extend(SVGInputElements.prototype, {  
+$.extend(SVGInputElements.prototype, {
+	_windowLoad: false,
+	ready: function() {
+		this._windowLoad = true;
+	},
+	get _events(){ return (this._eventmanager || (this._eventmanager = $('<input>'))) },
+	bind: function() {
+		this._events.bind.apply(this._events, arguments);
+	},
+	trigger: function() {
+		this._events.trigger.apply(this._events, arguments);
+	},
   /** 
    * Create a textArea.
    * Specify both of x and y or neither of them.
@@ -515,14 +541,16 @@ $.extend(SVGInputElements.prototype, {
       args.settings || {})
     );
   },
+  
   _textArea: function (parent, value, settings) {
     width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
     height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
     delete settings.width; 
-    delete settings.height; 
+    delete settings.height;
     
     return (new SVGEditableTextBox(this._wrapper)).init(parent, value, width, height, settings);
   },
+  
   /** 
    * Code copied and modified from Kieth Wood's jQuery SVG plugin:
    * Create a list.
@@ -551,6 +579,7 @@ $.extend(SVGInputElements.prototype, {
       args.settings || {})
     );
   },
+  
   _list: function (parent, value, settings) {
     width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
     height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
@@ -559,7 +588,13 @@ $.extend(SVGInputElements.prototype, {
     
     return (new SVGEditableList(this._wrapper)).init(parent, value, width, height, settings);
   }
+<<<<<<< HEAD
+});
+
+/** 
+=======
 });/** 
+>>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
  *  SVGSelection
 **/
 
@@ -791,10 +826,17 @@ $.extend(SVGSelectableGElement, {
     while( g == null){
       if (i.constructor === SVGGElement) {
         g = i 
+<<<<<<< HEAD
       }
       else if (i.parentNode) {
         i = i.parentNode;
       }
+=======
+      }
+      else if (i.parentNode) {
+        i = i.parentNode;
+      }
+>>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
       else {
         break;
       }

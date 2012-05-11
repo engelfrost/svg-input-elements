@@ -2,9 +2,21 @@ $.svg.addExtension('input', SVGInputElements);
 
 function SVGInputElements(wrapper) {
   this._wrapper = wrapper; // The attached SVG wrapper object
+  this._eventmanager;
 }
 
-$.extend(SVGInputElements.prototype, {  
+$.extend(SVGInputElements.prototype, {
+	_windowLoad: false,
+	ready: function() {
+		this._windowLoad = true;
+	},
+	get _events(){ return (this._eventmanager || (this._eventmanager = $('<input>'))) },
+	bind: function() {
+		this._events.bind.apply(this._events, arguments);
+	},
+	trigger: function() {
+		this._events.trigger.apply(this._events, arguments);
+	},
   /** 
    * Create a textArea.
    * Specify both of x and y or neither of them.
@@ -34,14 +46,16 @@ $.extend(SVGInputElements.prototype, {
       args.settings || {})
     );
   },
+  
   _textArea: function (parent, value, settings) {
     width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
     height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
     delete settings.width; 
-    delete settings.height; 
+    delete settings.height;
     
     return (new SVGEditableTextBox(this._wrapper)).init(parent, value, width, height, settings);
   },
+  
   /** 
    * Code copied and modified from Kieth Wood's jQuery SVG plugin:
    * Create a list.
@@ -70,6 +84,7 @@ $.extend(SVGInputElements.prototype, {
       args.settings || {})
     );
   },
+  
   _list: function (parent, value, settings) {
     width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
     height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
@@ -79,3 +94,4 @@ $.extend(SVGInputElements.prototype, {
     return (new SVGEditableList(this._wrapper)).init(parent, value, width, height, settings);
   }
 });
+
