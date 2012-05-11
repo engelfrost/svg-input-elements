@@ -252,7 +252,7 @@ var StyleSheet = {
       'counterReset', 
       'cursor', 
       'direction', 
-      'display'', 
+      'display', 
       'dominantBaseline', 
       'emptyCells', 
       'enableBackground', 
