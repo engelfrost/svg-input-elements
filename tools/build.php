@@ -1,5 +1,6 @@
 <?php
   
+  require("./jsmin.php"); 
   header("Content-type: text/javascript");
   
   function compare_filenames($a, $b) {
@@ -17,8 +18,8 @@
     closedir($handle);
     
     usort($paths, compare_filenames);
-    
-    $js = '/* SVG Input Elements for SVG jQuery (1.4.4).
+    $js = '';
+    $license = '/* SVG Input Elements for SVG jQuery (1.4.4).
    https://github.com/silence150/SVG-Input-Elements
    
    Written by 
@@ -58,7 +59,8 @@
     
     $js .= "\n})(jQuery);";
     
-    file_put_contents("../jquery.svg.input.js", $js);
+    file_put_contents("../jquery.svg.input.js", $license . $js);
+    file_put_contents("../jquery.svg.input.min.js", $license . JSMin::minify($js));
     
     echo $js; 
   }
