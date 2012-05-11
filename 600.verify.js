@@ -15,6 +15,8 @@ $(document).ready(function(){
 	domReady = true;
 	
 	goReady();
+
+	$('html').css({opacity: 0});
 	
 	$('.svg-container').transition({ x: '-2000px', y: '0', height: ($(window).height()*.6)+'px' }, 0);
 	
@@ -26,6 +28,8 @@ $(window).load(function () {
 	loaded = true;
 	
 	goReady();
+	
+	$('html').animate({opacity: 1}, 100);
 	
 });
 
@@ -49,10 +53,11 @@ function readyStart(svg){
 
   svg.input.textArea(18, 10, "It Takes Carbon Fiber and Kevlar to Make the Best Basketball Shoes in the World", {width: '200', class: 'heading'});
   
-  svg.input.textArea(18, 90, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
+  svg.input.textArea(18, 97, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
 
   svg.input.list(228, 10, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '150'});
   svg.input.list(228, 100, 'Nullam eget purus enim, quis faucibus sapien. \nVivamus semper nulla vel sapien fringilla ullamcorper. \nIn hac habitasse platea dictumst. ',{width: '150'});
+	
 	
 	$('.svg-container').transition({ x: '0', y: '20px', height: '400px'}, 1000, 'snap');
 	
