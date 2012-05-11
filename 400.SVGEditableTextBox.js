@@ -1776,9 +1776,6 @@ $.extend(SVGEditableTextBox.prototype, {
   
     this._selectStartCoord = null;
     
-    if (this._contextMenu)
-      this.openContextMenu(g,e);
-    
   },
   
   mousedown: function(g,e) {
@@ -1786,29 +1783,30 @@ $.extend(SVGEditableTextBox.prototype, {
     // if target inside / or the group element
     if (g && g._selectable && g._selectable.selected){
     
-      if (this._contextMenu)
-        this.closeContextMenu();
+    	if (e.button != 2) { // contextmenu
+    	
+    		this.closeContextMenu();
         
-      if (this._selection) {
-      	this._selection = null;
-      	$('.marking').remove();
-      }
-      	        
-      var lineHeight = int(StyleSheet.get('text', 'line-height', g));
-      var coord = this._coordInText(g,e,true);
-      
-      SVGTextMarker.show(this._wrapper, $.extend(coord, {
-        width   : 2 / g.getCTM().a,
-        height  : lineHeight * 1.2,
-        desx    : coord.x
-      }));
-      
-      row = coord.row-1;
-      paragraph = coord.paragraph-1; 
-      this._textPosition = this._textPositions[paragraph][row] + coord.char;
-    
-      this._selectStartCoord = this._coordInText(g,e);
-      
+	      if (this._selection) {
+	      	this._selection = null;
+	      	$('.marking').remove();
+	      }
+	      	        
+	      var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+	      var coord = this._coordInText(g,e,true);
+	      
+	      SVGTextMarker.show(this._wrapper, $.extend(coord, {
+	        width   : 2 / g.getCTM().a,
+	        height  : lineHeight * 1.2,
+	        desx    : coord.x
+	      }));
+	      
+	      row = coord.row-1;
+	      paragraph = coord.paragraph-1; 
+	      this._textPosition = this._textPositions[paragraph][row] + coord.char;
+	    
+	      this._selectStartCoord = this._coordInText(g,e);
+	    }
     } 
   },
   
@@ -1830,9 +1828,10 @@ $.extend(SVGEditableTextBox.prototype, {
     
     if ((new Date().getTime() - dclicktime < 300 || this._selection == null) && !this._tplClickState) {
     
-      this._selection = null;
+      //this._selection = null;
     
-      if (g && g._selectable && g._selectable.selected){
+      /*
+if (g && g._selectable && g._selectable.selected){
         
         this.closeContextMenu();
       
@@ -1850,8 +1849,9 @@ $.extend(SVGEditableTextBox.prototype, {
         this._textPosition = this._textPositions[paragraph][row] + coord.char;
 
       }
+*/
       
-      $('.marking').remove();
+      //$('.marking').remove();
       
     } else if (this._tplClickState) {
       this._tplClickState = false;
@@ -1895,5 +1895,7 @@ $.extend(SVGEditableTextBox.prototype, {
     this._contextMenu = true;
     g.setAttribute('class', g.getAttribute('class')  
       + (/contextmenu/.test(g.getAttribute('class'))?'':' contextmenu'));
+      
+    this.openContextMenu(g,e);
   }
 });
