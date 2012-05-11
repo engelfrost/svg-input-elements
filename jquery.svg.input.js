@@ -217,10 +217,15 @@ var StyleSheet = {
    * only handle the structure 'tag#id.class, tag#id.class...'
    */ 
   getAllStyles: function(selector, parent) {
-    return this.get(selector, undefined, parent); 
+    return this._get(selector, undefined, parent); 
   },
   
   get: function (selector, style, parent) {
+    style = style || ""; 
+    return this._get(selector, style, parent); 
+  },
+  
+  _get: function (selector, style, parent) {
     
     strParent = this._parentToString(parent); 
     
@@ -288,7 +293,7 @@ var StyleSheet = {
                           key.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase() 
                           + ": " 
                           + val 
-                          + ";\n"; 
+                          + "; "; 
                       }
                     });
                   }
@@ -1740,6 +1745,7 @@ $.extend(SVGEditableTextBox.prototype, {
       'dx': num(padding['left']), 
       'xml:space': 'preserve'
     };
+    
     var textSettings = {
       //TODO: Make sure this styling is complete!!!
       'style': StyleSheet.getAllTextStyles('text', g);
