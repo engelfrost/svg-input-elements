@@ -15,10 +15,6 @@ $(document).ready(function(){
 	domReady = true;
 	
 	goReady();
-
-	$('html').css({opacity: 0});
-	
-	$('.svg-container').transition({ x: '-2000px', y: '0', height: ($(window).height()*.6)+'px' }, 0);
 	
 });
 
@@ -28,8 +24,6 @@ $(window).load(function () {
 	loaded = true;
 	
 	goReady();
-	
-	$('html').animate({opacity: 1}, 100);
 	
 });
 
