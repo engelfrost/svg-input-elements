@@ -276,7 +276,7 @@ var StyleSheet = {
       'imageRendering', 
       'kerning', 
       'left', 
-      'length: 2
+      'length', 
       'letterSpacing', 
       'lightingColor', 
       'lineHeight', 
@@ -395,7 +395,7 @@ var StyleSheet = {
     });
     
     return results; 
-  }
+  },
   
   get: function (selector, style, parent) {
     
