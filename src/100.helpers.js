@@ -1,17 +1,21 @@
 // Function.inheritsFrom
-Function.prototype.inheritsFrom=function(a){
-	if(a.constructor==Function){
-		this.prototype=new a;
-		this.prototype.constructor=this;
-		this.prototype.super=a.prototype;
-	}
-	else { 
-		this.prototype=a;
-		this.prototype.constructor=this;
-		this.prototype.super=a
-	}
-	return this
-};
+Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
+	if ( parentClassOrObject.constructor == Function ) 
+	{ 
+		//Normal Inheritance 
+		this.prototype = new parentClassOrObject;
+		this.prototype.constructor = this;
+		this.prototype.parent = parentClassOrObject.prototype;
+	} 
+	else 
+	{ 
+		//Pure Virtual Inheritance 
+		this.prototype = parentClassOrObject;
+		this.prototype.constructor = this;
+		this.prototype.parent = parentClassOrObject;
+	} 
+	return this;
+}
 
 function isNumber(input){
   return typeof(input)=='number';
@@ -34,7 +38,7 @@ if (!Array.prototype.indexOf)
     if (from < 0)
       from += len;
 
-    for (from; from < len; from++)
+    for (; from < len; from++)
     {
       if (from in this &&
           this[from] === elt)
@@ -511,7 +515,7 @@ var StyleSheet = {
   }
 }
 
-function int(val){
+function num(val){ num
 	return val != null && typeof(val) != 'undefined' ? parseInt(val) : 0;
 }
 
@@ -557,13 +561,13 @@ $.each(types, function(i,t){
 		height: function() {
       if (t === SVGTSpanElement){ 
         g = SVGSelectableGElement._getGroupTarget(this);
-				return int(StyleSheet.get('text', 'line-height', g));
+				return num(StyleSheet.get('text', 'line-height', g));
 			} else {
 				var height = this.getBBox().height;
 				
 				if ($.browser.mozilla && t === SVGGElement) {
-          var tpad = int(StyleSheet.get( 'text', 'padding-bottom', this ));
-					height += Math.min(int(StyleSheet.get( 'rect.textbox', 'padding-bottom', this )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
+          var tpad = num(StyleSheet.get( 'text', 'padding-bottom', this ));
+					height += Math.min(num(StyleSheet.get( 'rect.textbox', 'padding-bottom', this )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
 				}
 			
 				return height;
@@ -572,14 +576,14 @@ $.each(types, function(i,t){
 		offset: function() { // position within parentNode element
 			if (t === SVGTSpanElement){ 
 				
-				var dx = int(this.getAttribute('dx'));
-				var dy = int(this.getAttribute('dy'));
-				dy += int(this.parentNode.getAttribute('y'));
+				var dx = num(this.getAttribute('dx'));
+				var dy = num(this.getAttribute('dy'));
+				dy += num(this.parentNode.getAttribute('y'));
 
 				// iterate through sibling-tspans above and grab their relative position
 				var prev = this.previousSibling;
 				while(prev != null) {
-					dy 	+= parseInt(prev.getAttribute('dy'));
+					dy 	+= num(prev.getAttribute('dy'));
 					prev = prev.previousSibling;
 				}
 				
@@ -588,27 +592,27 @@ $.each(types, function(i,t){
 					top		: dy}
 			} else if (t !== SVGTSpanElement) {
 				return {
-					left	: this.getCTM().e + int(this.getAttribute('x')), // not verified
-					top		: this.getCTM().f + int(this.getAttribute('y'))} // not verified
+					left	: this.getCTM().e + num(this.getAttribute('x')), // not verified
+					top		: this.getCTM().f + num(this.getAttribute('y'))} // not verified
 			}
 			return {
-				left	: this.getCTM().e - this.parentNode.getCTM().e + int(this.getAttribute('x')),
-				top		: this.getCTM().f - this.parentNode.getCTM().f + int(this.getAttribute('y'))}
+				left	: this.getCTM().e - this.parentNode.getCTM().e + num(this.getAttribute('x')),
+				top		: this.getCTM().f - this.parentNode.getCTM().f + num(this.getAttribute('y'))}
 		},
 		position: function() { // position within screenSpace
 			if (t === SVGTSpanElement){
 				var screenCTM = this.parentNode.getScreenCTM();
 				
-				var x = int(this.parentNode.getAttribute('x'));
-				var y = int(this.parentNode.getAttribute('y'));
+				var x = num(this.parentNode.getAttribute('x'));
+				var y = num(this.parentNode.getAttribute('y'));
 				
-				var dx = int(this.getAttribute('dx'));
-				var dy = int(this.getAttribute('dy'));
+				var dx = num(this.getAttribute('dx'));
+				var dy = num(this.getAttribute('dy'));
 
 				// iterate through siblings above and grab their relative position
 				var prev = this.previousSibling;
 				while(prev != null) {
-					dy 	+= parseInt(prev.getAttribute('dy'));
+					dy 	+= num(prev.getAttribute('dy'));
 					prev = prev.previousSibling;
 				}
 				

@@ -18,10 +18,10 @@ $.extend(SVGEditableList.prototype, {
   
   _getGPadding: function() {
     var padding = {};
-    padding['top']    = int(StyleSheet.get( 'rect.list', 'padding-top' ))*1.2;
-    padding['right']  = int(StyleSheet.get( 'rect.list', 'padding-right' ));
-    padding['bottom'] = int(StyleSheet.get( 'rect.list', 'padding-bottom' ));
-    padding['left']   = int(StyleSheet.get( 'rect.list', 'padding-left' ));
+    padding['top']    = num(StyleSheet.get( 'rect.list', 'padding-top' ))*1.2;
+    padding['right']  = num(StyleSheet.get( 'rect.list', 'padding-right' ));
+    padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom' ));
+    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left' ));
     return padding; 
   },
 });

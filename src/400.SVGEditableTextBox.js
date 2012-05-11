@@ -574,7 +574,7 @@ $.extend(SVGEditableTextBox, {
           
           if (cancelUpdate && !markall) {
             // keep marker visible if group was selected
-            var lineHeight = int(StyleSheet.get('text', 'line-height', selectedGroup));  // Find and pass parent here for all style rules!
+            var lineHeight = num(StyleSheet.get('text', 'line-height', selectedGroup));  // Find and pass parent here for all style rules!
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
             var coord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
@@ -801,10 +801,10 @@ $.extend(SVGEditableTextBox.prototype, {
   
   _getGPadding: function(g) {
     var padding = {
-      'top'    : int(StyleSheet.get( 'rect.textbox', 'padding-top', g))*1.2,
-      'right'  : int(StyleSheet.get( 'rect.textbox', 'padding-right', g)),
-      'bottom' : int(StyleSheet.get( 'rect.textbox', 'padding-bottom', g)),
-      'left'   : int(StyleSheet.get( 'rect.textbox', 'padding-left', g))
+      'top'    : num(StyleSheet.get( 'rect.textbox', 'padding-top', g))*1.2,
+      'right'  : num(StyleSheet.get( 'rect.textbox', 'padding-right', g)),
+      'bottom' : num(StyleSheet.get( 'rect.textbox', 'padding-bottom', g)),
+      'left'   : num(StyleSheet.get( 'rect.textbox', 'padding-left', g))
     }
     return padding; 
   },
@@ -828,11 +828,11 @@ $.extend(SVGEditableTextBox.prototype, {
     // Confusing, but it works. 
     
     var textY = padding['top']; 
-    var tspanDy = int( StyleSheet.get( 'text', 'line-height', g ) );
+    var tspanDy = num( StyleSheet.get( 'text', 'line-height', g ) );
     var tspanSettings = { 
-      'dy': int(tspanDy), 
+      'dy': num(tspanDy), 
       'x': 0, 
-      'dx': int(padding['left']), 
+      'dx': num(padding['left']), 
       'xml:space': 'preserve'
     };
     var textSettings = {
@@ -886,13 +886,13 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // Find the correct y-offset if there are previous text areas:
       if (el = $(g).children().last()[0]) {
-        textY = int(el.getAttribute('y')); //parseInt(/translate\(\d+\, (\d+)\)/.exec(e.getAttribute('transform'))[1]); // Better way of doing this? Value is not the same as e.getCTM().f
+        textY = num(el.getAttribute('y')); //parseInt(/translate\(\d+\, (\d+)\)/.exec(e.getAttribute('transform'))[1]); // Better way of doing this? Value is not the same as e.getCTM().f
         var height =  el.getBoundingClientRect().height;
         
         textY += (height / el.getCTM().d); //TODO: This is wrong, renders differently in Fx and GCr
         
         if ($.browser.mozilla) {
-          textY += int(StyleSheet.get( 'text', 'padding-bottom', g )) * 1.4; // Ugly-fix!!!
+          textY += num(StyleSheet.get( 'text', 'padding-bottom', g )) * 1.4; // Ugly-fix!!!
         }
       }
 
@@ -1066,13 +1066,13 @@ $.extend(SVGEditableTextBox.prototype, {
       paragraphCount.push(rowCount); 
       
       // Append the text to its group: 
-      t = that._wrapper.text(g, 0, int(textY), tspans, textSettings);
+      t = that._wrapper.text(g, 0, num(textY), tspans, textSettings);
       
     });
     
     var bgRect = this._wrapper.rect( g, 0, 0, 
-                                   int(maxWidth) + int(padding['right']) + int(padding['left']), 
-                                   int(g.height()) + int(padding['bottom']), 
+                                   num(maxWidth) + num(padding['right']) + num(padding['left']), 
+                                   num(g.height()) + num(padding['bottom']), 
                                    {class: 'textbox'} 
                                  );
     g.insertBefore( bgRect, g.firstChild );
@@ -1083,7 +1083,7 @@ $.extend(SVGEditableTextBox.prototype, {
     this._textPositions = paragraphCount; 
     
     // keep marker visible if group was selected
-    var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
     if (g._selected) {
       
       var possi = this._getTextPosition(this._textPosition);
@@ -1108,7 +1108,7 @@ $.extend(SVGEditableTextBox.prototype, {
         nearestEl,
         paragraphIndex = 0,
         rowIndex = 0,
-        lineHeight = int(StyleSheet.get('text', 'line-height', g));
+        lineHeight = num(StyleSheet.get('text', 'line-height', g));
     
     // put mouse position in a temp var
     var mouse={
@@ -1445,7 +1445,7 @@ $.extend(SVGEditableTextBox.prototype, {
           }
           
           var screenCTM = g.getScreenCTM();
-          var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+          var lineHeight = num(StyleSheet.get('text', 'line-height', g));
             
           if ($.browser.mozilla) { // Mozilla(FF)
             len = Math.max(0,Math.ceil(len-8)); // Ugly-fix!!
@@ -1491,7 +1491,7 @@ $.extend(SVGEditableTextBox.prototype, {
           x = x + g.position().left,
           closestPos = 0,
           screenCTM = g.getScreenCTM(),
-          lineHeight = int(StyleSheet.get('text', 'line-height', g));
+          lineHeight = num(StyleSheet.get('text', 'line-height', g));
       
           // from start of string to end of string
           for(i; i <= rEl.firstChild.data.length; i++) {
@@ -1553,7 +1553,7 @@ $.extend(SVGEditableTextBox.prototype, {
   
     var coords = this._getWordCoordsInText(g, e),
         width  = coords.stop.x - coords.start.x,
-        height = int(StyleSheet.get('text', 'line-height', g));
+        height = num(StyleSheet.get('text', 'line-height', g));
     
     var marking = this._wrapper.rect(
           coords.stop.parent, 
@@ -1601,7 +1601,7 @@ $.extend(SVGEditableTextBox.prototype, {
   
   _drawMarking: function(g, e_or_pos) {
   
-    var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
     
     // if target inside / or the group element
     if (this._selectStartCoord != null) {
@@ -1790,7 +1790,7 @@ $.extend(SVGEditableTextBox.prototype, {
           $('.marking').remove();
         }
                   
-        var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+        var lineHeight = num(StyleSheet.get('text', 'line-height', g));
         var coord = this._coordInText(g,e,true);
         
         SVGTextMarker.show(this._wrapper, $.extend(coord, {
@@ -1821,7 +1821,7 @@ $.extend(SVGEditableTextBox.prototype, {
   
   click: function(g,e) {
     
-    var lineHeight = int(StyleSheet.get('text', 'line-height', g));
+    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
     
     var dclicktime = $(window).data('dclickstime');
     
