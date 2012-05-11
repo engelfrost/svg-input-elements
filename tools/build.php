@@ -53,7 +53,8 @@
    THE SOFTWARE. */
    
 '; 
-    $js = '(function($) { // Hide scope, no $ conflict
+
+     $js = '(function($) { // Hide scope, no $ conflict
 
 ';
     

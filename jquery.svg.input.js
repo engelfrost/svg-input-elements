@@ -26,35 +26,23 @@
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
    THE SOFTWARE. */
    
-<<<<<<< HEAD
 (function($) { // Hide scope, no $ conflict
 
 // Function.inheritsFrom
-=======
-   (function($) { // Hide scope, no $ conflict// Function.inheritsFrom
->>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
 Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
   if ( parentClassOrObject.constructor == Function ) 
   { 
     //Normal Inheritance 
     this.prototype = new parentClassOrObject;
     this.prototype.constructor = this;
-<<<<<<< HEAD
     this.prototype.super = parentClassOrObject.prototype;
-=======
-    this.prototype.parent = parentClassOrObject.prototype;
->>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
   } 
   else 
   { 
     //Pure Virtual Inheritance 
     this.prototype = parentClassOrObject;
     this.prototype.constructor = this;
-<<<<<<< HEAD
     this.prototype.super = parentClassOrObject;
-=======
-    this.prototype.parent = parentClassOrObject;
->>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
   } 
   return this;
 }
@@ -588,13 +576,9 @@ $.extend(SVGInputElements.prototype, {
     
     return (new SVGEditableList(this._wrapper)).init(parent, value, width, height, settings);
   }
-<<<<<<< HEAD
 });
 
 /** 
-=======
-});/** 
->>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
  *  SVGSelection
 **/
 
@@ -826,17 +810,10 @@ $.extend(SVGSelectableGElement, {
     while( g == null){
       if (i.constructor === SVGGElement) {
         g = i 
-<<<<<<< HEAD
       }
       else if (i.parentNode) {
         i = i.parentNode;
       }
-=======
-      }
-      else if (i.parentNode) {
-        i = i.parentNode;
-      }
->>>>>>> 948774338979167e25da4b8823bd34ad14ef50ec
       else {
         break;
       }
@@ -1790,8 +1767,8 @@ $.extend(SVGEditableTextBox.prototype, {
     
     var textSettings = {
       //TODO: Make sure this styling is complete!!!
-      'style': StyleSheet.getAllTextStyles('text', g);
-    }
+      'style': StyleSheet.getAllStyles('text', g)
+    };
     
     var paragraphCount = []; // 
     var rowCount = []; 
