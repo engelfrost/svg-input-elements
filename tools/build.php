@@ -1,5 +1,7 @@
 <?php
   
+  header("Content-type: text/javascript");
+  
   function compare_filenames($a, $b) {
     return strcmp($a['basename'], $b['basename']);
   }
