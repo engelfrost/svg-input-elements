@@ -42,7 +42,7 @@ if (!Array.prototype.indexOf)
     if (from < 0)
       from += len;
 
-    for (; from < len; from++)
+    for (from; from < len; from++)
     {
       if (from in this &&
           this[from] === elt)
