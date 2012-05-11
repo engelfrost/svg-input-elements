@@ -7,8 +7,9 @@ behave naturally (i.e. as corresponding HTML input elements etc).
 
 For a demo of the 0.1 release go to 
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). You can 
-also try it out the latest version yourself with ./demo.html (just add jQuery 
-and jQuery SVG and adjust the href values).
+also download the latest examples and test yourself, just change the path 
+"../tools/build.js" to "../jquery.svg.input.js" unless you're on an Apache 
+server with PHP. 
 
 This project started out as a sub-project to a master thesis project, 
 [Personas in Real Life](http://personasinreallife.tumblr.com).
@@ -41,7 +42,7 @@ Chrome/Chromium. It should not be seen as something that is ready to be put
 in use.
 
 ###v0.2
-__Not released.__ This release will provide additional input elements and should work much 
+__Coming soon!__ This release will provide additional input elements and should work much 
 better in Firefox. 
 
 ...
