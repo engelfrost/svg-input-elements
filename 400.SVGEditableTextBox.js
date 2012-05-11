@@ -828,6 +828,7 @@ $.extend(SVGEditableTextBox.prototype, {
     
     var textY = padding['top']; 
     var tspanDy = int( StyleSheet.get( 'text', 'line-height', g ) );
+    console.log("line-height", tspanDy); 
     var tspanSettings = { 
       'dy': int(tspanDy), 
       'x': 0, 

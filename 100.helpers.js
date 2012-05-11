@@ -261,11 +261,11 @@ var StyleSheet = {
       });
     }
     // Return the final result. 
-    this.cache(selector, style, result);
+    this.cache(selector, style, result, parent);
     return result; 
   }, 
   
-  cache: function (selector, style, value) {
+  cache: function (selector, style, value, parent) {  //TODO: Do something with parent!
     if (this.StyleCache[selector] === undefined) {
       this.StyleCache[selector] = {}; 
     }
