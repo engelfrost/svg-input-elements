@@ -334,7 +334,7 @@ var elems = [], destroyerId;
 function destroyElem(element){
   elems.push(element);
   clearTimeout(destroyerId);
-  destroyerId = setTimeout("destroyer()", 100);
+  destroyerId = setTimeout(function(){destroyer()}, 100);
 }
 
 function destroyer() {
@@ -349,7 +349,7 @@ while (element.hasChildNodes()) {
     element.innerHTML = '';
     $(element).remove();
     
-    destroyerId = setTimeout("destroyer()", 10);
+    destroyerId = setTimeout(function(){destroyer()}, 10);
   }
 }
 
