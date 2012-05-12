@@ -92,7 +92,6 @@ $.extend(SVGEditableTextBox, {
           if (e.shiftKey && (e.keyCode < 35 || e.keyCode > 40)){
             if (selectedGroup._selection) {
               selectedGroup._selectStartCoord = selectedGroup._selection.start;
-              console.log('existing-1')
             }
           }
           else if (e.shiftKey
@@ -111,19 +110,14 @@ $.extend(SVGEditableTextBox, {
                 );
                
               selectedGroup._selection = null;
-              
-              console.log('non-existing')
             
             }
-            
-            console.log('shift+arrows/home/end')
             
           }
           else if (e.keyCode > 34 && e.keyCode < 41) {
             //arrows, home, end
             selectedGroup._selectStartCoord = null;
             
-            console.log('arrows/home/end')
           }
           
           if (e.metaKey || e.ctrlKey) { // CTRL/CMD
@@ -187,7 +181,9 @@ $.extend(SVGEditableTextBox, {
                 
                 break;
               
-              case 83: e.preventDefault(); console.log('CMD/CTRL+S'); break;
+              case 83: // cmd/ctrl+s
+              	e.preventDefault(); 
+              	break;
               
               case 86: // cmd/ctrl+v
                 
@@ -256,11 +252,11 @@ $.extend(SVGEditableTextBox, {
               case 90: // cmd/ctrl(+shift)+z
                 if (e.shiftKey) {
                   selectedGroup._historyRedo();
-                  console.log('CMD/CTRL+SHIFT+Z'); 
+                  
                 }
                 else {
                   selectedGroup._historyUndo();
-                  console.log('CMD/CTRL+Z'); 
+                  
                 }
                 break;
               default: 
