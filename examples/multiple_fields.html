@@ -4,33 +4,41 @@
 <meta http-equiv="Content-Type" content="charset=iso-8859-1" />
 
 <!-- Requirements, you need these libraries for SVG Input Elements to work -->
-<script type="text/javascript" src="../jquery-1.7.2.js"></script>
-<script type="text/javascript" src="../jquery.svg.js"></script>
-<script type="text/javascript" src="jquery.transit.min.js"></script>
+<script type="text/javascript" src="libs/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="libs/jquery.svg.js"></script>
+<script type="text/javascript" src="libs/jquery.transit.min.js"></script>
 
 
-<script type="text/javascript" src="100.helpers.js"></script>
-<script type="text/javascript" src="200.SVGInputElements.js"></script>
-<script type="text/javascript" src="300.SVGSelectableGElement.js"></script>
-<script type="text/javascript" src="400.SVGEditableTextBox.js"></script>
-<script type="text/javascript" src="450.SVGEditableList.js"></script>
-<script type="text/javascript" src="500.SVGTextMarker.js"></script>
-<script type="text/javascript" src="600.verify.js"></script>
-<link rel="stylesheet" href="svgte.css" \>
-<link rel="stylesheet" href="svg.css" \>
-<link rel="stylesheet" href="client.css" \>
+<script type="text/javascript" src="../tools/build.js"></script>
+<link rel="stylesheet" href="css/svgte.css" \>
+<link rel="stylesheet" href="css/svg.css" \>
+<link rel="stylesheet" href="css/multiple_fields.css" \>
 
 <script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-31571511-1']);
-  _gaq.push(['_trackPageview']);
+$(document).ready(function(){
+ 
+  $('.svg-container').transition({ x: '-2000px', y: '20px', height: $(window).height()*0.6+'px'}, 0);
+  
+  $('#svg').svg({onLoad: init, settings: {
+	    viewBox: '0 0 400 200', 
+	    version: '1.1'
+  	}
+  });
+  
+});
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+function init(svg){
+
+	svg.input.textArea(18, 10, "It Takes Carbon Fiber and Kevlar to Make the Best Basketball Shoes in the World", {width: '200', class: 'heading'});
+  
+  svg.input.textArea(18, 97, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
+	
+	$('.svg-container').transition({ x: '0', y: '20px', height: '400px'}, 1000, 'snap');
+	
+	$('.view .message').removeClass('loading');
+	
+}
 
 </script>
 

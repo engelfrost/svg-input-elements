@@ -1,9 +1,7 @@
-g.textbox, 
-g.textbox text {
+g.textbox {
   cursor: default;
 }
 
-g.textbox.selected,
 g.textbox.selected text {
   cursor: text;
 }

@@ -1,7 +1,7 @@
 html, body {
   padding: 0;
   margin: 0;
-  background: #ededed url('images/background.jpg');
+  background: #ededed url('../images/background.jpg');
   
   -webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -36,7 +36,7 @@ div.svg-container {
 	margin: auto;
 	max-width: 800px;
 	padding: 12% 20px;
-	background: url(images/shadow.png) no-repeat center bottom;
+	background: url(../images/shadow.png) no-repeat center bottom;
 }
 
 header nav ul li {
@@ -83,7 +83,7 @@ section.view .message {
 }
 
 section.view .message.loading {
-	background: url(images/load.gif) no-repeat center top;
+	background: url(../images/load.gif) no-repeat center top;
 }
 
 section.view .content {
