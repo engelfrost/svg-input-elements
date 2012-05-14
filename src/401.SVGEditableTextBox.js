@@ -1147,38 +1147,82 @@ $.extend(SVGEditableTextBox.prototype, {
       if (e.button != 2) { // contextmenu
         
         this.closeContextMenu();
+        
+        var dclicktime = $(window).data('dclickstime');
+        var diff = new Date().getTime() - dclicktime;
+        
+        if (!diff || (diff > 300 || this._selection) && !this._tplClickState) {
           
-        if (this._selection) {
-          this._selection = null;
-          $('.marking').remove();
+          if (this._selection) {
+            this._selection = null;
+            $('.marking').remove();
+          }
+                    
+          var lineHeight = num(StyleSheet.get('text', 'line-height', g));
+          var coord = this._coordInText(g,e,true);
+          
+          SVGTextMarker.show(this._wrapper, $.extend(coord, {
+            width   : 2 / g.getCTM().a,
+            height  : lineHeight * 1.2,
+            desx    : coord.x
+          }));
+          
+          row = coord.row-1;
+          paragraph = coord.paragraph-1; 
+          this._textPosition = this._textPositions[paragraph][row] + coord.char;
+        
+          this._selectStartCoord = this._coordInText(g,e);
+          
+        } 
+        else if (this._tplClickState) {
+          this._tplClickState = false;
         }
-                  
-        var lineHeight = num(StyleSheet.get('text', 'line-height', g));
-        var coord = this._coordInText(g,e,true);
-        
-        SVGTextMarker.show(this._wrapper, $.extend(coord, {
-          width   : 2 / g.getCTM().a,
-          height  : lineHeight * 1.2,
-          desx    : coord.x
-        }));
-        
-        row = coord.row-1;
-        paragraph = coord.paragraph-1; 
-        this._textPosition = this._textPositions[paragraph][row] + coord.char;
-      
-        this._selectStartCoord = this._coordInText(g,e);
-        
       }
     } 
   },
   
   mousemove: function(g,e) {
   
-    if (this._selectStartCoord && SVGTextMarker.isVisible()) {
-      SVGTextMarker.hide();
-    }
+    if (this._selectStartCoord)  {
     
-    this._drawMarking(g,e);
+	    var screenCTM = this._selectStartCoord.parent.getScreenCTM();
+	    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
+	                  
+      var dx = Math.abs((this._selectStartCoord.x)  * screenCTM.a + screenCTM.e - e.clientX),
+          dy = Math.abs((this._selectStartCoord.y + lineHeight)  * screenCTM.d + screenCTM.f - e.clientY);
+          
+      var delta = Math.sqrt(Math.pow(dx, 2) 
+                    + Math.pow(dy,2));
+                  
+/*       console.log(dx,dy, '.c' , e.clientX, e.clientY, '=', delta); */
+      
+      if ((dy > lineHeight || dx > 3)) {
+    
+		    if (SVGTextMarker.isVisible()) {
+		                  
+		      
+			      SVGTextMarker.hide();
+		    }
+		    
+		    this._drawMarking(g,e);
+		    
+	    } 
+	    else {
+          
+        SVGTextMarker.show(this._wrapper, $.extend(this._selectStartCoord, {
+          width   : 2 / g.getCTM().a,
+          height  : lineHeight * 1.2,
+          desx    : this._selectStartCoord.x
+        }));
+        
+        $('.marking').remove();
+        this._selection = null;
+	    }
+	    
+    } 
+    else {
+    	this._drawMarking(g,e);
+    }
     
   },
   
