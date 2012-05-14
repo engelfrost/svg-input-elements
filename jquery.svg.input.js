@@ -224,10 +224,6 @@ var StyleSheet = {
   
   get: function (selector, style, parent) {
     style = style || ""; 
-    return this._get(selector, style, parent); 
-  },
-  
-  _get: function (selector, style, parent) {
     
     strParent = this._parentToString(parent); 
     
@@ -238,93 +234,99 @@ var StyleSheet = {
       return this.StyleCache[strParent][selector][style]; 
     }
     else {
-      var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
-      var heritageRegExp = /^(.*[^>])(\s+|\s*\>\s*)([\w\.\#]+)$/; 
-      var result = ''; 
+      return this._get(selector, style, parent); 
+    }
+  },
+  
+  _get: function (selector, style, parent) {
+    var selectorRegExp = /^([\w]*)(\#[\w]+)?(\.[\w]+)?$/;
+    var heritageRegExp = /^(.*[^>])(\s+|\s*\>\s*)([\w\.\#]+)$/; 
+    var result = ''; 
+    
+    if (style !== undefined) {
       var ccStyle = $.camelCase(style);
-      
-      $.each( document.styleSheets, function( i, styleSheet ) {
-        // parse all stylesheets
-        $.each( styleSheet.cssRules, function( i, ruleBundle ) {
-          // parse all rules
-          if (ruleBundle.selectorText) {
-            $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
-              // split all grouped styles
+    }
+    $.each( document.styleSheets, function( i, styleSheet ) {
+      // parse all stylesheets
+      $.each( styleSheet.cssRules, function( i, ruleBundle ) {
+        // parse all rules
+        if (ruleBundle.selectorText) {
+          $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
+            // split all grouped styles
+            
+            var heritageOk = true; 
+            if (heritageRegExp.test(rule.trim())) {
+              // The rule uses parents, check if parent qualifies
               
-              var heritageOk = true; 
-              if (heritageRegExp.test(rule.trim())) {
-                // The rule uses parents, check if parent qualifies
-                
-                var heritage = heritageRegExp.exec(rule.trim()); 
-                
-                // Does parent match the rule? 
-                heritageOk = $(parent).is(heritage[1]);
-                
-                // Still got to make sure the child qualifies
-                rule = heritage[3];
-              }
+              var heritage = heritageRegExp.exec(rule.trim()); 
               
-              r = selectorRegExp.exec( rule.trim() );
-              s = selectorRegExp.exec( selector );
+              // Does parent match the rule? 
+              heritageOk = $(parent).is(heritage[1]);
               
-              // We ignore some stuff, like pseudo-elements, rules with parents etc. 
-              // We only handle what the regexp can handle.
+              // Still got to make sure the child qualifies
+              rule = heritage[3];
+            }
+            
+            r = selectorRegExp.exec( rule.trim() );
+            s = selectorRegExp.exec( selector );
+            
+            // We ignore some stuff, like pseudo-elements, rules with parents etc. 
+            // We only handle what the regexp can handle.
+            
+            // This can probably be re-written with jQuery .is()...
+            if ( r != null && s != null ) {
               
-              // This can probably be re-written with jQuery .is()...
-              if ( r != null && s != null ) {
+              // Check if rule requires a specific tag
+              tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
+              
+              // Check if rule requires ID 
+              idOk = ( r[2] == undefined || r[2] == s[2] ); 
+              
+              // Check if rule requires class
+              classOk = ( r[3] == undefined || r[3] == s[3] ); 
+              
+              // Check that 
+              bloodline = $(parent).is(heritage);
+              
+              if ( tagOk && idOk && classOk && heritageOk ) {
+                // If this is a match, update result with any new stuff
                 
-                // Check if rule requires a specific tag
-                tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
-                
-                // Check if rule requires ID 
-                idOk = ( r[2] == undefined || r[2] == s[2] ); 
-                
-                // Check if rule requires class
-                classOk = ( r[3] == undefined || r[3] == s[3] ); 
-                
-                // Check that 
-                bloodline = $(parent).is(heritage);
-                
-                if ( tagOk && idOk && classOk && heritageOk ) {
-                  // If this is a match, update result with any new stuff
-                  
-                  if (style === undefined) {
-                    $.each(ruleBundle.style, function(key, val) {
-                      if (val) {
-                        result += 
-                          key.replace(/([a-z])([A-Z])/, '$1-$2').toLowerCase() 
-                          + ": " 
-                          + val 
-                          + "; "; 
-                      }
-                    });
+                if (style === undefined) {
+                  $.each(ruleBundle.style, function(key, val) {
+                    if (val) {
+                      result += 
+                        val
+                        + ": " 
+                        + ruleBundle.style[val] 
+                        + "; "; 
+                    }
+                  });
+                }
+                else {
+                  if ( typeof ruleBundle.style[style] != 'undefined' 
+                    && ruleBundle.style[style] !== '' ) {
+                    
+                    // Save the result, but don't return it yet. Other rules may 
+                    // overwrite it later, since the rules are cascading. 
+                    result = ruleBundle.style[style];
                   }
-                  else {
-                    if ( typeof ruleBundle.style[style] != 'undefined' 
-                      && ruleBundle.style[style] !== '' ) {
+                  else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
+                    && ruleBundle.style[ccStyle] !== '' ) {
                       
-                      // Save the result, but don't return it yet. Other rules may 
-                      // overwrite it later, since the rules are cascading. 
-                      result = ruleBundle.style[style];
-                    }
-                    else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
-                      && ruleBundle.style[ccStyle] !== '' ) {
-                        
-                      // Some browsers use camelCase
-                      result = ruleBundle.style[ccStyle];
-                    }
+                    // Some browsers use camelCase
+                    result = ruleBundle.style[ccStyle];
                   }
                 }
               }
-            });
-          }
-        });
+            }
+          });
+        }
       });
-      
-      // Return the final result. 
-      this.cache(selector, style, result, parent);
-      return result; 
-    }
+    });
+    
+    // Return the final result. 
+    this.cache(selector, style, result, parent);
+    return result; 
   },
   
   _parentToString: function(parent) {
@@ -362,7 +364,7 @@ var elems = [], destroyerId;
 function destroyElem(element){
   elems.push(element);
   clearTimeout(destroyerId);
-  destroyerId = setTimeout("destroyer()", 100);
+  destroyerId = setTimeout(function(){destroyer()}, 100);
 }
 
 function destroyer() {
@@ -377,7 +379,7 @@ while (element.hasChildNodes()) {
     element.innerHTML = '';
     $(element).remove();
     
-    destroyerId = setTimeout("destroyer()", 10);
+    destroyerId = setTimeout(function(){destroyer()}, 10);
   }
 }
 
@@ -1024,7 +1026,6 @@ $.extend(SVGEditableTextBox, {
           if (e.shiftKey && (e.keyCode < 35 || e.keyCode > 40)){
             if (selectedGroup._selection) {
               selectedGroup._selectStartCoord = selectedGroup._selection.start;
-              console.log('existing-1')
             }
           }
           else if (e.shiftKey
@@ -1043,19 +1044,14 @@ $.extend(SVGEditableTextBox, {
                 );
                
               selectedGroup._selection = null;
-              
-              console.log('non-existing')
             
             }
-            
-            console.log('shift+arrows/home/end')
             
           }
           else if (e.keyCode > 34 && e.keyCode < 41) {
             //arrows, home, end
             selectedGroup._selectStartCoord = null;
             
-            console.log('arrows/home/end')
           }
           
           if (e.metaKey || e.ctrlKey) { // CTRL/CMD
@@ -1119,7 +1115,9 @@ $.extend(SVGEditableTextBox, {
                 
                 break;
               
-              case 83: e.preventDefault(); console.log('CMD/CTRL+S'); break;
+              case 83: // cmd/ctrl+s
+              	e.preventDefault(); 
+              	break;
               
               case 86: // cmd/ctrl+v
                 
@@ -1188,11 +1186,11 @@ $.extend(SVGEditableTextBox, {
               case 90: // cmd/ctrl(+shift)+z
                 if (e.shiftKey) {
                   selectedGroup._historyRedo();
-                  console.log('CMD/CTRL+SHIFT+Z'); 
+                  
                 }
                 else {
                   selectedGroup._historyUndo();
-                  console.log('CMD/CTRL+Z'); 
+                  
                 }
                 break;
               default: 
@@ -1506,7 +1504,7 @@ $.extend(SVGEditableTextBox, {
           
           if (cancelUpdate && !markall) {
             // keep marker visible if group was selected
-            var lineHeight = num(StyleSheet.get('text', 'line-height', selectedGroup));  // Find and pass parent here for all style rules!
+            var lineHeight = num(StyleSheet.get('text', 'line-height', selectedGroup._group));  // Find and pass parent here for all style rules!
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
             var coord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
@@ -1764,7 +1762,6 @@ $.extend(SVGEditableTextBox.prototype, {
       'dx': num(padding['left']), 
       'xml:space': 'preserve'
     };
-    
     var textSettings = {
       //TODO: Make sure this styling is complete!!!
       'style': StyleSheet.getAllStyles('text', g)
@@ -1996,7 +1993,7 @@ $.extend(SVGEditableTextBox.prototype, {
       paragraphCount.push(rowCount); 
       
       // Append the text to its group: 
-      t = that._wrapper.text(g, 0, num(textY), tspans, textSettings);
+      t = that._wrapper.text(g, 0, num(textY), tspans);
       
     });
     
@@ -2714,38 +2711,82 @@ $.extend(SVGEditableTextBox.prototype, {
       if (e.button != 2) { // contextmenu
         
         this.closeContextMenu();
+        
+        var dclicktime = $(window).data('dclickstime');
+        var diff = new Date().getTime() - dclicktime;
+        
+        if (!diff || (diff > 300 || this._selection) && !this._tplClickState) {
           
-        if (this._selection) {
-          this._selection = null;
-          $('.marking').remove();
+          if (this._selection) {
+            this._selection = null;
+            $('.marking').remove();
+          }
+                    
+          var lineHeight = num(StyleSheet.get('text', 'line-height', g));
+          var coord = this._coordInText(g,e,true);
+          
+          SVGTextMarker.show(this._wrapper, $.extend(coord, {
+            width   : 2 / g.getCTM().a,
+            height  : lineHeight * 1.2,
+            desx    : coord.x
+          }));
+          
+          row = coord.row-1;
+          paragraph = coord.paragraph-1; 
+          this._textPosition = this._textPositions[paragraph][row] + coord.char;
+        
+          this._selectStartCoord = this._coordInText(g,e);
+          
+        } 
+        else if (this._tplClickState) {
+          this._tplClickState = false;
         }
-                  
-        var lineHeight = num(StyleSheet.get('text', 'line-height', g));
-        var coord = this._coordInText(g,e,true);
-        
-        SVGTextMarker.show(this._wrapper, $.extend(coord, {
-          width   : 2 / g.getCTM().a,
-          height  : lineHeight * 1.2,
-          desx    : coord.x
-        }));
-        
-        row = coord.row-1;
-        paragraph = coord.paragraph-1; 
-        this._textPosition = this._textPositions[paragraph][row] + coord.char;
-      
-        this._selectStartCoord = this._coordInText(g,e);
-        
       }
     } 
   },
   
   mousemove: function(g,e) {
   
-    if (this._selectStartCoord && SVGTextMarker.isVisible()) {
-      SVGTextMarker.hide();
-    }
+    if (this._selectStartCoord)  {
     
-    this._drawMarking(g,e);
+	    var screenCTM = this._selectStartCoord.parent.getScreenCTM();
+	    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
+	                  
+      var dx = Math.abs((this._selectStartCoord.x)  * screenCTM.a + screenCTM.e - e.clientX),
+          dy = Math.abs((this._selectStartCoord.y + lineHeight)  * screenCTM.d + screenCTM.f - e.clientY);
+          
+      var delta = Math.sqrt(Math.pow(dx, 2) 
+                    + Math.pow(dy,2));
+                  
+/*       console.log(dx,dy, '.c' , e.clientX, e.clientY, '=', delta); */
+      
+      if ((dy > lineHeight || dx > 3)) {
+    
+		    if (SVGTextMarker.isVisible()) {
+		                  
+		      
+			      SVGTextMarker.hide();
+		    }
+		    
+		    this._drawMarking(g,e);
+		    
+	    } 
+	    else {
+          
+        SVGTextMarker.show(this._wrapper, $.extend(this._selectStartCoord, {
+          width   : 2 / g.getCTM().a,
+          height  : lineHeight * 1.2,
+          desx    : this._selectStartCoord.x
+        }));
+        
+        $('.marking').remove();
+        this._selection = null;
+	    }
+	    
+    } 
+    else {
+    	this._drawMarking(g,e);
+    }
     
   },
   
@@ -2950,4 +2991,5 @@ $.extend(SVGTextMarker, {
   }
   
 });
+
 })(jQuery);

@@ -11,6 +11,9 @@ also download the latest examples and test yourself, just change the path
 "../tools/build.js" to "../jquery.svg.input.js" unless you're on an Apache 
 server with PHP. 
 
+__Note:__ The generated files in the root might not always be 100% up to 
+date. 
+
 This project started out as a sub-project to a master thesis project, 
 [Personas in Real Life](http://personasinreallife.tumblr.com).
 
