@@ -570,7 +570,7 @@ $.extend(SVGEditableTextBox, {
           
           if (cancelUpdate && !markall) {
             // keep marker visible if group was selected
-            var lineHeight = num(StyleSheet.get('text', 'line-height', selectedGroup));  // Find and pass parent here for all style rules!
+            var lineHeight = num(StyleSheet.get('text', 'line-height', selectedGroup._group));  // Find and pass parent here for all style rules!
             var possi = selectedGroup._getTextPosition(selectedGroup._textPosition);
             var coord = selectedGroup._getCoordInTextbox(selectedGroup._group, possi.paragraph+1, possi.row+1, possi.char);
             
