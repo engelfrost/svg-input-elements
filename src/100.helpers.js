@@ -255,9 +255,6 @@ var StyleSheet = {
               // Check if rule requires class
               classOk = ( r[3] == undefined || r[3] == s[3] ); 
               
-              // Check that 
-              bloodline = $(parent).is(heritage);
-              
               if ( tagOk && idOk && classOk && heritageOk ) {
                 // If this is a match, update result with any new stuff
                 
@@ -327,7 +324,7 @@ var StyleSheet = {
 }
 
 function num(val){ num
-  return val != null && typeof(val) != 'undefined' ? parseInt(val) : 0;
+  return val != null && typeof(val) != 'undefined' ? parseInt(val || 0) : 0;
 }
 
 var elems = [], destroyerId;
