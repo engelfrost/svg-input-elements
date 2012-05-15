@@ -5,7 +5,7 @@ Currently this project implements text areas, similar in behaviour to HTML
 `<textarea>` tags. The goal is to implement input elements that feel and 
 behave naturally (i.e. as corresponding HTML input elements etc). 
 
-For a demo of the 0.1 release go to 
+For a demo of the 0.2 release go to 
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). You can 
 also download the latest examples and test yourself, just change the path 
 "../tools/build.js" to "../jquery.svg.input.js" unless you're on an Apache 
@@ -44,6 +44,9 @@ Versions
 __Scheduled early June__ This release will provide several text related input
 elements and should be stable on all major browsers except perhaps for 
 Internet Explorer, which seems to have very poor SVG support even in verion 9. 
+
+###v0.3
+__Coming soon:__ Will feature a list variant of the text input element. 
 
 ###v0.2
 __Released 15 May 2012__ This release provides bugfixes and several 
