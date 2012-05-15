@@ -60,7 +60,7 @@ $.extend(SVGSelectableGElement, {
     
     // clear all selected boxes
     select = $('#select');
-    if (select) {
+    if (select.length) {
       classes = (s = select.parent().attr('class')) ? s.replace('selected', '') : ''; 
       select.parent().attr('class', classes);
       select.remove();  

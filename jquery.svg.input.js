@@ -248,7 +248,15 @@ var StyleSheet = {
     }
     $.each( document.styleSheets, function( i, styleSheet ) {
       // parse all stylesheets
-      $.each( styleSheet.cssRules, function( i, ruleBundle ) {
+      if (styleSheet.cssRules[0].styleSheet) {
+        // Handle @import rule. Kind of ugly, I hope it doesn't cause bugs... 
+        cssRules = styleSheet.cssRules[0].styleSheet.cssRules;
+      }
+      else {
+        cssRules = styleSheet.cssRules;
+      }
+      
+      $.each( cssRules, function( i, ruleBundle ) {
         // parse all rules
         if (ruleBundle.selectorText) {
           $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
@@ -284,9 +292,6 @@ var StyleSheet = {
               
               // Check if rule requires class
               classOk = ( r[3] == undefined || r[3] == s[3] ); 
-              
-              // Check that 
-              bloodline = $(parent).is(heritage);
               
               if ( tagOk && idOk && classOk && heritageOk ) {
                 // If this is a match, update result with any new stuff
@@ -357,7 +362,7 @@ var StyleSheet = {
 }
 
 function num(val){ num
-  return val != null && typeof(val) != 'undefined' ? parseInt(val) : 0;
+  return val != null && typeof(val) != 'undefined' ? parseInt(val || 0) : 0;
 }
 
 var elems = [], destroyerId;
@@ -642,7 +647,7 @@ $.extend(SVGSelectableGElement, {
     
     // clear all selected boxes
     select = $('#select');
-    if (select) {
+    if (select.length) {
       classes = (s = select.parent().attr('class')) ? s.replace('selected', '') : ''; 
       select.parent().attr('class', classes);
       select.remove();  
@@ -1767,6 +1772,8 @@ $.extend(SVGEditableTextBox.prototype, {
       'style': StyleSheet.getAllStyles('text', g)
     };
     
+    console.log(textSettings); 
+    
     var paragraphCount = []; // 
     var rowCount = []; 
     var lastRow = 0; 
@@ -1873,7 +1880,7 @@ $.extend(SVGEditableTextBox.prototype, {
             
             tmpTspans = that._wrapper.createText(); 
             tmpTspans.span( remainingWords[0], tspanSettings );
-            tmpText = that._wrapper.text( -1000, -1000, tmpTspans, textSettings );
+            tmpText = that._wrapper.text( -1000, -1000, tmpTspans); //, textSettings );
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
               width: tmpText.width() 
@@ -1913,7 +1920,7 @@ $.extend(SVGEditableTextBox.prototype, {
                   
                   tmpTspans = that._wrapper.createText(); 
                   tmpTspans.span(newTmpWord, tspanSettings);
-                  tmpText = that._wrapper.text(-1000, -1000, tmpTspans, textSettings);
+                  tmpText = that._wrapper.text(-1000, -1000, tmpTspans); //, textSettings);
                   
                   cachedWord = 
                     SVGEditableTextBox._wordCache[fontSettings][newTmpWord] = 

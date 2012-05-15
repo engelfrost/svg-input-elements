@@ -203,6 +203,8 @@ $.extend(SVGEditableTextBox.prototype, {
       'style': StyleSheet.getAllStyles('text', g)
     };
     
+    console.log(textSettings); 
+    
     var paragraphCount = []; // 
     var rowCount = []; 
     var lastRow = 0; 
@@ -309,7 +311,7 @@ $.extend(SVGEditableTextBox.prototype, {
             
             tmpTspans = that._wrapper.createText(); 
             tmpTspans.span( remainingWords[0], tspanSettings );
-            tmpText = that._wrapper.text( -1000, -1000, tmpTspans, textSettings );
+            tmpText = that._wrapper.text( -1000, -1000, tmpTspans); //, textSettings );
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
               width: tmpText.width() 
@@ -349,7 +351,7 @@ $.extend(SVGEditableTextBox.prototype, {
                   
                   tmpTspans = that._wrapper.createText(); 
                   tmpTspans.span(newTmpWord, tspanSettings);
-                  tmpText = that._wrapper.text(-1000, -1000, tmpTspans, textSettings);
+                  tmpText = that._wrapper.text(-1000, -1000, tmpTspans); //, textSettings);
                   
                   cachedWord = 
                     SVGEditableTextBox._wordCache[fontSettings][newTmpWord] = 

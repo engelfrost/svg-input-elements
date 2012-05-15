@@ -218,7 +218,15 @@ var StyleSheet = {
     }
     $.each( document.styleSheets, function( i, styleSheet ) {
       // parse all stylesheets
-      $.each( styleSheet.cssRules, function( i, ruleBundle ) {
+      if (styleSheet.cssRules[0].styleSheet) {
+        // Handle @import rule. Kind of ugly, I hope it doesn't cause bugs... 
+        cssRules = styleSheet.cssRules[0].styleSheet.cssRules;
+      }
+      else {
+        cssRules = styleSheet.cssRules;
+      }
+      
+      $.each( cssRules, function( i, ruleBundle ) {
         // parse all rules
         if (ruleBundle.selectorText) {
           $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
