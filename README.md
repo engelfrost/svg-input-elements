@@ -9,12 +9,11 @@ For a demo of the 0.1 release go to
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). You can 
 also download the latest examples and test yourself, just change the path 
 "../tools/build.js" to "../jquery.svg.input.js" unless you're on an Apache 
-server with PHP. __Note: In Chrome the script will fail if you run it from 
+server with PHP. _Note:_ In Chrome the script will fail if you run it from 
 your local file system 
 [because of a bug](http://code.google.com/p/chromium/issues/detail?id=49001). 
 
-__Note:__ The generated files in the root might not always be 100% up to 
-date. 
+(The generated files in the root might not always be 100% up to date.) 
 
 This project started out as a sub-project to a master thesis project, 
 [Personas in Real Life](http://personasinreallife.tumblr.com).
