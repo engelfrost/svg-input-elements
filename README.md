@@ -39,20 +39,21 @@ This project requires [jQuery](http://docs.jquery.com/Downloading_jQuery)
 
 Versions
 --------
-###v0.1
-__Released 9 May 2012.__ This is a rather limited release which is only properly tested in 
-Chrome/Chromium. It should not be seen as something that is ready to be put 
-in use.
+###v1.0
+__Scheduled early June__ This release will provide several text related input
+elements and should be stable on all major browsers except perhaps for 
+Internet Explorer, which seems to have very poor SVG support even in verion 9. 
 
 ###v0.2
-__Coming soon!__ This release will provide additional input elements and should work much 
-better in Firefox. 
+__Released 15 May 2012__ This release provides bugfixes and several 
+improvements and should also work on Firefox. Additional input elements are 
+postponed to the next release. The documentation is still lacking, contact us 
+if you want help. 
 
-...
-
-###v1.0 
-__Not released - expected in early June__ This release will be ready for real use. It will also have better 
-documentation and examples. 
+###v0.1
+__Released 9 May 2012.__ This is a rather limited release which is only 
+properly tested in Chrome/Chromium. It should not be seen as something that is
+ready to be put in use.
 
 Development
 -----------
