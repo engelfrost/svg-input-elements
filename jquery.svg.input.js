@@ -248,85 +248,91 @@ var StyleSheet = {
     }
     $.each( document.styleSheets, function( i, styleSheet ) {
       // parse all stylesheets
-      if (styleSheet.cssRules[0].styleSheet) {
-        // Handle @import rule. Kind of ugly, I hope it doesn't cause bugs... 
-        cssRules = styleSheet.cssRules[0].styleSheet.cssRules;
-      }
-      else {
-        cssRules = styleSheet.cssRules;
-      }
       
-      $.each( cssRules, function( i, ruleBundle ) {
-        // parse all rules
-        if (ruleBundle.selectorText) {
-          $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
-            // split all grouped styles
-            
-            var heritageOk = true; 
-            if (heritageRegExp.test(rule.trim())) {
-              // The rule uses parents, check if parent qualifies
-              
-              var heritage = heritageRegExp.exec(rule.trim()); 
-              
-              // Does parent match the rule? 
-              heritageOk = $(parent).is(heritage[1]);
-              
-              // Still got to make sure the child qualifies
-              rule = heritage[3];
-            }
-            
-            r = selectorRegExp.exec( rule.trim() );
-            s = selectorRegExp.exec( selector );
-            
-            // We ignore some stuff, like pseudo-elements, rules with parents etc. 
-            // We only handle what the regexp can handle.
-            
-            // This can probably be re-written with jQuery .is()...
-            if ( r != null && s != null ) {
-              
-              // Check if rule requires a specific tag
-              tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
-              
-              // Check if rule requires ID 
-              idOk = ( r[2] == undefined || r[2] == s[2] ); 
-              
-              // Check if rule requires class
-              classOk = ( r[3] == undefined || r[3] == s[3] ); 
-              
-              if ( tagOk && idOk && classOk && heritageOk ) {
-                // If this is a match, update result with any new stuff
+      _parseRules(styleSheet.cssRules);
+      
+      // This is a function so that it can be called recursively
+      function _parseRules(cssRules) {
+        $.each( cssRules, function( i, ruleBundle ) {
+          // parse all rules
+          
+          // Is this an @import rule? 
+          if (ruleBundle.styleSheet) {
+            cssRules = ruleBundle.styleSheet.cssRules;
+            _parseRules(cssRules); 
+          }
+          else {
+            if (ruleBundle.selectorText) {
+              $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
+                // split all grouped styles
                 
-                if (style === undefined) {
-                  $.each(ruleBundle.style, function(key, val) {
-                    if (val) {
-                      result += 
-                        val
-                        + ": " 
-                        + ruleBundle.style[val] 
-                        + "; "; 
-                    }
-                  });
+                var heritageOk = true; 
+                if (heritageRegExp.test(rule.trim())) {
+                  // The rule uses parents, check if parent qualifies
+                  
+                  var heritage = heritageRegExp.exec(rule.trim()); 
+                  
+                  // Does parent match the rule? 
+                  heritageOk = $(parent).is(heritage[1]);
+                  
+                  // Still got to make sure the child qualifies
+                  rule = heritage[3];
                 }
-                else {
-                  if ( typeof ruleBundle.style[style] != 'undefined' 
-                    && ruleBundle.style[style] !== '' ) {
+                
+                r = selectorRegExp.exec( rule.trim() );
+                s = selectorRegExp.exec( selector );
+                
+                // We ignore some stuff, like pseudo-elements, rules with parents etc. 
+                // We only handle what the regexp can handle.
+                
+                // This can probably be re-written with jQuery .is()...
+                if ( r != null && s != null ) {
+                  
+                  // Check if rule requires a specific tag
+                  tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
+                  
+                  // Check if rule requires ID 
+                  idOk = ( r[2] == undefined || r[2] == s[2] ); 
+                  
+                  // Check if rule requires class
+                  classOk = ( r[3] == undefined || r[3] == s[3] ); 
+                  
+                  if ( tagOk && idOk && classOk && heritageOk ) {
+                    // If this is a match, update result with any new stuff
                     
-                    // Save the result, but don't return it yet. Other rules may 
-                    // overwrite it later, since the rules are cascading. 
-                    result = ruleBundle.style[style];
-                  }
-                  else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
-                    && ruleBundle.style[ccStyle] !== '' ) {
-                      
-                    // Some browsers use camelCase
-                    result = ruleBundle.style[ccStyle];
+                    if (style === undefined) {
+                      $.each(ruleBundle.style, function(key, val) {
+                        if (val) {
+                          result += 
+                            val
+                            + ": " 
+                            + ruleBundle.style[val] 
+                            + "; "; 
+                        }
+                      });
+                    }
+                    else {
+                      if ( typeof ruleBundle.style[style] != 'undefined' 
+                        && ruleBundle.style[style] !== '' ) {
+                        
+                        // Save the result, but don't return it yet. Other rules may 
+                        // overwrite it later, since the rules are cascading. 
+                        result = ruleBundle.style[style];
+                      }
+                      else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
+                        && ruleBundle.style[ccStyle] !== '' ) {
+                          
+                        // Some browsers use camelCase
+                        result = ruleBundle.style[ccStyle];
+                      }
+                    }
                   }
                 }
-              }
+              });
             }
-          });
-        }
-      });
+          }
+        });
+      }
     });
     
     // Return the final result. 
@@ -336,9 +342,9 @@ var StyleSheet = {
   
   _parentToString: function(parent) {
     if (parent) {
-      return $(parent).tagName 
-        + $(parent).attr('id') || ""
-        + ($(parent).attr('class') || "").replace(" ", ",");
+      return parent.nodeName 
+        + "--" + ($(parent).attr('id') || "") 
+        + "--" + ($(parent).attr('class') || "").replace(" ", ".");
     }
     else {
       return ""; 
@@ -357,6 +363,7 @@ var StyleSheet = {
     if (this.StyleCache[parent][selector][style] === undefined) {
       this.StyleCache[parent][selector][style] = value; 
     }
+    console.log("StyleCache", this.StyleCache);
     return value; 
   }
 }
