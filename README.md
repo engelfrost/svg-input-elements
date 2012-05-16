@@ -48,8 +48,12 @@ Internet Explorer, which seems to have very poor SVG support even in verion 9.
 ###v0.3
 __Coming soon:__ Will feature a list variant of the text input element. 
 
+###v0.2.1
+__Released 16 May 2012.__ Minor enhancements, bugfixes and support for 
+@import. 
+
 ###v0.2
-__Released 15 May 2012__ This release provides bugfixes and several 
+__Released 15 May 2012.__ This release provides bugfixes and several 
 improvements and should also work on Firefox. Additional input elements are 
 postponed to the next release. The documentation is still lacking, contact us 
 if you want help. 
