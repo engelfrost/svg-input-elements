@@ -228,8 +228,8 @@ $.extend(SVGSelectableGElement, {
     
     var g;
     while( g == null){
-      if (i.constructor === SVGGElement) {
-        g = i 
+      if (i.constructor === SVGGElement && $(i).is('.selectable')) {
+        g = i;
       }
       else if (i.parentNode) {
         i = i.parentNode;
@@ -250,6 +250,7 @@ $.extend(SVGSelectableGElement, {
 $.extend(SVGSelectableGElement.prototype, {
   _group: null,
   selected: false,
+  _class: 'selectable',
   
   init: function() {
   
@@ -268,7 +269,7 @@ $.extend(SVGSelectableGElement.prototype, {
     var that = this; 
     if (this._wrapper) {
 
-      var classes = '';
+      var classes;
 
       // create g element
       if (this._group) {

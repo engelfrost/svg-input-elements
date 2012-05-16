@@ -821,8 +821,8 @@ $.extend(SVGSelectableGElement, {
     
     var g;
     while( g == null){
-      if (i.constructor === SVGGElement) {
-        g = i 
+      if (i.constructor === SVGGElement && $(i).is('.selectable')) {
+        g = i;
       }
       else if (i.parentNode) {
         i = i.parentNode;
@@ -843,6 +843,7 @@ $.extend(SVGSelectableGElement, {
 $.extend(SVGSelectableGElement.prototype, {
   _group: null,
   selected: false,
+  _class: 'selectable',
   
   init: function() {
   
@@ -861,7 +862,7 @@ $.extend(SVGSelectableGElement.prototype, {
     var that = this; 
     if (this._wrapper) {
 
-      var classes = '';
+      var classes;
 
       // create g element
       if (this._group) {
@@ -1635,7 +1636,7 @@ $.extend(SVGEditableTextBox.prototype, {
     this._height = height; // not used at the moment
     SVGEditableTextBox._textareaCount++; 
     this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
-    this._class = (settings.class || '') + ' textbox';
+    this._class += " textbox "+(settings.class || '');
     this._settings = settings;
     
     this._textPositions = []; 

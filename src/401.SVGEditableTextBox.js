@@ -59,7 +59,7 @@ $.extend(SVGEditableTextBox.prototype, {
     this._height = height; // not used at the moment
     SVGEditableTextBox._textareaCount++; 
     this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
-    this._class = (settings.class || '') + ' textbox';
+    this._class += " textbox "+(settings.class || '');
     this._settings = settings;
     
     this._textPositions = []; 
