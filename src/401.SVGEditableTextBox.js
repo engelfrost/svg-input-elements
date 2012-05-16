@@ -164,10 +164,10 @@ $.extend(SVGEditableTextBox.prototype, {
   
   _getGPadding: function(g) {
     var padding = {
-      'top'    : num(StyleSheet.get( 'rect.textbox', 'padding-top', g))*1.2,
-      'right'  : num(StyleSheet.get( 'rect.textbox', 'padding-right', g)),
-      'bottom' : num(StyleSheet.get( 'rect.textbox', 'padding-bottom', g)),
-      'left'   : num(StyleSheet.get( 'rect.textbox', 'padding-left', g))
+      'top'    : num(StyleSheet.get( 'rect.background', 'padding-top', g))*1.2,
+      'right'  : num(StyleSheet.get( 'rect.background', 'padding-right', g)),
+      'bottom' : num(StyleSheet.get( 'rect.background', 'padding-bottom', g)),
+      'left'   : num(StyleSheet.get( 'rect.background', 'padding-left', g))
     }
     return padding; 
   },
@@ -248,6 +248,7 @@ $.extend(SVGEditableTextBox.prototype, {
     $.each(paragraphs, function( i, paragraph ) {
       // Reset row counter
       rowCount = [];
+      
       
       // Find the correct y-offset if there are previous text areas:
       if (el = $(g).children().last()[0]) {
@@ -432,25 +433,33 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // Append the text to its group: 
       t = that._wrapper.text(g, 0, num(textY), tspans);
-      
     });
     
     // Add invisible lines from bottom to height
     
-    var bgRect = this._wrapper.rect(g, 0, 0, 
-                                    num(maxWidth) + num(padding['right']) + num(padding['left']), 
-                                    num(g.height()) + num(padding['bottom']), 
-                                    {class: 'textbox'} 
-                                    );
-    g.insertBefore( bgRect, g.firstChild );
+    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
+//     var fontSize = num(StyleSheet.get('text', 'font-size', g));
+//     var diff = Math.max(lineHeight - fontSize, 0); 
+//     vad lh = Math.max(lineHeight - fontSize, 0);
+//     stroke = num(StyleSheet.get('rect#select', 'stroke-width', $(this).parent()[0]));
+//     console.log(padding['bottom']); 
     
+    console.log(g.firstChild.getBBox());
+
+    var width = num(maxWidth) + num(padding['right']) + num(padding['left']); 
+    var height = g.height() + num(padding['bottom']) + 
+      g.firstChild.getBBox().y; // this last value differs depending on 
+                                // lineHeight and such
+    var bgRect = that._wrapper.rect(g, 0, 0, width, height, 
+                                    {class: 'background'} 
+                                   );
+    g.insertBefore( bgRect, g.firstChild );
     // keep group in focus if selected
     g.reload();
-    
+   
     this._textPositions = paragraphCount; 
     
     // keep marker visible if group was selected
-    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
     if (g._selected) {
       
       var possi = this._getTextPosition(this._textPosition);

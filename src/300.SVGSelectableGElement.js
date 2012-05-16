@@ -319,7 +319,12 @@ $.extend(SVGSelectableGElement.prototype, {
         _render: function() {
           if (this._selected) {
             // add a select highlighter inside the grouping element
-            this._wrapper.rect(this, 0, 0, this.width(), this.height(), {id: 'select'});
+//             console.log("300", $(this)[0]);
+//             console.log($(this));
+//             stroke = num(StyleSheet.get('rect#select', 'stroke-width', $(this).parent()[0]));
+            background = $(this).find("rect.background")[0].getBBox();
+            console.log(background);
+            this._wrapper.rect(this, 0, 0, background.width, background.height, {id: 'select'});
           }
           
         },

@@ -1,4 +1,6 @@
-
+svg {
+  background-color: #ccc; 
+}
 
 /*@font-face {
   font-family: "Alba Super";
@@ -6,8 +8,8 @@
 }*/
 
 
-rect.textbox {
-  padding: 6pt; /* Custom CSS for TextBox SVG */
+rect.background {
+  padding: 0pt; /* Custom CSS for TextBox SVG */
   padding-left: 8pt;
   padding-right: 8pt;
 }
@@ -19,12 +21,11 @@ rect.list {
 
 text { /* Paragrafs */
   font-family: "Georgia";
-  font-size: 5pt;
+  font-size: 6pt;
   font-style: italic;
-  line-height: 9pt; /* Custom CSS for TextBox SVG */
+  line-height: 6pt; /* Custom CSS for TextBox SVG */
   fill: #515359;
   text-rendering: geometricprecision;
-  padding-bottom: 6pt; /* Custom CSS for TextBox SVG */
 }
 .heading text {
   font-size: 12pt;
@@ -35,10 +36,10 @@ rect#select {
   stroke: #FFAA00;
   fill: none;
   stroke-opacity: 0.6;
-  stroke-width: 2;
+  stroke-width: 0;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-meterlimit: 10;
+  stroke-miterlimit: 10;
 }
 
 rect.marker {
@@ -55,7 +56,7 @@ g.contextmenu rect.marking {
   fill: #E3E3E3;
 }
 
-rect.textbox {
+rect.background {
   fill: #FFFFFF;
 }
 
