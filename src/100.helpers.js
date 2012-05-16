@@ -313,8 +313,8 @@ var StyleSheet = {
   _parentToString: function(parent) {
     if (parent) {
       return parent.nodeName 
-        + "--" + ($(parent).attr('id') || "") 
-        + "--" + ($(parent).attr('class') || "").replace(" ", ".");
+        + "--" + (parent.getAttribute('id') || "") 
+        + "--" + (parent.getAttribute('class') || "").replace(" ", ".");
     }
     else {
       return ""; 
@@ -333,7 +333,7 @@ var StyleSheet = {
     if (this.StyleCache[parent][selector][style] === undefined) {
       this.StyleCache[parent][selector][style] = value; 
     }
-    console.log("StyleCache", this.StyleCache);
+//     console.log("StyleCache", this.StyleCache);
     return value; 
   }
 }

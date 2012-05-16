@@ -343,8 +343,8 @@ var StyleSheet = {
   _parentToString: function(parent) {
     if (parent) {
       return parent.nodeName 
-        + "--" + ($(parent).attr('id') || "") 
-        + "--" + ($(parent).attr('class') || "").replace(" ", ".");
+        + "--" + (parent.getAttribute('id') || "") 
+        + "--" + (parent.getAttribute('class') || "").replace(" ", ".");
     }
     else {
       return ""; 
