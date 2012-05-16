@@ -1865,7 +1865,7 @@ $.extend(SVGEditableTextBox.prototype, {
         }
         
         // Split into words and spaces
-        regex = /[ \u00A0]|[^ \u00A0]+/g; 
+        regex = /[ \u00A0]{1}|[^ \u00A0]+/g; 
         remainingWords = []; 
         
         while ((w = regex.exec(section)) != null) {
