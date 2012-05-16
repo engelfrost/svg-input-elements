@@ -310,7 +310,7 @@ $.extend(SVGEditableTextBox.prototype, {
             // Measure the word length
             
             tmpTspans = that._wrapper.createText(); 
-            tmpTspans.span( remainingWords[0], tspanSettings );
+            tmpTspans.span( remainingWords[0].replace(/ /g, "\u00A0"), tspanSettings );
             tmpText = that._wrapper.text( -1000, -1000, tmpTspans); //, textSettings );
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
@@ -350,7 +350,7 @@ $.extend(SVGEditableTextBox.prototype, {
                   // Measure the word length
                   
                   tmpTspans = that._wrapper.createText(); 
-                  tmpTspans.span(newTmpWord, tspanSettings);
+                  tmpTspans.span(newTmpWord.replace(/ /g, "\u00A0"), tspanSettings);
                   tmpText = that._wrapper.text(-1000, -1000, tmpTspans); //, textSettings);
                   
                   cachedWord = 
