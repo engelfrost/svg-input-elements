@@ -195,7 +195,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var tspanSettings = { 
       'dy': num(tspanDy), 
       'x': 0, 
-      'dx': num(padding['left']) //, 
+      'dx': num(padding['left']), 
 //       'xml:space': 'preserve'
     };
     var textSettings = {
@@ -203,7 +203,7 @@ $.extend(SVGEditableTextBox.prototype, {
       'style': StyleSheet.getAllStyles('text', g)
     };
     
-    console.log(textSettings); 
+//     console.log(textSettings); 
     
     var paragraphCount = []; // 
     var rowCount = []; 
@@ -260,7 +260,7 @@ $.extend(SVGEditableTextBox.prototype, {
           textY += num(StyleSheet.get( 'text', 'padding-bottom', g )) * 1.4; // Ugly-fix!!!
         }
       }
-
+      
       tspans = that._wrapper.createText(); 
       
       // split paragraph into sections by \r
@@ -270,13 +270,13 @@ $.extend(SVGEditableTextBox.prototype, {
         sections.push(w[0]);
       }
       if (sections.length == 0) {
-        sections = [' ']; 
+        sections = ["\u00A0"]; 
       }
       
       // Special case: trailing empty new line
       var lastSectionLength = sections[sections.length - 1].length; 
       if (sections[sections.length - 1].charAt(lastSectionLength-1) == "\r") {
-        sections.push(" "); // Add space so that height can be calculated
+        sections.push("\u00A0"); // Add no-break space so that height can be calculated
       }
       
       $.each( sections, function( j, section ) {
@@ -379,7 +379,7 @@ $.extend(SVGEditableTextBox.prototype, {
                   }
                   
                   // Add tmpWord to our "real" textbox
-                  el = tspans.span( tmpWord, tspanSettings ); 
+                  el = tspans.span( tmpWord.replace(/ /g, "\u00A0"), tspanSettings ); 
                   rowCount.push(lastRow);
                   lastRow += tmpWord.length; // adds one too many if final row
                   tmpWord = ''; 
@@ -408,7 +408,7 @@ $.extend(SVGEditableTextBox.prototype, {
               }
               
               // Save this row
-              tspans.span( tmpRow, tspanSettings );
+              tspans.span( tmpRow.replace(/ /g, "\u00A0"), tspanSettings );
               rowCount.push( lastRow ); // counter
               lastRow += tmpRow.length;
               // Reset the row variable: 
@@ -419,7 +419,7 @@ $.extend(SVGEditableTextBox.prototype, {
         }
         
         // We're done, so add the very last row of text
-        tspans.span( tmpRow, tspanSettings ); 
+        tspans.span( tmpRow.replace(/ /g, "\u00A0"), tspanSettings ); 
         rowCount.push( lastRow ); 
         
         // Note: lastRow will be 1 too much for the final row, which does not 
@@ -435,11 +435,13 @@ $.extend(SVGEditableTextBox.prototype, {
       
     });
     
-    var bgRect = this._wrapper.rect( g, 0, 0, 
-                                   num(maxWidth) + num(padding['right']) + num(padding['left']), 
-                                   num(g.height()) + num(padding['bottom']), 
-                                   {class: 'textbox'} 
-                                 );
+    // Add invisible lines from bottom to height
+    
+    var bgRect = this._wrapper.rect(g, 0, 0, 
+                                    num(maxWidth) + num(padding['right']) + num(padding['left']), 
+                                    num(g.height()) + num(padding['bottom']), 
+                                    {class: 'textbox'} 
+                                    );
     g.insertBefore( bgRect, g.firstChild );
     
     // keep group in focus if selected

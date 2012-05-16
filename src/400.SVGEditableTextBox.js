@@ -53,6 +53,7 @@ $.extend(SVGEditableTextBox, {
               break;
               
             case 32: // space
+              char = "\u00A0";
               break;
               
             default: 

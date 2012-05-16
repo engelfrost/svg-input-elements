@@ -333,7 +333,6 @@ var StyleSheet = {
     if (this.StyleCache[parent][selector][style] === undefined) {
       this.StyleCache[parent][selector][style] = value; 
     }
-//     console.log("StyleCache", this.StyleCache);
     return value; 
   }
 }
