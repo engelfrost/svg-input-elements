@@ -9,7 +9,7 @@ svg {
 
 
 rect.background {
-  padding: 0pt; /* Custom CSS for TextBox SVG */
+  padding: 6pt; /* Custom CSS for TextBox SVG */
   padding-left: 8pt;
   padding-right: 8pt;
 }
@@ -23,7 +23,7 @@ text { /* Paragrafs */
   font-family: "Georgia";
   font-size: 6pt;
   font-style: italic;
-  line-height: 6pt; /* Custom CSS for TextBox SVG */
+  line-height: 9pt; /* Custom CSS for TextBox SVG */
   fill: #515359;
   text-rendering: geometricprecision;
 }

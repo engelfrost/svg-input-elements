@@ -183,6 +183,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var g = this.super._render.call(this, this._parent, this._id, gSettings);
     var padding = this._getGPadding(g);
     var maxWidth = this._width - padding['left'] - padding['right'];
+//     console.log(maxWidth);
     
     // padding-top is applied through text elements,
     // padding-left is applied through tspan elements and 
@@ -311,21 +312,26 @@ $.extend(SVGEditableTextBox.prototype, {
             // Measure the word length
             
             tmpTspans = that._wrapper.createText(); 
-            tmpTspans.span( remainingWords[0].replace(/ /g, "\u00A0"), tspanSettings );
-            tmpText = that._wrapper.text( -1000, -1000, tmpTspans); //, textSettings );
+            tmpTspans.span( "\u00A0"+remainingWords[0]+"\u00A0", tspanSettings );
+            tmpText = that._wrapper.text( -1000, -1000, tmpTspans, textSettings );
+            
+            wrapperTspans = that._wrapper.createText(); 
+            wrapperTspans.span( "\u00A0\u00A0", tspanSettings );
+            wrapperText = that._wrapper.text( -1000, -1000, wrapperTspans, textSettings );
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
-              width: tmpText.width() 
+              width: tmpText.width() - wrapperText.width(),
               // Timestamp not needed unless we maintain the cache size
 //               timestamp: new Date().getTime()
             }; 
             
             $(tmpText).remove();
+            $(wrapperText).remove();
           }
           
           wordWidth = cachedWord.width; 
           
-          if ( ( tmpRowWidth + wordWidth ) <= maxWidth || maxWidth == -1 ) {
+          if ((tmpRowWidth + wordWidth) <= maxWidth || maxWidth == -1) {
             // We're OK, add the word to the row
             tmpRow = tmpRow + remainingWords.shift(); 
             tmpRowWidth += wordWidth; 
@@ -444,9 +450,8 @@ $.extend(SVGEditableTextBox.prototype, {
 //     stroke = num(StyleSheet.get('rect#select', 'stroke-width', $(this).parent()[0]));
 //     console.log(padding['bottom']); 
     
-    console.log(g.firstChild.getBBox());
 
-    var width = num(maxWidth) + num(padding['right']) + num(padding['left']); 
+    var width = num(maxWidth) + padding['right'] + padding['left']; 
     var height = g.height() + num(padding['bottom']) + 
       g.firstChild.getBBox().y; // this last value differs depending on 
                                 // lineHeight and such
