@@ -1797,7 +1797,7 @@ $.extend(SVGEditableTextBox.prototype, {
     // Special case: trailing empty paragraph
     var lastParagraphLength = paragraphs[paragraphs.length - 1].length; 
     if (paragraphs[paragraphs.length-1].charAt(lastParagraphLength-1) == "\n") {
-      paragraphs.push(" "); // Add space so that height can be calculated
+      paragraphs.push("\u00A0"); // Add space so that height can be calculated
     }
     
 //     paragraphs = regex.exec(this._text);
@@ -1865,7 +1865,7 @@ $.extend(SVGEditableTextBox.prototype, {
         }
         
         // Split into words and spaces
-        regex = / |[^ ]+/g; 
+        regex = /[ \u00A0]|[^ \u00A0]+/g; 
         remainingWords = []; 
         
         while ((w = regex.exec(section)) != null) {
@@ -1979,7 +1979,7 @@ $.extend(SVGEditableTextBox.prototype, {
               // The row is full, the next word does not fit here
               
               // Always end with a space, even if the line is too long. 
-              if (!/ $/.test(tmpRow) && remainingWords[0] === ' ') {
+              if (!/[ \u00A0]{1}$/.test(tmpRow) && remainingWords[0] === ' ') {
                 tmpRow += remainingWords.shift(); 
               }
               
