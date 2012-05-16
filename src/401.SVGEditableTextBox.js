@@ -195,8 +195,8 @@ $.extend(SVGEditableTextBox.prototype, {
     var tspanSettings = { 
       'dy': num(tspanDy), 
       'x': 0, 
-      'dx': num(padding['left']), 
-      'xml:space': 'preserve'
+      'dx': num(padding['left']) //, 
+//       'xml:space': 'preserve'
     };
     var textSettings = {
       //TODO: Make sure this styling is complete!!!
