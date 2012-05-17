@@ -5,7 +5,6 @@
 
   <style type="text/css" media="all">
     @import url("css/svg.css");
-    @import url("css/svgte.css");
   </style>
 <!-- <link rel="stylesheet" href="css/svgte.css" \> -->
 <!-- <link rel="stylesheet" href="css/svg.css" \> -->
@@ -32,9 +31,12 @@ function init(svg){
 
 	try {
 	s = svg.input.textArea(18, 97, "When you look at basketball shoes, what do you see? A big swoosh. Three stripes. Michael Jordan. A billboard molded to your feet. But do you see the technology? Though maybe not as blatant as an Intel sticker on your laptop, every shoe showcases its own advanced technology. Don't worry, you can't miss it on these, the best basketball shoes on the planet. Because they roll with carbon fiber and Kevlar.", {width: '200'});
-	s.bind("change", function (e) {
-    console.log("changed");
-	});
+  s.bind("SVGInput_changedSize", function (e, width, height) {
+    console.log("changed size: " + width.toString() + "x" + height.toString());
+  });
+  s.bind("SVGInput_changedText", function (e, string) {
+    console.log("changed text: " + string);
+  });
 	
 	} catch(e) {
 		var err = e;

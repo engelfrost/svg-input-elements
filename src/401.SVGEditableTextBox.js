@@ -11,6 +11,7 @@ $.extend(SVGEditableTextBox.prototype, {
   _moveDown: true,
   _renderTimer: -1,
   _contextMenu: false,
+  _size: {width: 0, height: 0}, // cached size, for detecting size change
   
   _history: [{}],
   _historyPos: 0,
@@ -478,9 +479,18 @@ $.extend(SVGEditableTextBox.prototype, {
         }));
     }
     
+    // Trigger events if things have changed
+    this.trigger("SVGInput_changedText", [this._text]);
+    if (this._size.width != width || this._size.height != height) {
+      this._size.width = width; 
+      this._size.height = height; 
+      this.trigger("SVGInput_changedSize", [width, height]); 
+    }
+    
+    // Performance goals: 
     console.timeEnd("total time");
     console.log('goal:', (1/24)*1000);
-    this.trigger("change");
+    
     return this;
   },
   

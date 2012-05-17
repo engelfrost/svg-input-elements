@@ -331,7 +331,7 @@ $.extend(SVGSelectableGElement.prototype, {
 //             console.log($(this));
 //             stroke = num(StyleSheet.get('rect#select', 'stroke-width', $(this).parent()[0]));
             background = $(this).find("rect.background")[0].getBBox();
-            console.log(background);
+//             console.log(background);
             this._wrapper.rect(this, 0, 0, background.width, background.height, {id: 'select'});
           }
           
