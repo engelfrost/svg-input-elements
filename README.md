@@ -51,28 +51,48 @@ include these libraries, and SVG Input Elements:
 ```
 Also include some styles (apologies for bad documentation and coding on this 
 part, SVG Input Elements doesn't behave as expected if certain styles aren't 
-defined):
+defined. Also, in a futur version all SVG Input Elements classes and IDs will 
+have a special prefix.):
 ```
-<link rel="stylesheet" href="svg.css" \>
+<link rel="stylesheet" href="svg.css" />
 ```
-Create an inline SVG element with the following attributes: 
+Create an inline SVG element with the following attributes (the ID is optional
+but useful, especially if you have more than one SVG element): 
 ```
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" unselectable="on" style="-webkit-user-select: none;"></svg>
+<svg id="svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" unselectable="on" style="-webkit-user-select: none;"></svg>
 ```
+Make sure that the document is loaded before we start manipulating it, see the
+[jQuery SVG documentation](http://keith-wood.name/svgRef.html) for more 
+information on this: 
+```
+$(document).ready(function(){
+  $('#svg').svg({onLoad: init, settings: {}});  
+});
+```
+
 You can now create a textarea using the following code: 
 ```
-var parent = $('svg')[0]; 
-var x = 10; 
-var y = 10; 
-var settings = {width: '200'}; 
-svg.input.textArea(parent, x, y, "text", settings);
+function init(svg) {
+    var parent = $('#svg')[0]; 
+    var x = 10; 
+    var y = 10; 
+    var settings = {width: '200'}; 
+
+    svg.input.textArea(parent, x, y, "text", settings);
+}
 ```
 the `parent` parameter is optional. The properties of the `settings` object 
-corresponds to the attributes of an SVG <g> tag, plus an additional width 
+corresponds to the attributes of an SVG `<g>` tag, plus an additional `width` 
 parameter. 
+ 
+You should now have a working text area!
 
-In future versions all SVG Input Elements classes and IDs will have a special 
-prefix. 
+SVG Input Elements trigger events that you can bind: 
+```
+textArea = svg.input.textArea(parent, x, y, "text", settings);
+textArea.bind("SVGInput_changedText", function(e) {
+  alert("text changed");
+}
 
 Versions
 --------
