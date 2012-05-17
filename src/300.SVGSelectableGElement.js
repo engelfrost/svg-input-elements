@@ -252,6 +252,14 @@ $.extend(SVGSelectableGElement.prototype, {
   selected: false,
   _class: 'selectable',
   
+  get _events() { return (this._eventmanager || (this._eventmanager = $('<input>'))) },
+  bind: function() {
+    this._events.bind.apply(this._events, arguments);
+  },
+  trigger: function() {
+    this._events.trigger.apply(this._events, arguments);
+  },
+  
   init: function() {
   
     // bind to events

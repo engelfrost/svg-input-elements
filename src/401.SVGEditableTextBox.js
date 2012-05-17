@@ -480,6 +480,8 @@ $.extend(SVGEditableTextBox.prototype, {
     
     console.timeEnd("total time");
     console.log('goal:', (1/24)*1000);
+    this.trigger("change");
+    return this;
   },
   
   _coordInText: function(g,e,no_space_end){    

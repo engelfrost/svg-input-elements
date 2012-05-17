@@ -502,17 +502,7 @@ function SVGInputElements(wrapper) {
 }
 
 $.extend(SVGInputElements.prototype, {
-	_windowLoad: false,
-	ready: function() {
-		this._windowLoad = true;
-	},
-	get _events(){ return (this._eventmanager || (this._eventmanager = $('<input>'))) },
-	bind: function() {
-		this._events.bind.apply(this._events, arguments);
-	},
-	trigger: function() {
-		this._events.trigger.apply(this._events, arguments);
-	},
+
   /** 
    * Create a textArea.
    * Specify both of x and y or neither of them.
@@ -844,6 +834,14 @@ $.extend(SVGSelectableGElement.prototype, {
   _group: null,
   selected: false,
   _class: 'selectable',
+  
+  get _events() { return (this._eventmanager || (this._eventmanager = $('<input>'))) },
+  bind: function() {
+    this._events.bind.apply(this._events, arguments);
+  },
+  trigger: function() {
+    this._events.trigger.apply(this._events, arguments);
+  },
   
   init: function() {
   
@@ -2062,6 +2060,8 @@ $.extend(SVGEditableTextBox.prototype, {
     
     console.timeEnd("total time");
     console.log('goal:', (1/24)*1000);
+    this.trigger("change");
+    return this;
   },
   
   _coordInText: function(g,e,no_space_end){    

@@ -6,17 +6,7 @@ function SVGInputElements(wrapper) {
 }
 
 $.extend(SVGInputElements.prototype, {
-	_windowLoad: false,
-	ready: function() {
-		this._windowLoad = true;
-	},
-	get _events(){ return (this._eventmanager || (this._eventmanager = $('<input>'))) },
-	bind: function() {
-		this._events.bind.apply(this._events, arguments);
-	},
-	trigger: function() {
-		this._events.trigger.apply(this._events, arguments);
-	},
+
   /** 
    * Create a textArea.
    * Specify both of x and y or neither of them.

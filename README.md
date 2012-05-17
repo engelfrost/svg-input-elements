@@ -19,7 +19,8 @@ This project started out as a sub-project to a master thesis project,
 [Personas in Real Life](http://personasinreallife.tumblr.com).
 
 __Go to:__ [Features](#features-), [Requirements](#requirements), 
-[Versions](#versions) or [Development](#development)
+[Getting Started](#getting-started), [Versions](#versions) or 
+[Development](#development)
 
 Features 
 --------
@@ -38,19 +39,54 @@ This project requires [jQuery](http://docs.jquery.com/Downloading_jQuery)
 (we're using 1.7.2) and the 
 [jQuery SVG plugin](http://keith-wood.name/svg.html)
 
+Getting Started
+---------------
+[Download jQuery](http://jquery.com/) (we've tested on version 1.7.2) and 
+[jQuery SVG](http://keith-wood.name/svg.html) (tested on version 1.4.5) and 
+include these libraries, and SVG Input Elements: 
+```
+<script type="text/javascript" src="jquery.js" />
+<script type="text/javascript" src="jquery.svg.js" />
+<script type="text/javascript" src="jquery.svg.input.js" />
+```
+Also include some styles (apologies for bad documentation and coding on this 
+part, SVG Input Elements doesn't behave as expected if certain styles aren't 
+defined):
+```
+<link rel="stylesheet" href="svg.css" \>
+```
+Create an inline SVG element with the following attributes: 
+```
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" unselectable="on" style="-webkit-user-select: none;"></svg>
+```
+You can now create a textarea using the following code: 
+```
+var parent = $('svg')[0]; 
+var x = 10; 
+var y = 10; 
+var settings = {width: '200'}; 
+svg.input.textArea(parent, x, y, "text", settings);
+```
+the `parent` parameter is optional. The properties of the `settings` object 
+corresponds to the attributes of an SVG <g> tag, plus an additional width 
+parameter. 
+
+In future versions all SVG Input Elements classes and IDs will have a special 
+prefix. 
+
 Versions
 --------
 ###v1.0
-__Scheduled early June__ This release will provide several text related input
+__Scheduled early June.__ This release will provide several text related input
 elements and should be stable on all major browsers except perhaps for 
 Internet Explorer, which seems to have very poor SVG support even in verion 9. 
 
 ###v0.3
-__Coming soon:__ Will feature a list variant of the text input element. 
+__Coming soon.__ Will feature a list variant of the text input element. 
 
 ###v0.2.1
 __Released 16 May 2012.__ Minor enhancements, bugfixes and support for 
-@import. 
+@import. No longer requires support for the xml:space attribute. 
 
 ###v0.2
 __Released 15 May 2012.__ This release provides bugfixes and several 

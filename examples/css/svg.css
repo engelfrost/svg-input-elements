@@ -1,6 +1,17 @@
 svg {
   background-color: #ccc; 
+  border: solid 1px #ddd;
 }
+
+g.textbox {
+  cursor: default;
+}
+
+g.textbox.selected text {
+  cursor: text;
+}
+
+
 
 /*@font-face {
   font-family: "Alba Super";
