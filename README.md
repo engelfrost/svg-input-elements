@@ -19,8 +19,8 @@ This project started out as a sub-project to a master thesis project,
 [Personas in Real Life](http://personasinreallife.tumblr.com).
 
 __Go to:__ [Features](#features-), [Requirements](#requirements), 
-[Getting Started](#getting-started), [Versions](#versions) or 
-[Development](#development)
+[Getting Started](#getting-started), [Events](#events), [Versions](#versions) 
+or [Development](#development)
 
 Features 
 --------
@@ -91,10 +91,20 @@ You should now have a working text area!
 SVG Input Elements trigger events that you can bind: 
 ```
 textArea = svg.input.textArea(parent, x, y, "text", settings);
-textArea.bind("SVGInput_changedText", function(e) {
-  alert("text changed");
+textArea.bind("SVGInput_changedText", function(e, paramText) {
+  alert("text changed: " + paramText);
 }
 ```
+
+Events
+------
+* __SVGInput_textChanged__: Triggered when the SVG Input Element text has 
+changed in some way. Returns one parameter: 
+  * _param1_: The new text
+* __SVGInput_sizeChanged__: Triggered when the size of the SVG Input Element 
+changes. Returns two parameters: 
+  * _param1_: The new width
+  * _param2_: The new height
 
 Versions
 --------
