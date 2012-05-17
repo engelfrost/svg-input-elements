@@ -87,12 +87,14 @@ parameter.
  
 You should now have a working text area!
 
+###Binding Events
 SVG Input Elements trigger events that you can bind: 
 ```
 textArea = svg.input.textArea(parent, x, y, "text", settings);
 textArea.bind("SVGInput_changedText", function(e) {
   alert("text changed");
 }
+```
 
 Versions
 --------
