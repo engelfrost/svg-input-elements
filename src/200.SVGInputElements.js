@@ -38,6 +38,12 @@ $.extend(SVGInputElements.prototype, {
   },
   
   _textArea: function (parent, value, settings) {
+    // If width is not enforced and parent has width, inherit width
+    if (typeof settings.width == 'undefined') {
+      if (box = parent.getBBox()) {
+        width = box.width; 
+      }
+    }
     width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
     height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
     delete settings.width; 

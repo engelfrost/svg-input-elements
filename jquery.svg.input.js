@@ -534,6 +534,12 @@ $.extend(SVGInputElements.prototype, {
   },
   
   _textArea: function (parent, value, settings) {
+    // If width is not enforced and parent has width, inherit width
+    if (typeof settings.width == 'undefined') {
+      if (box = parent.getBBox()) {
+        width = box.width; 
+      }
+    }
     width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
     height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
     delete settings.width; 
@@ -834,17 +840,22 @@ $.extend(SVGSelectableGElement.prototype, {
   _group: null,
   selected: false,
   _class: 'selectable',
+  _events: null, 
   
-  get _events() { return (this._eventmanager || (this._eventmanager = $('<input>'))) },
   bind: function() {
     this._events.bind.apply(this._events, arguments);
   },
   trigger: function() {
     this._events.trigger.apply(this._events, arguments);
   },
+  //TODO: More of these. 
+  change: function() {
+    this.bind.apply(this, arguments.unshift('change'));
+  },
   
   init: function() {
-  
+    this._events = this._eventmanager = $('<input>'),
+         
     // bind to events
     SVGSelectableGElement.setup( this );
     
@@ -1592,6 +1603,7 @@ $.extend(SVGEditableTextBox.prototype, {
   _renderTimer: -1,
   _contextMenu: false,
   _size: {width: 0, height: 0}, // cached size, for detecting size change
+  g: null,
   
   _history: [{}],
   _historyPos: 0,
@@ -1663,6 +1675,14 @@ $.extend(SVGEditableTextBox.prototype, {
     $(window).unbind('keydown.editable-textbox');
     
     this.super.destroy.apply(this);
+  },
+  
+  getHeight: function() {
+    return this._size['height'];
+  },
+  
+  getWidth: function() {
+    return this._size['width'];
   },
   
   openContextMenu: function(g,e) {
@@ -2060,16 +2080,18 @@ $.extend(SVGEditableTextBox.prototype, {
     }
     
     // Trigger events if things have changed
-    this.trigger("SVGInput_changedText", [this._text]);
+    this.trigger("change", {trigger: g});
     if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
-      this.trigger("SVGInput_changedSize", [width, height]); 
+      this.trigger("changeSize", {trigger: g}); 
     }
     
     // Performance goals: 
     console.timeEnd("total time");
     console.log('goal:', (1/24)*1000);
+    
+    this.g = g; 
     
     return this;
   },

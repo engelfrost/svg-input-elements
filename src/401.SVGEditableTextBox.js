@@ -12,6 +12,7 @@ $.extend(SVGEditableTextBox.prototype, {
   _renderTimer: -1,
   _contextMenu: false,
   _size: {width: 0, height: 0}, // cached size, for detecting size change
+  g: null,
   
   _history: [{}],
   _historyPos: 0,
@@ -83,6 +84,14 @@ $.extend(SVGEditableTextBox.prototype, {
     $(window).unbind('keydown.editable-textbox');
     
     this.super.destroy.apply(this);
+  },
+  
+  getHeight: function() {
+    return this._size['height'];
+  },
+  
+  getWidth: function() {
+    return this._size['width'];
   },
   
   openContextMenu: function(g,e) {
@@ -480,16 +489,18 @@ $.extend(SVGEditableTextBox.prototype, {
     }
     
     // Trigger events if things have changed
-    this.trigger("SVGInput_changedText", [this._text]);
+    this.trigger("change", {trigger: g});
     if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
-      this.trigger("SVGInput_changedSize", [width, height]); 
+      this.trigger("changeSize", {trigger: g}); 
     }
     
     // Performance goals: 
     console.timeEnd("total time");
     console.log('goal:', (1/24)*1000);
+    
+    this.g = g; 
     
     return this;
   },
