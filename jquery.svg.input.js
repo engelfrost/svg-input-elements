@@ -2079,12 +2079,15 @@ $.extend(SVGEditableTextBox.prototype, {
         }));
     }
     
+    var eChange = $.Event("change", {target: g});
+    var eChangeSize = $.Event("changeSize", {target: g});
+    
     // Trigger events if things have changed
-    this.trigger("change", {trigger: g});
+    this.trigger(eChange);
     if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
-      this.trigger("changeSize", {trigger: g}); 
+      this.trigger(eChangeSize, [width, height]); 
     }
     
     // Performance goals: 
