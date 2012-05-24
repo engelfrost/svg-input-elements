@@ -491,19 +491,27 @@ $.extend(SVGEditableTextBox.prototype, {
     var eChange = $.Event("change", {target: g});
     var eChangeSize = $.Event("changeSize", {target: g});
     
+    
     // Trigger events if things have changed
-    this.trigger(eChange);
+//     this.change();
+//     console.log("svg", eChange); 
+    
+//     $(this).trigger(eChange);
     if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
-      this.trigger(eChangeSize, [width, height]); 
+      this.trigger(eChange, [width, height]); 
+      console.log("triggered changeSize", g);
+    }
+    else {
+      console.log("w", width, "h", height); 
     }
     
     // Performance goals: 
     console.timeEnd("total time");
     console.log('goal:', (1/24)*1000);
     
-    this.g = g; 
+//     this._group = g; 
     
     return this;
   },
