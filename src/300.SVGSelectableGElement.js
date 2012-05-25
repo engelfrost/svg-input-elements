@@ -137,7 +137,7 @@ $.extend(SVGSelectableGElement, {
         }
         
         // pass along the event to outsiders
-        g.trigger(new $.Event('mousedown', {target: g}));
+//         g.trigger(new $.Event('mousedown', {target: g}));
         
       }
       else {
