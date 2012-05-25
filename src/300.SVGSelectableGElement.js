@@ -97,6 +97,8 @@ $.extend(SVGSelectableGElement, {
   
   _mouseup: function(e){
   
+  	var g;
+  
     if ($.inArray(e.target.constructor, types)!=-1){
   
       var g = this._getGroupTarget(e.target);
@@ -106,11 +108,16 @@ $.extend(SVGSelectableGElement, {
         if (el.selected) {
           el.mouseup(g,e);
         }
+        
+        el.trigger($.Event('mouseup', {target: g}));
       });
     } else {
-      g = this.selectedGroup();
-      if (g)
+      var g = this.selectedGroup();
+      if (g) {
         g.mouseup(g._group,e);
+        
+        g.trigger($.Event('mouseup', {target: g}));
+      }
     }
   },
   
@@ -128,6 +135,9 @@ $.extend(SVGSelectableGElement, {
           $(g).parent().append(g);
           g.select(g,e);
         }
+        
+        // pass along the event to outsiders
+        g.trigger(new $.Event('mousedown', {target: g}));
         
       }
       else {
