@@ -865,9 +865,9 @@ $.extend(SVGSelectableGElement.prototype, {
     this._events.trigger.apply(this._events, arguments);
   },
 //   TODO: More of these. 
-  change: function() {
-    this.bind.apply(this, arguments.unshift('change'));
-  },
+//   change: function() {
+//     this.bind.apply(this, arguments.unshift('change'));
+//   },
   
   init: function() {
     this._events = this._eventmanager = $('<input data-unique="'+Math.random()+'">'),
@@ -2129,13 +2129,13 @@ $.extend(SVGEditableTextBox.prototype, {
 //     this.change();
 //     console.log("svg", eChange); 
     
-//     $(this).trigger(eChange);
-//     if (this._size.width != width || this._size.height != height) {
+    $(this).trigger(eChange);
+    if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
-      this.trigger(eChange, [width, height]); 
+      this.trigger(eChangeSize, [width, height]); 
       console.log("triggered changeSize", g);
-//     }
+    }
 //     else {
 //       console.log("w", width, "h", height); 
 //     }

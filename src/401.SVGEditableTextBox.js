@@ -522,13 +522,13 @@ $.extend(SVGEditableTextBox.prototype, {
 //     this.change();
 //     console.log("svg", eChange); 
     
-//     $(this).trigger(eChange);
-//     if (this._size.width != width || this._size.height != height) {
+    $(this).trigger(eChange);
+    if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
-      this.trigger(eChange, [width, height]); 
+      this.trigger(eChangeSize, [width, height]); 
       console.log("triggered changeSize", g);
-//     }
+    }
 //     else {
 //       console.log("w", width, "h", height); 
 //     }
