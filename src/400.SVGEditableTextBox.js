@@ -338,13 +338,8 @@ $.extend(SVGEditableTextBox, {
                 if (selectedGroup._contextMenu) {
                   selectedGroup.closeContextMenu();
                 }
-                else if (selectedGroup._selection) {
-                  $('.marking').remove();
-                  selectedGroup._selection = null;
-                }
-                else if (SVGTextMarker.isVisible()) {
-                  SVGTextMarker.hide();
-                  unselect_marker = true;
+                else if (selectedGroup._selection || SVGTextMarker.isVisible()) {
+                  selectedGroup.stopEditing();
                 }
                 else {
                   SVGSelectableGElement.deselectAll();

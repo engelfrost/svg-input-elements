@@ -6,6 +6,7 @@ $.extend(SVGEditableTextBox.prototype, {
   _textPosition: 0, 
   _selectStartCoord: null,
   _selection: null,
+  _selectionDisabled: false,
   _tplClickState: false,
   _keepDesiredX: false,
   _moveDown: true,
@@ -142,6 +143,23 @@ $.extend(SVGEditableTextBox.prototype, {
     // TODO: Implement context menu for the group
   },
   
+  stopEditing: function(all) {
+    if (this._selection && !all) {
+      $('.marking').remove();
+      this._selection = null;
+    }
+    else if (SVGTextMarker.isVisible() && !all) {
+      SVGTextMarker.hide();
+      unselect_marker = true;
+    }
+    else {
+    	$('.marking').remove();
+      this._selection = null;
+      SVGTextMarker.hide();
+      unselect_marker = true;
+    }
+  },
+  
   getSelectedText: function() {
     var txt;
     if (this._selection) {
@@ -164,6 +182,15 @@ $.extend(SVGEditableTextBox.prototype, {
       this._textPosition = Math.min(p1,p2);
       this.update();
     }
+  },
+  
+  disableSelection: function() {
+  	this.stopEditing(true);
+  	this._selectionDisabled = true;
+  },
+  
+  enableSelection: function(){
+  	this._selectionDisabled = false;
   },
   
   update: function() {
@@ -475,17 +502,17 @@ $.extend(SVGEditableTextBox.prototype, {
     this._textPositions = paragraphCount; 
     
     // keep marker visible if group was selected
-    if (g._selected) {
+    if (g._selected && !this._selectionDisabled) {
       
       var possi = this._getTextPosition(this._textPosition);
       var coord = this._getCoordInTextbox(g, possi.paragraph+1, possi.row+1, possi.char);
       var desx = ( this._keepDesiredX ? SVGTextMarker.getDesiredX() : coord.x );
       
       SVGTextMarker.show(this._wrapper, $.extend(coord, {
-          width   : 2 / g.getCTM().a,
-          height  : lineHeight * 1.2,
-          desx    : desx
-        }));
+	        width   : 2 / g.getCTM().a,
+  	      height  : lineHeight * 1.2,
+    	    desx    : desx
+      	}));
     }
     
     var eChange = $.Event("change", {target: g});
@@ -1205,11 +1232,13 @@ $.extend(SVGEditableTextBox.prototype, {
           var lineHeight = num(StyleSheet.get('text', 'line-height', g));
           var coord = this._coordInText(g,e,true);
           
-          SVGTextMarker.show(this._wrapper, $.extend(coord, {
-            width   : 2 / g.getCTM().a,
-            height  : lineHeight * 1.2,
-            desx    : coord.x
-          }));
+          if (!this._selectionDisabled) {
+	          SVGTextMarker.show(this._wrapper, $.extend(coord, {
+	            width   : 2 / g.getCTM().a,
+	            height  : lineHeight * 1.2,
+	            desx    : coord.x
+	          }));
+	        }
           
           row = coord.row-1;
           paragraph = coord.paragraph-1; 
@@ -1229,9 +1258,9 @@ $.extend(SVGEditableTextBox.prototype, {
   
     if (this._selectStartCoord)  {
     
-	    var screenCTM = this._selectStartCoord.parent.getScreenCTM();
-	    var lineHeight = num(StyleSheet.get('text', 'line-height', g));
-	                  
+      var screenCTM = this._selectStartCoord.parent.getScreenCTM();
+      var lineHeight = num(StyleSheet.get('text', 'line-height', g));
+                    
       var dx = Math.abs((this._selectStartCoord.x)  * screenCTM.a + screenCTM.e - e.clientX),
           dy = Math.abs((this._selectStartCoord.y + lineHeight)  * screenCTM.d + screenCTM.f - e.clientY);
           
@@ -1242,16 +1271,17 @@ $.extend(SVGEditableTextBox.prototype, {
       
       if ((dy > lineHeight || dx > 3)) {
     
-		    if (SVGTextMarker.isVisible()) {
-		                  
-		      
-			      SVGTextMarker.hide();
-		    }
-		    
-		    this._drawMarking(g,e);
-		    
-	    } 
-	    else {
+        if (SVGTextMarker.isVisible()) {
+                      
+          
+            SVGTextMarker.hide();
+        }
+        
+        if (!this._selectionDisabled)
+	        this._drawMarking(g,e);
+        
+      } 
+      else if (!this._selectionDisabled) {
           
         SVGTextMarker.show(this._wrapper, $.extend(this._selectStartCoord, {
           width   : 2 / g.getCTM().a,
@@ -1261,11 +1291,11 @@ $.extend(SVGEditableTextBox.prototype, {
         
         $('.marking').remove();
         this._selection = null;
-	    }
-	    
+      }
+      
     } 
-    else {
-    	this._drawMarking(g,e);
+    else if (!this._selectionDisabled) {
+      this._drawMarking(g,e);
     }
     
   },
@@ -1278,30 +1308,7 @@ $.extend(SVGEditableTextBox.prototype, {
     
     if ((new Date().getTime() - dclicktime < 300 || this._selection == null) && !this._tplClickState) {
     
-      //this._selection = null;
-    
-      /*
-if (g && g._selectable && g._selectable.selected){
-        
-        this.closeContextMenu();
-      
-        var coord = this._coordInText(g,e,true);
-      
-        SVGTextMarker.show(this._wrapper, $.extend(coord, {
-          width   : 2 / g.getCTM().a,
-          height  : lineHeight * 1.2,
-          desx    : coord.x
-        }));
-        
-        //this._textposition = this._getCoordInTextbox(g,coord.paragraph,coord.row,coord.char);
-        row = coord.row-1;
-        paragraph = coord.paragraph-1; 
-        this._textPosition = this._textPositions[paragraph][row] + coord.char;
-
-      }
-*/
-      
-      //$('.marking').remove();
+    	// why is this still here
       
     } else if (this._tplClickState) {
       this._tplClickState = false;
@@ -1320,7 +1327,8 @@ if (g && g._selectable && g._selectable.selected){
       
       this.closeContextMenu();
       
-      this._drawWordMarking(g,e);
+      if (!this._selectionDisabled)
+	      this._drawWordMarking(g,e);
       
     }
 
@@ -1334,8 +1342,9 @@ if (g && g._selectable && g._selectable.selected){
     this._tplClickState = true;
     
     this.closeContextMenu();
-    
-    this._drawRowMarking(g,e);
+
+    if (!this._selectionDisabled)
+	    this._drawRowMarking(g,e);
     
     //var coordInText = this._getClosestRowCoordsInText(g,e);
   },

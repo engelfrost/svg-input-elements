@@ -106,17 +106,21 @@ $.extend(SVGSelectableGElement, {
       $.each(this._instances, function(i,el){
       
         if (el.selected) {
-          el.mouseup(g,e);
+          
+          e.target = g;
+	        el.trigger(e);
+	        
+	        el.mouseup(g,e);
         }
-        
-        el.trigger($.Event('mouseup', {target: g}));
       });
     } else {
       var g = this.selectedGroup();
       if (g) {
-        g.mouseup(g._group,e);
         
-        g.trigger($.Event('mouseup', {target: g}));
+        e.target = g._group;
+        g.trigger(e);
+        
+        g.mouseup(g._group,e);
       }
     }
   },
@@ -131,13 +135,14 @@ $.extend(SVGSelectableGElement, {
       
       if (g) { // selection occured
       
+      	// pass along the event to outsiders
+        e.target = g;
+        g._selectable.trigger(e);
+      
         if (!g._selected) {
           $(g).parent().append(g);
           g.select(g,e);
         }
-        
-        // pass along the event to outsiders
-        g.trigger(new $.Event('mousedown', {target: g}));
         
       }
       else {
@@ -261,7 +266,8 @@ $.extend(SVGSelectableGElement.prototype, {
   _group: null,
   selected: false,
   _class: 'selectable',
-  _events: null, 
+  _events: null,
+  _parent: null,
   
   bind: function() {
     this._events.bind.apply(this._events, arguments);
@@ -286,6 +292,11 @@ $.extend(SVGSelectableGElement.prototype, {
   
     SVGSelectableGElement.destroy( this );
     
+  },
+  
+  appendTo: function(parent) {
+  	this._parent = parent;
+  	this._render();
   },
   
   _render: function() {
