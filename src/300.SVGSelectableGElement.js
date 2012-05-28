@@ -275,13 +275,13 @@ $.extend(SVGSelectableGElement.prototype, {
   trigger: function() {
     this._events.trigger.apply(this._events, arguments);
   },
-  //TODO: More of these. 
+//   TODO: More of these. 
   change: function() {
     this.bind.apply(this, arguments.unshift('change'));
   },
   
   init: function() {
-    this._events = this._eventmanager = $('<input>'),
+    this._events = this._eventmanager = $('<input data-unique="'+Math.random()+'">'),
          
     // bind to events
     SVGSelectableGElement.setup( this );

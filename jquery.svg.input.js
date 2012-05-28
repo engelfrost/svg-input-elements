@@ -686,6 +686,8 @@ $.extend(SVGSelectableGElement, {
   
   _mouseup: function(e){
   
+  	var g;
+  
     if ($.inArray(e.target.constructor, types)!=-1){
   
       var g = this._getGroupTarget(e.target);
@@ -695,11 +697,16 @@ $.extend(SVGSelectableGElement, {
         if (el.selected) {
           el.mouseup(g,e);
         }
+        
+        el.trigger($.Event('mouseup', {target: g}));
       });
     } else {
-      g = this.selectedGroup();
-      if (g)
+      var g = this.selectedGroup();
+      if (g) {
         g.mouseup(g._group,e);
+        
+        g.trigger($.Event('mouseup', {target: g}));
+      }
     }
   },
   
@@ -717,6 +724,9 @@ $.extend(SVGSelectableGElement, {
           $(g).parent().append(g);
           g.select(g,e);
         }
+        
+        // pass along the event to outsiders
+//         g.trigger(new $.Event('mousedown', {target: g}));
         
       }
       else {
@@ -848,13 +858,13 @@ $.extend(SVGSelectableGElement.prototype, {
   trigger: function() {
     this._events.trigger.apply(this._events, arguments);
   },
-  //TODO: More of these. 
+//   TODO: More of these. 
   change: function() {
     this.bind.apply(this, arguments.unshift('change'));
   },
   
   init: function() {
-    this._events = this._eventmanager = $('<input>'),
+    this._events = this._eventmanager = $('<input data-unique="'+Math.random()+'">'),
          
     // bind to events
     SVGSelectableGElement.setup( this );
@@ -1812,7 +1822,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var lastRow = 0; 
     var tspans; // tspans to be rendered
     var paragraphs = []; 
-    regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by, \n, preserving any \n.
+    regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by \n preserving any \n.
     while ((w = regex.exec(this._text)) != null) {
       paragraphs.push(w[0]); //.replace(/\n$/, ' '));
     }
@@ -1829,7 +1839,7 @@ $.extend(SVGEditableTextBox.prototype, {
 //     paragraphs = regex.exec(this._text);
     // Make sure caching is set up: 
     testText = this._wrapper.createText();
-    testText.span( "test", tspanSettings ); 
+    testText.span("test", tspanSettings); 
     var style = $(tmp = that._wrapper.text(-1000, -1000, testText, textSettings))[0].style; 
     fontSettings = style.fontFamily + ','
       + style.fontSize + ','
@@ -1847,7 +1857,7 @@ $.extend(SVGEditableTextBox.prototype, {
       SVGEditableTextBox._wordCache[fontSettings] = {};
     }
     
-    $.each(paragraphs, function( i, paragraph ) {
+    $.each(paragraphs, function(i, paragraph) {
       // Reset row counter
       rowCount = [];
       
@@ -1860,7 +1870,7 @@ $.extend(SVGEditableTextBox.prototype, {
         textY += (height / el.getCTM().d); //TODO: This is wrong, renders differently in Fx and GCr
         
         if ($.browser.mozilla) {
-          textY += num(StyleSheet.get( 'text', 'padding-bottom', g )) * 1.4; // Ugly-fix!!!
+          textY += num(StyleSheet.get('text', 'padding-bottom', g)) * 1.4; // Ugly-fix!!!
         }
       }
       
@@ -1869,12 +1879,16 @@ $.extend(SVGEditableTextBox.prototype, {
       // split paragraph into sections by \r
       sections = [];
       regex = /[^\r]+\r?|\r/g;
+      console.log("\"",paragraph,"\"");
       while ((w = regex.exec(paragraph)) != null) {
         sections.push(w[0]);
       }
-      if (sections.length == 0) {
+      if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
+//       else {
+        console.log(">>>", sections);
+//       }
       
       // Special case: trailing empty new line
       var lastSectionLength = sections[sections.length - 1].length; 
@@ -1882,14 +1896,9 @@ $.extend(SVGEditableTextBox.prototype, {
         sections.push("\u00A0"); // Add no-break space so that height can be calculated
       }
       
-      $.each( sections, function( j, section ) {
+      $.each(sections, function(j, section) {
         // this will be turned into a row when filled up or when there are no 
         // more remainingWords
-        
-        if (section == '') {
-          // Empty row
-          console.log("Empty row - this shouldn't happen!");
-        }
         
         // Split into words and spaces
         regex = /[ \u00A0]{1}|[^ \u00A0]+/g; 
@@ -1904,7 +1913,7 @@ $.extend(SVGEditableTextBox.prototype, {
         var tmpRowWidth = 0; 
         
         // Add words one by one splitting them into new spans as necessary
-        while ( remainingWords[0] ) { 
+        while (remainingWords[0]) { 
                     
           
           // Search for cached word: 
@@ -1917,8 +1926,8 @@ $.extend(SVGEditableTextBox.prototype, {
             tmpText = that._wrapper.text( -1000, -1000, tmpTspans, textSettings );
             
             wrapperTspans = that._wrapper.createText(); 
-            wrapperTspans.span( "\u00A0\u00A0", tspanSettings );
-            wrapperText = that._wrapper.text( -1000, -1000, wrapperTspans, textSettings );
+            wrapperTspans.span("\u00A0\u00A0", tspanSettings);
+            wrapperText = that._wrapper.text(-1000, -1000, wrapperTspans, textSettings);
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
               width: tmpText.width() - wrapperText.width(),
@@ -1947,7 +1956,7 @@ $.extend(SVGEditableTextBox.prototype, {
               var tmpWord = ''; 
               var remainingChars = remainingWords[0].split("");
               
-              while ( remainingChars[0] ) {
+              while (remainingChars[0]) {
                 newTmpWord = tmpWord + remainingChars[0]; 
                 
                 // Search for cached word: 
@@ -1966,8 +1975,8 @@ $.extend(SVGEditableTextBox.prototype, {
                     {
                       width: tmpText.width() 
                         + padding['left']
-                        + padding['right'], 
-                      timestamp: new Date().getTime()
+                        + padding['right'], // TODO: is padding supposed to be here? 
+//                       timestamp: new Date().getTime()
                     }; 
                 }
                 
@@ -1980,14 +1989,14 @@ $.extend(SVGEditableTextBox.prototype, {
                   // We can't make the word longer now, wrap it and keep 
                   // rendering the word in the next row
                   
-                  if ( tmpWord.length == 0 ) {
+                  if (tmpWord.length == 0) {
                     // If maxWidth is less than the caracter width add it 
                     // anyway, each row must take at least one character. 
                     tmpWord += remainingChars.shift(); 
                   }
                   
                   // Add tmpWord to our "real" textbox
-                  el = tspans.span( tmpWord.replace(/ /g, "\u00A0"), tspanSettings ); 
+                  el = tspans.span(tmpWord.replace(/ /g, "\u00A0"), tspanSettings); 
                   rowCount.push(lastRow);
                   lastRow += tmpWord.length; // adds one too many if final row
                   tmpWord = ''; 
@@ -2000,24 +2009,24 @@ $.extend(SVGEditableTextBox.prototype, {
               // The too long word is now taken care of! 
               
               remainingWords.shift();
-              if ( tmpWord !== '' ) {
+              if (tmpWord !== '') {
                 // Add the last part of the long word to be included in the  
                 // next row
                 
-                remainingWords.unshift( tmpWord ); 
+                remainingWords.unshift(tmpWord); 
               }
             }
             else {
               // The row is full, the next word does not fit here
               
               // Always end with a space, even if the line is too long. 
-              if (!/[ \u00A0]{1}$/.test(tmpRow) && remainingWords[0] === ' ') {
+              if (!/[ \u00A0]{1}$/.test(tmpRow) && /^[ \u00A0]{1}$/.test(remainingWords[0])) {
                 tmpRow += remainingWords.shift(); 
               }
               
               // Save this row
-              tspans.span( tmpRow.replace(/ /g, "\u00A0"), tspanSettings );
-              rowCount.push( lastRow ); // counter
+              tspans.span(tmpRow.replace(/ /g, "\u00A0"), tspanSettings);
+              rowCount.push(lastRow); // counter
               lastRow += tmpRow.length;
               // Reset the row variable: 
               tmpRow = ''; 
@@ -2027,8 +2036,8 @@ $.extend(SVGEditableTextBox.prototype, {
         }
         
         // We're done, so add the very last row of text
-        tspans.span( tmpRow.replace(/ /g, "\u00A0"), tspanSettings ); 
-        rowCount.push( lastRow ); 
+        tspans.span(tmpRow.replace(/ /g, "\u00A0"), tspanSettings); 
+        rowCount.push(lastRow); 
         
         // Note: lastRow will be 1 too much for the final row, which does not 
         // end with \r or \n. However, we don't use this variable for the very 
@@ -2082,19 +2091,27 @@ $.extend(SVGEditableTextBox.prototype, {
     var eChange = $.Event("change", {target: g});
     var eChangeSize = $.Event("changeSize", {target: g});
     
+    
     // Trigger events if things have changed
-    this.trigger(eChange);
-    if (this._size.width != width || this._size.height != height) {
+//     this.change();
+//     console.log("svg", eChange); 
+    
+//     $(this).trigger(eChange);
+//     if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
-      this.trigger(eChangeSize, [width, height]); 
-    }
+      this.trigger(eChange, [width, height]); 
+      console.log("triggered changeSize", g);
+//     }
+//     else {
+//       console.log("w", width, "h", height); 
+//     }
     
     // Performance goals: 
     console.timeEnd("total time");
     console.log('goal:', (1/24)*1000);
     
-    this.g = g; 
+//     this._group = g; 
     
     return this;
   },
