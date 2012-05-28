@@ -296,7 +296,7 @@ $.extend(SVGSelectableGElement.prototype, {
   
   appendTo: function(parent) {
   	this._parent = parent;
-  	this._render();
+  	//this._render();
   },
   
   _render: function() {
