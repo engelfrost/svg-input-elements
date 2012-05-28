@@ -211,7 +211,6 @@ $.extend(SVGEditableTextBox.prototype, {
   
   _render: function() {
     
-    console.time("total time"); // timeing
     var that = this; 
     var x = this._settings.x; 
     var y = this._settings.y; 
@@ -305,16 +304,12 @@ $.extend(SVGEditableTextBox.prototype, {
       // split paragraph into sections by \r
       sections = [];
       regex = /[^\r]+\r?|\r/g;
-      console.log("\"",paragraph,"\"");
       while ((w = regex.exec(paragraph)) != null) {
         sections.push(w[0]);
       }
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
-//       else {
-        console.log(">>>", sections);
-//       }
       
       // Special case: trailing empty new line
       var lastSectionLength = sections[sections.length - 1].length; 
@@ -480,11 +475,6 @@ $.extend(SVGEditableTextBox.prototype, {
     // Add invisible lines from bottom to height
     
     var lineHeight = num(StyleSheet.get('text', 'line-height', g));
-//     var fontSize = num(StyleSheet.get('text', 'font-size', g));
-//     var diff = Math.max(lineHeight - fontSize, 0); 
-//     vad lh = Math.max(lineHeight - fontSize, 0);
-//     stroke = num(StyleSheet.get('rect#select', 'stroke-width', $(this).parent()[0]));
-//     console.log(padding['bottom']); 
     
 
     var width = num(maxWidth) + padding['right'] + padding['left']; 
@@ -527,15 +517,7 @@ $.extend(SVGEditableTextBox.prototype, {
       this._size.width = width; 
       this._size.height = height; 
       this.trigger(eChangeSize, [width, height]); 
-      console.log("triggered changeSize", g);
     }
-//     else {
-//       console.log("w", width, "h", height); 
-//     }
-    
-    // Performance goals: 
-    console.timeEnd("total time");
-    console.log('goal:', (1/24)*1000);
     
 //     this._group = g; 
     
