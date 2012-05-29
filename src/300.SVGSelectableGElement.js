@@ -170,21 +170,32 @@ if (this._instances.length == 0) {
       
       $.each(this._instances, function(i,el){
       
-        if (el.selected && el._group == g)
+        if (el.selected && el._group == g) {
           el.mousemove(g,e);
+          
+          e.target = g;
+  	    	g._selectable.trigger(e);
+        }
         else {
           // when another g element that is not selected is below the mouse
           g2 = SVGSelectableGElement.selectedGroup();
           if (g2) {
             e.target = g2;
             g2.mousemove(g2._group,e);
+            
+            e.target = g2._group;
+  	    		g2.trigger(e);
           }
         }
       });
+      
     } else {
       g = SVGSelectableGElement.selectedGroup();
       if (g) {
         g.mousemove(g._group,e);
+        
+        e.target = g._group;
+  	    g.trigger(e);
       }
     }
   },
@@ -293,6 +304,10 @@ $.extend(SVGSelectableGElement.prototype, {
   
     SVGSelectableGElement.destroy( this );
     
+  },
+  
+  isSelected: function() {
+  	return this.selected;
   },
   
   appendTo: function(parent) {
