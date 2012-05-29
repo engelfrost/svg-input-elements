@@ -675,13 +675,15 @@ $.extend(SVGSelectableGElement, {
   
   destroy: function( instance ){
   
-    this._instances = $.grep(_instances, function(e){
+    this._instances = $.grep(this._instances, function(e){
       return e!==instance;
     });
     
-    if (this._instances.length == 0) {
+    /*
+if (this._instances.length == 0) {
       $(window).unbind('mouseup.selection');
     }
+*/
   },
   
   _mouseup: function(e){
@@ -860,6 +862,9 @@ $.extend(SVGSelectableGElement.prototype, {
   
   bind: function() {
     this._events.bind.apply(this._events, arguments);
+  },
+  unbind: function() {
+    this._events.unbind.apply(this._events, arguments);
   },
   trigger: function() {
     this._events.trigger.apply(this._events, arguments);
