@@ -759,21 +759,32 @@ if (this._instances.length == 0) {
       
       $.each(this._instances, function(i,el){
       
-        if (el.selected && el._group == g)
+        if (el.selected && el._group == g) {
           el.mousemove(g,e);
+          
+          e.target = g;
+  	    	g._selectable.trigger(e);
+        }
         else {
           // when another g element that is not selected is below the mouse
           g2 = SVGSelectableGElement.selectedGroup();
           if (g2) {
             e.target = g2;
             g2.mousemove(g2._group,e);
+            
+            e.target = g2._group;
+  	    		g2.trigger(e);
           }
         }
       });
+      
     } else {
       g = SVGSelectableGElement.selectedGroup();
       if (g) {
         g.mousemove(g._group,e);
+        
+        e.target = g._group;
+  	    g.trigger(e);
       }
     }
   },
@@ -882,6 +893,10 @@ $.extend(SVGSelectableGElement.prototype, {
   
     SVGSelectableGElement.destroy( this );
     
+  },
+  
+  isSelected: function() {
+  	return this.selected;
   },
   
   appendTo: function(parent) {
@@ -2120,7 +2135,7 @@ $.extend(SVGEditableTextBox.prototype, {
 //     this.change();
 //     console.log("svg", eChange); 
     
-    $(this).trigger(eChange);
+    this.trigger(eChange, [this._text]);
     if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
@@ -2284,12 +2299,12 @@ $.extend(SVGEditableTextBox.prototype, {
     
       var str = pos.element.firstChild.data;
       
-      if (str[pos.char]!=' ') {
+      if (str[pos.char]!='\u00A0') {
       
       // get the closest word on the row
     
         for (var i=Math.max(pos.char-1, 0); i>=0; i--){
-            if (str[i] == ' ' && i < str.length-1) {
+          if (str[i] == '\u00A0' && i < str.length-1) {
               i = i+1;
               break;
             }
@@ -2304,7 +2319,7 @@ $.extend(SVGEditableTextBox.prototype, {
               j = str.length;
               break;
             }
-            else if (str[j] == ' ') {
+            else if (str[j] == '\u00A0') {
               break;
             }
         }
@@ -2313,7 +2328,7 @@ $.extend(SVGEditableTextBox.prototype, {
       // get the closest spaces on the row
         
         for (var i=Math.max(pos.char-1, 0); i>=0; i--){
-            if (str[i] != ' ' && i < str.length-1) {
+          if (str[i] != '\u00A0' && i < str.length-1) {
               i = i+1;
               break;
             }
@@ -2328,7 +2343,7 @@ $.extend(SVGEditableTextBox.prototype, {
               j = str.length;
               break;
             }
-            else if (str[j] != ' ') {
+            else if (str[j] != '\u00A0') {
               break;
             }
         }
