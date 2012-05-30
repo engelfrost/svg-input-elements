@@ -1635,6 +1635,7 @@ $.extend(SVGEditableTextBox.prototype, {
   _moveDown: true,
   _renderTimer: -1,
   _contextMenu: false,
+  _classType: "textbox", 
   _size: {width: 0, height: 0}, // cached size, for detecting size change
   g: null,
   
@@ -1685,7 +1686,7 @@ $.extend(SVGEditableTextBox.prototype, {
     this._height = height; // not used at the moment
     SVGEditableTextBox._textareaCount++; 
     this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
-    this._class += " textbox "+(settings.class || '');
+    this._class += " " + this._classType + " "+(settings.class || '');
     this._settings = settings;
     
     this._textPositions = []; 
@@ -1832,8 +1833,8 @@ $.extend(SVGEditableTextBox.prototype, {
     return padding; 
   },
   
-  _paragraphHook: function(g, paragraph) {
-    return paragraph; 
+  _postParagraphHook: function(group, text) {
+    return true; 
   },
   
   _render: function() {
@@ -1925,14 +1926,16 @@ $.extend(SVGEditableTextBox.prototype, {
         }
       }
       
-      paragraph = that._paragraphHook(g, paragraph, this);
-      
       tspans = that._wrapper.createText(); 
       
       // split paragraph into sections by \r
       sections = [];
       regex = /[^\r]+\r?|\r/g;
       while ((w = regex.exec(paragraph)) != null) {
+        if (w[0] == "\r") {
+          console.log("'",w[0],"'");
+//           w[0] = "\u00A0"+w[0]; 
+        }
         sections.push(w[0]);
       }
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
@@ -1954,6 +1957,9 @@ $.extend(SVGEditableTextBox.prototype, {
         remainingWords = []; 
         
         while ((w = regex.exec(section)) != null) {
+//           if (w[0] == "\r") {
+//             w[0] == "\u00A0\r";
+//           }
           remainingWords.push(w[0]);
         }
                 
@@ -2073,6 +2079,10 @@ $.extend(SVGEditableTextBox.prototype, {
                 tmpRow += remainingWords.shift(); 
               }
               
+              if (tmpRow.length == 0) {
+                console.log("gurka");
+              }
+              
               // Save this row
               tspans.span(tmpRow.replace(/ /g, "\u00A0"), tspanSettings);
               rowCount.push(lastRow); // counter
@@ -2098,6 +2108,10 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // Append the text to its group: 
       t = that._wrapper.text(g, 0, num(textY), tspans);
+      
+      
+      
+      that._postParagraphHook(g, t);
     });
     
     // Add invisible lines from bottom to height
@@ -2992,20 +3006,25 @@ function SVGEditableList(wrapper){
 
 $.extend(SVGEditableList.prototype, new SVGEditableTextBox);
 $.extend(SVGEditableList.prototype, {
+  _classType: "list", 
   
-  _getGPadding: function() {
+  _getGPadding: function(g) {
     var padding = {};
-    padding['top']    = num(StyleSheet.get( 'rect.list', 'padding-top' ))*1.2;
-    padding['right']  = num(StyleSheet.get( 'rect.list', 'padding-right' ));
-    padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom' ));
-    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left' ));
+    padding['top']    = num(StyleSheet.get( 'rect.list', 'padding-top', g ))*1.2;
+    padding['right']  = num(StyleSheet.get( 'rect.list', 'padding-right', g ));
+    padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom', g ));
+    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
     return padding; 
   },
   
-  _paragraphHook: function(g, paragraph, self) {
-    console.log(self);
-    this._wrapper.circle(g, 0, self.textY, 2); 
-    return paragraph; 
+  _postParagraphHook: function(group, text) {
+    var height = num(text.getAttribute("y"));
+    var paddingLeft = num(StyleSheet.get("rect.list", "padding-left", text.parent));
+    var lineHeight = num(StyleSheet.get("text", "line-height", text));
+    var fontSize = num(StyleSheet.get("text", "font-size", text));
+    var radius = fontSize * 0.2; 
+    this._wrapper.circle(group, paddingLeft, height + lineHeight - fontSize/2 + radius/2, radius); 
+    return true; 
   },
 });/** 
  *  SVGTextMarker
