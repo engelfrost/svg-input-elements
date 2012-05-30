@@ -1,12 +1,19 @@
 SVG Input Elements
 ==================
 
+We are soon ready for a 1.0 version. Help coding a better and more general 
+2.0 version would be greatly appreciated! 
+
+Better documentation will be included in the 1.0 release. For now, use the 
+instructions in [Getting Started](#getting-started). 
+
 The goal of this project is to implement input elements that feel and behave 
 naturally. Initially the ambition was to have them behave similarly to HTML 
 form elements, but due to the different nature of SVG there are some 
 major differences. For example, the height of the input elements are 
 (currently) fluid. The textarea grows with the text instead of using 
-scrollbars. 
+scrollbars. (This might be improved if the project continues beyond release 
+1.0). 
 
 For a demo of the 0.2.2 release go to 
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). You can 
@@ -149,14 +156,6 @@ ready to be put in use.
 
 Development
 -----------
-Next in line to be implemented are variations of the text area (like a list 
-box, for example) and an image input element. 
-
 Feel free to join in and develop, if you want to contact us please e-mail 
 Tim at [info@sypreme.se](mailto:info@sypreme.se) or Josef at 
 [josef.ottosson@josf.se](mailto:josef.ottosson@josf.se). 
-
-In a future version, we would build it both for JQuery SVG and Raphael, or 
-rid of both dependencies completely. We would love some help implementing 
-this! About choosing which to build for, we refer to this thread (for now):
-http://stackoverflow.com/questions/588718/jquery-svg-vs-raphael
