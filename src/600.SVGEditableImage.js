@@ -68,8 +68,6 @@ $.extend(SVGEditableImage.prototype, {
 		
 			var imageProportion = this.width/this.height;
 			
-			console.log(imageProportion)
-			
 			var height = width / imageProportion;
 			
 			self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
