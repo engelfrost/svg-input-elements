@@ -104,11 +104,12 @@ would stack div elements in HTML.
 
 Events
 ------
-change: Triggered when the SVG Input Element has changed in some way, i.e. for
+__change__: Triggered when the SVG Input Element has changed in some way, i.e. for
 a textbox it is triggered every time a character is removed or added. Returns 
 one parameter: 
   * _param1_: The new text
-changeSize: Triggered when the size of the SVG Input Element changes. Returns 
+  
+__changeSize__: Triggered when the size of the SVG Input Element changes. Returns 
 two parameters: 
   * _param1_: The new width
   * _param2_: The new height
