@@ -29,18 +29,7 @@ $(document).ready(function(){
 
 function init(svg){
 
-	try {
 	s = svg.input.image(18, 37, "images/tim091710.jpg", {width: '150'});
-	
-	} catch(e) {
-		var err = e;
-		var caller_line = err.stack.split("\n")[4];
-		var index = caller_line.indexOf("at ");
-		var clean = caller_line.slice(index+2, caller_line.length);
-
-		console.log(e.toString(), caller_line)
-		
-	}
 	
 }
 
