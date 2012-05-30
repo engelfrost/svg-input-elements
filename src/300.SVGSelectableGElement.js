@@ -62,7 +62,7 @@ $.extend(SVGSelectableGElement, {
     select = $('#select');
     if (select.length) {
       classes = (s = select.parent().attr('class')) ? s.replace('selected', '') : ''; 
-      select.parent().attr('class', classes);
+      select.parent().attr('class', classes.trim());
       select.remove();  
       $('#textbox-marker').css({display: 'none'});
     }
@@ -354,7 +354,7 @@ $.extend(SVGSelectableGElement.prototype, {
           this._selected = true;
           
           // set the class of the element to selected, so we can find it later
-          this.setAttribute('class', this.getAttribute('class') + ' selected');
+          this.setAttribute('class', this.getAttribute('class').trim() + ' selected');
           
           this._render();
             

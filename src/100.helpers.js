@@ -174,7 +174,7 @@ $.event.special.doubleclick = {
 };
 
 // List approved types
-var types = [SVGGElement, SVGTextElement, SVGTSpanElement, SVGRectElement];
+var types = [SVGGElement, SVGTextElement, SVGTSpanElement, SVGRectElement, SVGImageElement];
 var typeNames = types.map(function(e,i){ return e.name; });
 
 var StyleSheet = {

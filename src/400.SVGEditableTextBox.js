@@ -2,8 +2,6 @@
  *  SVGEditableTextBox
 **/
 
-// $.svg.addExtension('textbox', SVGEditableTextBox);
-
 function SVGEditableTextBox(wrapper){
   this._wrapper = wrapper; // The attached SVG wrapper object
 }
