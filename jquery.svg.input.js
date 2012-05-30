@@ -1832,6 +1832,10 @@ $.extend(SVGEditableTextBox.prototype, {
     return padding; 
   },
   
+  _paragraphHook: function(g, paragraph) {
+    return paragraph; 
+  },
+  
   _render: function() {
     
     var that = this; 
@@ -1909,9 +1913,8 @@ $.extend(SVGEditableTextBox.prototype, {
       // Reset row counter
       rowCount = [];
       
-      
       // Find the correct y-offset if there are previous text areas:
-      if (el = $(g).children().last()[0]) {
+      if (el = $(g).find("text").last()[0]) {
         textY = num(el.getAttribute('y')); //parseInt(/translate\(\d+\, (\d+)\)/.exec(e.getAttribute('transform'))[1]); // Better way of doing this? Value is not the same as e.getCTM().f
         var height =  el.getBoundingClientRect().height;
         
@@ -1921,6 +1924,8 @@ $.extend(SVGEditableTextBox.prototype, {
           textY += num(StyleSheet.get('text', 'padding-bottom', g)) * 1.4; // Ugly-fix!!!
         }
       }
+      
+      paragraph = that._paragraphHook(g, paragraph, this);
       
       tspans = that._wrapper.createText(); 
       
@@ -2995,6 +3000,12 @@ $.extend(SVGEditableList.prototype, {
     padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom' ));
     padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left' ));
     return padding; 
+  },
+  
+  _paragraphHook: function(g, paragraph, self) {
+    console.log(self);
+    this._wrapper.circle(g, 0, self.textY, 2); 
+    return paragraph; 
   },
 });/** 
  *  SVGTextMarker

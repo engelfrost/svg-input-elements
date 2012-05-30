@@ -12,6 +12,7 @@ $.extend(SVGEditableTextBox.prototype, {
   _moveDown: true,
   _renderTimer: -1,
   _contextMenu: false,
+  _classType: "textbox", 
   _size: {width: 0, height: 0}, // cached size, for detecting size change
   g: null,
   
@@ -62,7 +63,7 @@ $.extend(SVGEditableTextBox.prototype, {
     this._height = height; // not used at the moment
     SVGEditableTextBox._textareaCount++; 
     this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
-    this._class += " textbox "+(settings.class || '');
+    this._class += " " + this._classType + " "+(settings.class || '');
     this._settings = settings;
     
     this._textPositions = []; 
@@ -209,6 +210,10 @@ $.extend(SVGEditableTextBox.prototype, {
     return padding; 
   },
   
+  _postParagraphHook: function(group, text) {
+    return true; 
+  },
+  
   _render: function() {
     
     var that = this; 
@@ -286,9 +291,8 @@ $.extend(SVGEditableTextBox.prototype, {
       // Reset row counter
       rowCount = [];
       
-      
       // Find the correct y-offset if there are previous text areas:
-      if (el = $(g).children().last()[0]) {
+      if (el = $(g).find("text").last()[0]) {
         textY = num(el.getAttribute('y')); //parseInt(/translate\(\d+\, (\d+)\)/.exec(e.getAttribute('transform'))[1]); // Better way of doing this? Value is not the same as e.getCTM().f
         var height =  el.getBoundingClientRect().height;
         
@@ -305,6 +309,10 @@ $.extend(SVGEditableTextBox.prototype, {
       sections = [];
       regex = /[^\r]+\r?|\r/g;
       while ((w = regex.exec(paragraph)) != null) {
+        if (w[0] == "\r") {
+          console.log("'",w[0],"'");
+//           w[0] = "\u00A0"+w[0]; 
+        }
         sections.push(w[0]);
       }
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
@@ -326,6 +334,9 @@ $.extend(SVGEditableTextBox.prototype, {
         remainingWords = []; 
         
         while ((w = regex.exec(section)) != null) {
+//           if (w[0] == "\r") {
+//             w[0] == "\u00A0\r";
+//           }
           remainingWords.push(w[0]);
         }
                 
@@ -445,6 +456,10 @@ $.extend(SVGEditableTextBox.prototype, {
                 tmpRow += remainingWords.shift(); 
               }
               
+              if (tmpRow.length == 0) {
+                console.log("gurka");
+              }
+              
               // Save this row
               tspans.span(tmpRow.replace(/ /g, "\u00A0"), tspanSettings);
               rowCount.push(lastRow); // counter
@@ -470,6 +485,10 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // Append the text to its group: 
       t = that._wrapper.text(g, 0, num(textY), tspans);
+      
+      
+      
+      that._postParagraphHook(g, t);
     });
     
     // Add invisible lines from bottom to height
