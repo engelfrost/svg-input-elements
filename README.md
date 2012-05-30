@@ -78,7 +78,7 @@ function init(svg) {
     var y = 10; 
     var settings = {width: '200'}; 
 
-    svg.input.textArea(parent, x, y, "text", settings);
+    var textArea = svg.input.textArea(parent, x, y, "text", settings);
 }
 ```
 the `parent` parameter is optional. The properties of the `settings` object 
@@ -90,19 +90,22 @@ You should now have a working text area!
 ###Binding Events
 SVG Input Elements trigger events that you can bind: 
 ```
-textArea = svg.input.textArea(parent, x, y, "text", settings);
-textArea.bind("SVGInput_changedText", function(e, paramText) {
-  alert("text changed: " + paramText);
+textArea.bind("change", function(e, text) {
+  alert("text changed: " + text);
+}
+textArea.bind("changeSize", function(e, height, width) {
+  alert("dimensions changed: " + height + "x" + width);
 }
 ```
 
 Events
 ------
-* __SVGInput_textChanged__: Triggered when the SVG Input Element text has 
-changed in some way. Returns one parameter: 
+change: Triggered when the SVG Input Element has changed in some way, i.e. for
+a textbox it is triggered every time a character is removed or added. Returns 
+one parameter: 
   * _param1_: The new text
-* __SVGInput_sizeChanged__: Triggered when the size of the SVG Input Element 
-changes. Returns two parameters: 
+changeSize: Triggered when the size of the SVG Input Element changes. Returns 
+two parameters: 
   * _param1_: The new width
   * _param2_: The new height
 
@@ -115,6 +118,9 @@ Internet Explorer, which seems to have very poor SVG support even in verion 9.
 
 ###v0.3
 __Coming soon.__ Will feature a list variant of the text input element. 
+
+###v0.2.2
+__Released 30 May 2012.__ Minor enhancements, bugfixes and useable events. 
 
 ###v0.2.1
 __Released 16 May 2012.__ Minor enhancements, bugfixes and support for 
