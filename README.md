@@ -94,7 +94,7 @@ textArea.bind("change", function(e, text) {
   alert("text changed: " + text);
 }
 textArea.bind("changeSize", function(e, height, width) {
-  alert("dimensions changed: " + height + "x" + width);
+  alert("dimensions changed: " + width + "x" + height);
 }
 ```
 
