@@ -1,29 +1,13 @@
 SVG Input Elements
 ==================
 
-We are soon ready for a 1.0 version. Help coding a better and more general 
-2.0 version would be greatly appreciated! 
+*We are soon ready for a 1.0 version. Help coding a better and more general 
+2.0 version would be greatly appreciated! *
 
 Better documentation will be included in the 1.0 release. For now, use the 
-instructions in [Getting Started](#getting-started). 
-
-The goal of this project is to implement input elements that feel and behave 
-naturally. Initially the ambition was to have them behave similarly to HTML 
-form elements, but due to the different nature of SVG there are some 
-major differences. For example, the height of the input elements are 
-(currently) fluid. The textarea grows with the text instead of using 
-scrollbars. (This might be improved if the project continues beyond release 
-1.0). 
-
-For a demo of the 0.2.2 release go to 
-[josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). You can 
-also download the latest examples and test yourself, just change the path 
-"../tools/build.js" to "../jquery.svg.input.js" unless you're on an Apache 
-server with PHP. _Note:_ In Chrome the script will fail if you run it from 
-your local file system 
-[because of a bug](http://code.google.com/p/chromium/issues/detail?id=49001). 
-
-(The generated files in the root might not always be 100% up to date.) 
+instructions in [Getting Started](#getting-started). For a demo of the 0.2.2 
+release (essentially the same as 0.3 but without lists) go to 
+[josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). 
 
 This project started out as a sub-project to a master thesis project, 
 [Personas in Real Life](http://personasinreallife.tumblr.com).
@@ -51,6 +35,16 @@ This project requires [jQuery](http://docs.jquery.com/Downloading_jQuery)
 
 Getting Started
 ---------------
+You can download the latest examples and test yourself, just change the path 
+"../tools/build.js" to "../jquery.svg.input.js" unless you're on an Apache 
+server with PHP. 
+
+_Note:_ In Chrome (and Safari?) the script will fail if you 
+run it from your local file system 
+[because of a bug](http://code.google.com/p/chromium/issues/detail?id=49001). 
+
+_Note:_ The generated files in the root might not always be 100% up to date.
+
 [Download jQuery](http://jquery.com/) (we've tested on version 1.7.2) and 
 [jQuery SVG](http://keith-wood.name/svg.html) (tested on version 1.4.5) and 
 include these libraries, and SVG Input Elements: 
