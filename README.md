@@ -98,6 +98,10 @@ textArea.bind("changeSize", function(e, height, width) {
 }
 ```
 
+The changeSize event is useful because the textArea is contained within a 
+group element, and thus it is not possible to stack them in the same way you 
+would stack div elements in HTML. 
+
 Events
 ------
 change: Triggered when the SVG Input Element has changed in some way, i.e. for
