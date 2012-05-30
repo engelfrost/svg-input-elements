@@ -1,9 +1,12 @@
 SVG Input Elements
 ==================
 
-Currently this project implements text areas, similar in behaviour to HTML 
-`<textarea>` tags. The goal is to implement input elements that feel and 
-behave naturally (i.e. as corresponding HTML input elements etc). 
+The goal of this project is to implement input elements that feel and behave 
+naturally. Initially the ambition was to have them behave similarly to HTML 
+form elements, but due to the different nature of SVG there are some 
+major differences. For example, the height of the input elements are 
+(currently) fluid. The textarea grows with the text instead of using 
+scrollbars. 
 
 For a demo of the 0.2.2 release go to 
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). You can 
@@ -122,7 +125,9 @@ elements and should be stable on all major browsers except perhaps for
 Internet Explorer, which seems to have very poor SVG support even in verion 9. 
 
 ###v0.3
-__Coming soon.__ Will feature a list variant of the text input element. 
+__Released 30 May 2012.__ Features a list item. It places bullets in front of 
+each new paragraph, styling the textbox like a list. Nothing fancy, but 
+convenient. 
 
 ###v0.2.2
 __Released 30 May 2012.__ Minor enhancements, bugfixes and useable events. 
