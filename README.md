@@ -5,7 +5,7 @@ Currently this project implements text areas, similar in behaviour to HTML
 `<textarea>` tags. The goal is to implement input elements that feel and 
 behave naturally (i.e. as corresponding HTML input elements etc). 
 
-For a demo of the 0.2 release go to 
+For a demo of the 0.2.2 release go to 
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). You can 
 also download the latest examples and test yourself, just change the path 
 "../tools/build.js" to "../jquery.svg.input.js" unless you're on an Apache 
