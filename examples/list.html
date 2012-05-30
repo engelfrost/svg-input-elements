@@ -28,8 +28,7 @@ $(document).ready(function(){
 });
 
 function init(svg){
-  s = svg.input.image(18, 37, "images/tim.jpg", {width: '150'});
-  s = svg.input.image(18+150+18, 37, "images/josef.jpg", {width: '150'});
+  s = svg.input.list(18, 18, "Apples\nBananas\nSparrows\nStars", {width: '200'});
 }
 
 </script>
@@ -51,6 +50,5 @@ function init(svg){
 
 <p style="margin: auto; width: 800px; margin-top: 10px; ">This is a simple demonstration of a textarea written in JavaScript and SVG. It handles text input, line wrapping, word wrapping, selection, copy/paste and undo/redo. None of these features are natively supported in SVG 1.1. It can be styled using a subset of CSS. Licensed under the <a href="license.txt">MIT License</a>. For more information go to <a href="https://github.com/silence150/SVG-Input-Elements">the GitHub project</a>. 
 </p>
-
 </body>
 </html>
