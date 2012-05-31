@@ -597,6 +597,44 @@ $.extend(SVGInputElements.prototype, {
    * @param  settings  (object) additional settings for the list. These are SVG group value + optionally width and height values (optional)
    * @return  (element) the new text node 
    */
+  text: function (parent, x, y, value, settings) {
+    var args = this._wrapper._args(arguments, ['x', 'y', 'value']);
+    if (typeof args.x == 'string' && arguments.length < 4) {
+      args.value = args.x;
+      args.settings = args.y;
+      args.x = args.y = null;
+    }
+    return this._list(
+      args.parent, 
+      args.value, 
+      $.extend({
+        x: (args.x && isArray(args.x) ? args.x.join(' ') : args.x),
+               y: (args.y && isArray(args.y) ? args.y.join(' ') : args.y)
+      }, 
+      args.settings || {})
+    );
+  },
+  
+  _text: function (parent, value, settings) {
+    width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
+    height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
+    delete settings.width; 
+    delete settings.height; 
+    
+    return (new SVGEditableText(this._wrapper)).init(parent, value, width, height, settings);
+  },
+  
+  /** 
+   * Code copied and modified from Kieth Wood's jQuery SVG plugin:
+   * Create a list.
+   * Specify both of x and y or neither of them.
+   * @param  parent    (element or jQuery) the parent node for the text (optional)
+   * @param  x         (number or number[]) the x-coordinate(s) for the text (optional)
+   * @param  y         (number or number[]) the y-coordinate(s) for the text (optional)
+   * @param  value     (string) the text content
+   * @param  settings  (object) additional settings for the list. These are SVG group value + optionally width and height values (optional)
+   * @return  (element) the new text node 
+   */
   image: function (parent, x, y, value, settings) {
     var args = this._wrapper._args(arguments, ['x', 'y', 'value']);
     if (typeof args.x == 'string' && arguments.length < 4) {
@@ -713,13 +751,15 @@ $.extend(SVGSelectableGElement, {
   
   destroy: function( instance ){
   
-    this._instances = $.grep(_instances, function(e){
+    this._instances = $.grep(this._instances, function(e){
       return e!==instance;
     });
     
-    if (this._instances.length == 0) {
+    /*
+if (this._instances.length == 0) {
       $(window).unbind('mouseup.selection');
     }
+*/
   },
   
   _mouseup: function(e){
@@ -771,9 +811,6 @@ $.extend(SVGSelectableGElement, {
           g.select(g,e);
         }
         
-        // pass along the event to outsiders
-        g.trigger(new $.Event('mousedown', {target: g}));
-        
       }
       else {
         SVGSelectableGElement.deselectAll();
@@ -798,21 +835,32 @@ $.extend(SVGSelectableGElement, {
       
       $.each(this._instances, function(i,el){
       
-        if (el.selected && el._group == g)
+        if (el.selected && el._group == g) {
           el.mousemove(g,e);
+          
+          e.target = g;
+  	    	g._selectable.trigger(e);
+        }
         else {
           // when another g element that is not selected is below the mouse
           g2 = SVGSelectableGElement.selectedGroup();
           if (g2) {
             e.target = g2;
             g2.mousemove(g2._group,e);
+            
+            e.target = g2._group;
+  	    		g2.trigger(e);
           }
         }
       });
+      
     } else {
       g = SVGSelectableGElement.selectedGroup();
       if (g) {
         g.mousemove(g._group,e);
+        
+        e.target = g._group;
+  	    g.trigger(e);
       }
     }
   },
@@ -896,21 +944,21 @@ $.extend(SVGSelectableGElement.prototype, {
   _group: null,
   selected: false,
   _class: 'selectable',
-  _events: null, 
+  _events: null,
+  _parent: null,
   
   bind: function() {
     this._events.bind.apply(this._events, arguments);
   },
+  unbind: function() {
+    this._events.unbind.apply(this._events, arguments);
+  },
   trigger: function() {
     this._events.trigger.apply(this._events, arguments);
   },
-  //TODO: More of these. 
-  change: function() {
-    this.bind.apply(this, arguments.unshift('change'));
-  },
   
   init: function() {
-    this._events = this._eventmanager = $('<input>'),
+    this._events = this._eventmanager = $('<input data-unique="'+Math.random()+'">'),
          
     // bind to events
     SVGSelectableGElement.setup( this );
@@ -921,6 +969,15 @@ $.extend(SVGSelectableGElement.prototype, {
   
     SVGSelectableGElement.destroy( this );
     
+  },
+  
+  isSelected: function() {
+  	return this.selected;
+  },
+  
+  appendTo: function(parent) {
+  	this._parent = parent;
+  	//this._render();
   },
   
   _render: function() {
@@ -1652,6 +1709,7 @@ $.extend(SVGEditableTextBox.prototype, {
   _moveDown: true,
   _renderTimer: -1,
   _contextMenu: false,
+  _classType: "textbox", 
   _size: {width: 0, height: 0}, // cached size, for detecting size change
   g: null,
   
@@ -1689,20 +1747,21 @@ $.extend(SVGEditableTextBox.prototype, {
   
   _setText: function(text, textPosition) {
     this._historyAdd(text, textPosition); 
-    this._text = text; 
-    this._textPosition = textPosition;
+    var res = this._preProcessSetText(text, textPosition); 
+    this._text = res[0]; 
+    this._textPosition = res[1];
   },
   
   init: function(parent, value, width, height, settings) {
   
     this._parent = parent; 
-    this._text = value.toString();
+    this._text = this._preProcessSetText(value.toString(), 0)[0];
     this._history = [{text: value.toString(), textPosition: null}];
     this._width = width; // value -1 means "no maxwidth"
     this._height = height; // not used at the moment
     SVGEditableTextBox._textareaCount++; 
     this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
-    this._class += " textbox "+(settings.class || '');
+    this._class += " " + this._classType + " "+(settings.class || '');
     this._settings = settings;
     
     this._textPositions = []; 
@@ -1849,9 +1908,16 @@ $.extend(SVGEditableTextBox.prototype, {
     return padding; 
   },
   
+  _preProcessText: function(text, textPosition) {
+    return [text, textPosition]; 
+  },
+  
+  _postParagraphHook: function(group, text) {
+    return true; 
+  },
+  
   _render: function() {
     
-    console.time("total time"); // timeing
     var that = this; 
     var x = this._settings.x; 
     var y = this._settings.y; 
@@ -1888,7 +1954,8 @@ $.extend(SVGEditableTextBox.prototype, {
     var lastRow = 0; 
     var tspans; // tspans to be rendered
     var paragraphs = []; 
-    regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by, \n, preserving any \n.
+    regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by \n preserving any \n.
+//     this._text = this._preProcessText(this._text); 
     while ((w = regex.exec(this._text)) != null) {
       paragraphs.push(w[0]); //.replace(/\n$/, ' '));
     }
@@ -1905,7 +1972,7 @@ $.extend(SVGEditableTextBox.prototype, {
 //     paragraphs = regex.exec(this._text);
     // Make sure caching is set up: 
     testText = this._wrapper.createText();
-    testText.span( "test", tspanSettings ); 
+    testText.span("test", tspanSettings); 
     var style = $(tmp = that._wrapper.text(-1000, -1000, testText, textSettings))[0].style; 
     fontSettings = style.fontFamily + ','
       + style.fontSize + ','
@@ -1923,20 +1990,19 @@ $.extend(SVGEditableTextBox.prototype, {
       SVGEditableTextBox._wordCache[fontSettings] = {};
     }
     
-    $.each(paragraphs, function( i, paragraph ) {
+    $.each(paragraphs, function(i, paragraph) {
       // Reset row counter
       rowCount = [];
       
-      
       // Find the correct y-offset if there are previous text areas:
-      if (el = $(g).children().last()[0]) {
+      if (el = $(g).find("text").last()[0]) {
         textY = num(el.getAttribute('y')); //parseInt(/translate\(\d+\, (\d+)\)/.exec(e.getAttribute('transform'))[1]); // Better way of doing this? Value is not the same as e.getCTM().f
         var height =  el.getBoundingClientRect().height;
         
         textY += (height / el.getCTM().d); //TODO: This is wrong, renders differently in Fx and GCr
         
         if ($.browser.mozilla) {
-          textY += num(StyleSheet.get( 'text', 'padding-bottom', g )) * 1.4; // Ugly-fix!!!
+          textY += num(StyleSheet.get('text', 'padding-bottom', g)) * 1.4; // Ugly-fix!!!
         }
       }
       
@@ -1948,7 +2014,7 @@ $.extend(SVGEditableTextBox.prototype, {
       while ((w = regex.exec(paragraph)) != null) {
         sections.push(w[0]);
       }
-      if (sections.length == 0) {
+      if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
       
@@ -1958,20 +2024,18 @@ $.extend(SVGEditableTextBox.prototype, {
         sections.push("\u00A0"); // Add no-break space so that height can be calculated
       }
       
-      $.each( sections, function( j, section ) {
+      $.each(sections, function(j, section) {
         // this will be turned into a row when filled up or when there are no 
         // more remainingWords
-        
-        if (section == '') {
-          // Empty row
-          console.log("Empty row - this shouldn't happen!");
-        }
         
         // Split into words and spaces
         regex = /[ \u00A0]{1}|[^ \u00A0]+/g; 
         remainingWords = []; 
         
         while ((w = regex.exec(section)) != null) {
+//           if (w[0] == "\r") {
+//             w[0] == "\u00A0\r";
+//           }
           remainingWords.push(w[0]);
         }
                 
@@ -1980,7 +2044,7 @@ $.extend(SVGEditableTextBox.prototype, {
         var tmpRowWidth = 0; 
         
         // Add words one by one splitting them into new spans as necessary
-        while ( remainingWords[0] ) { 
+        while (remainingWords[0]) { 
                     
           
           // Search for cached word: 
@@ -1993,8 +2057,8 @@ $.extend(SVGEditableTextBox.prototype, {
             tmpText = that._wrapper.text( -1000, -1000, tmpTspans, textSettings );
             
             wrapperTspans = that._wrapper.createText(); 
-            wrapperTspans.span( "\u00A0\u00A0", tspanSettings );
-            wrapperText = that._wrapper.text( -1000, -1000, wrapperTspans, textSettings );
+            wrapperTspans.span("\u00A0\u00A0", tspanSettings);
+            wrapperText = that._wrapper.text(-1000, -1000, wrapperTspans, textSettings);
             
             cachedWord = SVGEditableTextBox._wordCache[fontSettings][remainingWords[0]] = {
               width: tmpText.width() - wrapperText.width(),
@@ -2023,7 +2087,7 @@ $.extend(SVGEditableTextBox.prototype, {
               var tmpWord = ''; 
               var remainingChars = remainingWords[0].split("");
               
-              while ( remainingChars[0] ) {
+              while (remainingChars[0]) {
                 newTmpWord = tmpWord + remainingChars[0]; 
                 
                 // Search for cached word: 
@@ -2042,8 +2106,8 @@ $.extend(SVGEditableTextBox.prototype, {
                     {
                       width: tmpText.width() 
                         + padding['left']
-                        + padding['right'], 
-                      timestamp: new Date().getTime()
+                        + padding['right'], // TODO: is padding supposed to be here? 
+//                       timestamp: new Date().getTime()
                     }; 
                 }
                 
@@ -2056,14 +2120,14 @@ $.extend(SVGEditableTextBox.prototype, {
                   // We can't make the word longer now, wrap it and keep 
                   // rendering the word in the next row
                   
-                  if ( tmpWord.length == 0 ) {
+                  if (tmpWord.length == 0) {
                     // If maxWidth is less than the caracter width add it 
                     // anyway, each row must take at least one character. 
                     tmpWord += remainingChars.shift(); 
                   }
                   
                   // Add tmpWord to our "real" textbox
-                  el = tspans.span( tmpWord.replace(/ /g, "\u00A0"), tspanSettings ); 
+                  el = tspans.span(tmpWord.replace(/ /g, "\u00A0"), tspanSettings); 
                   rowCount.push(lastRow);
                   lastRow += tmpWord.length; // adds one too many if final row
                   tmpWord = ''; 
@@ -2076,24 +2140,28 @@ $.extend(SVGEditableTextBox.prototype, {
               // The too long word is now taken care of! 
               
               remainingWords.shift();
-              if ( tmpWord !== '' ) {
+              if (tmpWord !== '') {
                 // Add the last part of the long word to be included in the  
                 // next row
                 
-                remainingWords.unshift( tmpWord ); 
+                remainingWords.unshift(tmpWord); 
               }
             }
             else {
               // The row is full, the next word does not fit here
               
               // Always end with a space, even if the line is too long. 
-              if (!/[ \u00A0]{1}$/.test(tmpRow) && remainingWords[0] === ' ') {
+              if (!/[ \u00A0]{1}$/.test(tmpRow) && /^[ \u00A0]{1}$/.test(remainingWords[0])) {
                 tmpRow += remainingWords.shift(); 
               }
               
+              if (tmpRow.length == 0) {
+                console.log("gurka");
+              }
+              
               // Save this row
-              tspans.span( tmpRow.replace(/ /g, "\u00A0"), tspanSettings );
-              rowCount.push( lastRow ); // counter
+              tspans.span(tmpRow.replace(/ /g, "\u00A0"), tspanSettings);
+              rowCount.push(lastRow); // counter
               lastRow += tmpRow.length;
               // Reset the row variable: 
               tmpRow = ''; 
@@ -2103,8 +2171,8 @@ $.extend(SVGEditableTextBox.prototype, {
         }
         
         // We're done, so add the very last row of text
-        tspans.span( tmpRow.replace(/ /g, "\u00A0"), tspanSettings ); 
-        rowCount.push( lastRow ); 
+        tspans.span(tmpRow.replace(/ /g, "\u00A0"), tspanSettings); 
+        rowCount.push(lastRow); 
         
         // Note: lastRow will be 1 too much for the final row, which does not 
         // end with \r or \n. However, we don't use this variable for the very 
@@ -2116,16 +2184,15 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // Append the text to its group: 
       t = that._wrapper.text(g, 0, num(textY), tspans);
+      
+      
+      
+      that._postParagraphHook(g, t);
     });
     
     // Add invisible lines from bottom to height
     
     var lineHeight = num(StyleSheet.get('text', 'line-height', g));
-//     var fontSize = num(StyleSheet.get('text', 'font-size', g));
-//     var diff = Math.max(lineHeight - fontSize, 0); 
-//     vad lh = Math.max(lineHeight - fontSize, 0);
-//     stroke = num(StyleSheet.get('rect#select', 'stroke-width', $(this).parent()[0]));
-//     console.log(padding['bottom']); 
     
 
     var width = num(maxWidth) + padding['right'] + padding['left']; 
@@ -2142,37 +2209,35 @@ $.extend(SVGEditableTextBox.prototype, {
     this._textPositions = paragraphCount; 
     
     // keep marker visible if group was selected
-    if (g._selected) {
+    if (g._selected && !this._selectionDisabled) {
       
       var possi = this._getTextPosition(this._textPosition);
       var coord = this._getCoordInTextbox(g, possi.paragraph+1, possi.row+1, possi.char);
       var desx = ( this._keepDesiredX ? SVGTextMarker.getDesiredX() : coord.x );
       
-      if (!this._selectionDisabled) {
-	      SVGTextMarker.show(this._wrapper, $.extend(coord, {
-  	        width   : 2 / g.getCTM().a,
-    	      height  : lineHeight * 1.2,
-      	    desx    : desx
-        	}));
-       }
+      SVGTextMarker.show(this._wrapper, $.extend(coord, {
+	        width   : 2 / g.getCTM().a,
+  	      height  : lineHeight * 1.2,
+    	    desx    : desx
+      	}));
     }
     
     var eChange = $.Event("change", {target: g});
     var eChangeSize = $.Event("changeSize", {target: g});
     
+    
     // Trigger events if things have changed
-    this.trigger(eChange);
+//     this.change();
+//     console.log("svg", eChange); 
+    
+    this.trigger(eChange, [this._text]);
     if (this._size.width != width || this._size.height != height) {
       this._size.width = width; 
       this._size.height = height; 
       this.trigger(eChangeSize, [width, height]); 
     }
     
-    // Performance goals: 
-    console.timeEnd("total time");
-    console.log('goal:', (1/24)*1000);
-    
-    this.g = g; 
+//     this._group = g; 
     
     return this;
   },
@@ -2329,12 +2394,12 @@ $.extend(SVGEditableTextBox.prototype, {
     
       var str = pos.element.firstChild.data;
       
-      if (str[pos.char]!=' ') {
+      if (str[pos.char]!='\u00A0') {
       
       // get the closest word on the row
     
         for (var i=Math.max(pos.char-1, 0); i>=0; i--){
-            if (str[i] == ' ' && i < str.length-1) {
+          if (str[i] == '\u00A0' && i < str.length-1) {
               i = i+1;
               break;
             }
@@ -2349,7 +2414,7 @@ $.extend(SVGEditableTextBox.prototype, {
               j = str.length;
               break;
             }
-            else if (str[j] == ' ') {
+            else if (str[j] == '\u00A0') {
               break;
             }
         }
@@ -2358,7 +2423,7 @@ $.extend(SVGEditableTextBox.prototype, {
       // get the closest spaces on the row
         
         for (var i=Math.max(pos.char-1, 0); i>=0; i--){
-            if (str[i] != ' ' && i < str.length-1) {
+          if (str[i] != '\u00A0' && i < str.length-1) {
               i = i+1;
               break;
             }
@@ -2373,7 +2438,7 @@ $.extend(SVGEditableTextBox.prototype, {
               j = str.length;
               break;
             }
-            else if (str[j] != ' ') {
+            else if (str[j] != '\u00A0') {
               break;
             }
         }
@@ -3017,14 +3082,61 @@ function SVGEditableList(wrapper){
 
 $.extend(SVGEditableList.prototype, new SVGEditableTextBox);
 $.extend(SVGEditableList.prototype, {
+  _classType: "list", 
   
-  _getGPadding: function() {
+  _getGPadding: function(g) {
     var padding = {};
-    padding['top']    = num(StyleSheet.get( 'rect.list', 'padding-top' ))*1.2;
-    padding['right']  = num(StyleSheet.get( 'rect.list', 'padding-right' ));
-    padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom' ));
-    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left' ));
+    padding['top']    = num(StyleSheet.get( 'rect.list', 'padding-top', g ))*1.2;
+    padding['right']  = num(StyleSheet.get( 'rect.list', 'padding-right', g ));
+    padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom', g ));
+    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
     return padding; 
+  },
+  
+  _postParagraphHook: function(group, text) {
+    var height = num(text.getAttribute("y"));
+    var paddingLeft = num(StyleSheet.get("rect.list", "padding-left", text.parent));
+    var lineHeight = num(StyleSheet.get("text", "line-height", text));
+    var fontSize = num(StyleSheet.get("text", "font-size", text));
+    var radius = fontSize * 0.2; 
+    this._wrapper.circle(group, paddingLeft, height + lineHeight - fontSize/2 + radius/2, radius); 
+    return true; 
+  },
+});/** 
+ *  SVGEditableList
+**/
+
+// $.svg.addExtension('list', SVGEditableList);
+
+function SVGEditableList(wrapper){
+  this._wrapper = wrapper; // The attached SVG wrapper object
+}
+
+// SVGEditableList.inheritsFrom( SVGEditableTextBox );
+
+
+/* ------- PUBLIC INSTANCE ------- */
+
+$.extend(SVGEditableList.prototype, new SVGEditableTextBox);
+$.extend(SVGEditableList.prototype, {
+  _classType: "text", 
+  
+  _getGPadding: function(g) {
+    var padding = {};
+    padding['top']    = num(StyleSheet.get( 'rect.text', 'padding-top', g ))*1.2;
+    padding['right']  = num(StyleSheet.get( 'rect.text', 'padding-right', g ));
+    padding['bottom'] = num(StyleSheet.get( 'rect.text', 'padding-bottom', g ));
+    padding['left']   = num(StyleSheet.get( 'rect.text', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
+    return padding; 
+  },
+  
+  _preProcessSetText: function(text, textPosition) {
+    var before = text.length; 
+    text = text.replace(/[\n\r]{1}/g, ""); 
+    var after = text.length; 
+    var diff = before - after; 
+    textPosition = textPosition - diff; 
+    return [text, textPosition]; 
   },
 });/** 
  *  SVGTextMarker

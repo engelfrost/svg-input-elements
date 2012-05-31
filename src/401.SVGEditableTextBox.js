@@ -50,14 +50,15 @@ $.extend(SVGEditableTextBox.prototype, {
   
   _setText: function(text, textPosition) {
     this._historyAdd(text, textPosition); 
-    this._text = text; 
-    this._textPosition = textPosition;
+    var res = this._preProcessSetText(text, textPosition); 
+    this._text = res[0]; 
+    this._textPosition = res[1];
   },
   
   init: function(parent, value, width, height, settings) {
   
     this._parent = parent; 
-    this._text = value.toString();
+    this._text = this._preProcessSetText(value.toString(), 0)[0];
     this._history = [{text: value.toString(), textPosition: null}];
     this._width = width; // value -1 means "no maxwidth"
     this._height = height; // not used at the moment
@@ -210,6 +211,10 @@ $.extend(SVGEditableTextBox.prototype, {
     return padding; 
   },
   
+  _preProcessText: function(text, textPosition) {
+    return [text, textPosition]; 
+  },
+  
   _postParagraphHook: function(group, text) {
     return true; 
   },
@@ -253,6 +258,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var tspans; // tspans to be rendered
     var paragraphs = []; 
     regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by \n preserving any \n.
+//     this._text = this._preProcessText(this._text); 
     while ((w = regex.exec(this._text)) != null) {
       paragraphs.push(w[0]); //.replace(/\n$/, ' '));
     }
@@ -309,10 +315,6 @@ $.extend(SVGEditableTextBox.prototype, {
       sections = [];
       regex = /[^\r]+\r?|\r/g;
       while ((w = regex.exec(paragraph)) != null) {
-        if (w[0] == "\r") {
-          console.log("'",w[0],"'");
-//           w[0] = "\u00A0"+w[0]; 
-        }
         sections.push(w[0]);
       }
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
