@@ -22,7 +22,7 @@
     }
     closedir($handle);
     
-    usort($paths, compare_filenames);
+    usort($paths, 'compare_filenames');
     
     $license = '/* SVG Input Elements for SVG jQuery (1.4.4).
    https://github.com/silence150/SVG-Input-Elements

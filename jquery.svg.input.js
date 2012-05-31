@@ -204,7 +204,7 @@ $.event.special.doubleclick = {
 };
 
 // List approved types
-var types = [SVGGElement, SVGTextElement, SVGTSpanElement, SVGRectElement];
+var types = [SVGGElement, SVGTextElement, SVGTSpanElement, SVGRectElement, SVGImageElement];
 var typeNames = types.map(function(e,i){ return e.name; });
 
 var StyleSheet = {
@@ -584,6 +584,44 @@ $.extend(SVGInputElements.prototype, {
     delete settings.height; 
     
     return (new SVGEditableList(this._wrapper)).init(parent, value, width, height, settings);
+  },
+  
+  /** 
+   * Code copied and modified from Kieth Wood's jQuery SVG plugin:
+   * Create a list.
+   * Specify both of x and y or neither of them.
+   * @param  parent    (element or jQuery) the parent node for the text (optional)
+   * @param  x         (number or number[]) the x-coordinate(s) for the text (optional)
+   * @param  y         (number or number[]) the y-coordinate(s) for the text (optional)
+   * @param  value     (string) the text content
+   * @param  settings  (object) additional settings for the list. These are SVG group value + optionally width and height values (optional)
+   * @return  (element) the new text node 
+   */
+  image: function (parent, x, y, value, settings) {
+    var args = this._wrapper._args(arguments, ['x', 'y', 'value']);
+    if (typeof args.x == 'string' && arguments.length < 4) {
+      args.value = args.x;
+      args.settings = args.y;
+      args.x = args.y = null;
+    }
+    return this._image(
+      args.parent, 
+      args.value, 
+      $.extend({
+        x: (args.x && isArray(args.x) ? args.x.join(' ') : args.x),
+               y: (args.y && isArray(args.y) ? args.y.join(' ') : args.y)
+      }, 
+      args.settings || {})
+    );
+  },
+  
+  _image: function (parent, value, settings) {
+    width = ( typeof settings.width == 'undefined' ) ? -1 : settings.width; 
+    height = ( typeof settings.height == 'undefined' ) ? -1 : settings.height; 
+    delete settings.width; 
+    delete settings.height; 
+    
+    return (new SVGEditableImage(this._wrapper)).init(parent, value, width, height, settings);
   }
 });
 
@@ -651,7 +689,7 @@ $.extend(SVGSelectableGElement, {
     select = $('#select');
     if (select.length) {
       classes = (s = select.parent().attr('class')) ? s.replace('selected', '') : ''; 
-      select.parent().attr('class', classes);
+      select.parent().attr('class', classes.trim());
       select.remove();  
       $('#textbox-marker').css({display: 'none'});
     }
@@ -924,7 +962,7 @@ $.extend(SVGSelectableGElement.prototype, {
           this._selected = true;
           
           // set the class of the element to selected, so we can find it later
-          this.setAttribute('class', this.getAttribute('class') + ' selected');
+          this.setAttribute('class', this.getAttribute('class').trim() + ' selected');
           
           this._render();
             
@@ -979,8 +1017,6 @@ $.extend(SVGSelectableGElement.prototype, {
 /** 
  *  SVGEditableTextBox
 **/
-
-// $.svg.addExtension('textbox', SVGEditableTextBox);
 
 function SVGEditableTextBox(wrapper){
   this._wrapper = wrapper; // The attached SVG wrapper object
@@ -3085,6 +3121,115 @@ $.extend(SVGTextMarker, {
 
   }
   
+});/** 
+ *  SVGEditableList
+**/
+
+function SVGEditableImage(wrapper){
+  this._wrapper = wrapper; // The attached SVG wrapper object
+}
+
+SVGEditableImage.inheritsFrom( SVGSelectableGElement );
+
+// "static" stuff
+$.extend(SVGEditableImage, {
+	once: false, 
+  
+  setup: function(){
+    
+    // do all times
+    
+    if (!this.once){
+    
+    	this.once = true;
+    }
+  }
+});
+
+/* ------- PUBLIC INSTANCE ------- */
+
+//$.extend(SVGEditableImage.prototype, new SVGEditableGElement);
+$.extend(SVGEditableImage.prototype, {
+	_classType: "image",
+
+	init: function(parent, value, width, height, settings) {
+  
+    this._parent = parent; 
+    this._src = value.toString();
+    this._width = width; // value -1 means "no maxwidth"
+    this._height = height; // not used at the moment
+    SVGEditableImage._textareaCount++; 
+    this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
+    this._class += " " + this._classType + " " + (settings.class || '');
+    this._settings = settings;
+  
+    // bind to events
+    SVGEditableImage.setup();
+    
+    this.super.init.apply(this);
+    
+    // Render Objects
+    return this._render();
+    
+  },
+  
+  _render: function() {
+  	var self = this; 
+    var x = this._settings.x; 
+    var y = this._settings.y; 
+    var gSettings = {class: this._class, transform: 'translate('+x+','+y+')'};
+    var g = this.super._render.call(this, this._parent, this._id, gSettings);
+    var padding = this._getGPadding(g);
+    var maxWidth = this._width - padding['left'] - padding['right'];
+    
+    var width = num(maxWidth); 
+    var ctm = g.getScreenCTM();
+    
+    // build an image to display
+    var img = new Image();
+		img.onload = function() {
+		
+			var imageProportion = this.width/this.height;
+			
+			var height = width / imageProportion;
+			
+			self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
+			
+			var bgRect = self._wrapper.rect(g, 0, 0, width + padding['right'] + padding['left'], height + padding['top']+ num(padding['bottom']), 
+                                    {class: 'background'} 
+                                   );
+	    g.insertBefore( bgRect, g.firstChild );
+	    // keep group in focus if selected
+	    g.reload();
+			
+		}
+		img.src = this._src;
+  },
+  
+  _getGPadding: function(g) {
+    var padding = {
+      'top'    : num(StyleSheet.get( 'rect.background', 'padding-top', g))*1.2,
+      'right'  : num(StyleSheet.get( 'rect.background', 'padding-right', g)),
+      'bottom' : num(StyleSheet.get( 'rect.background', 'padding-bottom', g)),
+      'left'   : num(StyleSheet.get( 'rect.background', 'padding-left', g))
+    }
+    return padding; 
+  },
+  
+  disableSelection: function() {},
+  
+  enableSelection: function(){},
+  
+  // implementation of extension point (hooks)
+  select: function(g,e){}, // a hook to capture the selection
+  deselect: function(){},
+  mouseup: function(g,e){},
+  mousedown: function(g,e){},
+  mousemove: function(g,e){},
+  click: function(g,e){},
+  dblclick: function(g,e){},
+  tplclick: function(g,e){},
+  contextmenu: function(g,e){}
 });
 
 })(jQuery);
