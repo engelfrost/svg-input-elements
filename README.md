@@ -84,8 +84,8 @@ function init(svg) {
 
     var textArea = svg.input.textArea(parent, x, y, "text with \nparagraphs", settings);
     var text = svg.input.text(parent, x, y, "text with \nno line \nbreaks", settings);
-    var text = svg.input.list(parent, x, y, "list\nof\nitems", settings);
-    var text = svg.input.image(parent, x, y, "path/to/image.jpg", settings);
+    var list = svg.input.list(parent, x, y, "list\nof\nitems", settings);
+    var image = svg.input.image(parent, x, y, "path/to/image.jpg", settings);
 }
 ```
 the `parent` parameter is optional. The properties of the `settings` object 
