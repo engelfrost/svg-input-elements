@@ -74,7 +74,7 @@ $(document).ready(function(){
 });
 ```
 
-You can now create a textarea using the following code: 
+You can now create a textarea, text, list and image using the following code: 
 ```
 function init(svg) {
     var parent = $('#svg')[0]; 
@@ -82,7 +82,10 @@ function init(svg) {
     var y = 10; 
     var settings = {width: '200'}; 
 
-    var textArea = svg.input.textArea(parent, x, y, "text", settings);
+    var textArea = svg.input.textArea(parent, x, y, "text with \nparagraphs", settings);
+    var text = svg.input.text(parent, x, y, "text with \nno line \nbreaks", settings);
+    var text = svg.input.list(parent, x, y, "list\nof\nitems", settings);
+    var text = svg.input.image(parent, x, y, "path/to/image.jpg", settings);
 }
 ```
 the `parent` parameter is optional. The properties of the `settings` object 
