@@ -293,7 +293,7 @@ $.extend(SVGSelectableGElement.prototype, {
   },
   
   init: function() {
-    this._events = this._eventmanager = $('<input data-unique="'+Math.random()+'">'),
+    this._events = this._eventmanager = $('<input>'),
          
     // bind to events
     SVGSelectableGElement.setup( this );

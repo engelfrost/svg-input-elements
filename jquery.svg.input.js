@@ -958,7 +958,7 @@ $.extend(SVGSelectableGElement.prototype, {
   },
   
   init: function() {
-    this._events = this._eventmanager = $('<input data-unique="'+Math.random()+'">'),
+    this._events = this._eventmanager = $('<input>'),
          
     // bind to events
     SVGSelectableGElement.setup( this );
@@ -1893,9 +1893,9 @@ $.extend(SVGEditableTextBox.prototype, {
   },
   
   update: function() {
-    var that = this;
+    var self = this;
     clearTimeout(this._renderTimer);
-    this._renderTimer = setTimeout(function(){that._render()},0);
+    this._renderTimer = setTimeout(function(){self._render()},0);
   },
   
   _getGPadding: function(g) {
@@ -1908,7 +1908,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return padding; 
   },
   
-  _preProcessText: function(text, textPosition) {
+  _preProcessSetText: function(text, textPosition) {
     return [text, textPosition]; 
   },
   
@@ -1954,7 +1954,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var lastRow = 0; 
     var tspans; // tspans to be rendered
     var paragraphs = []; 
-    regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by \n preserving any \n.
+    var regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by \n preserving any \n.
 //     this._text = this._preProcessText(this._text); 
     while ((w = regex.exec(this._text)) != null) {
       paragraphs.push(w[0]); //.replace(/\n$/, ' '));
@@ -1982,8 +1982,6 @@ $.extend(SVGEditableTextBox.prototype, {
       + style.fontVariant + ','
       + style.letterSpacing; 
     
-//     console.log(fontSettings, this._text); I AM HERE
-        
     $(tmp).remove();
     
     if (!(fontSettings in SVGEditableTextBox._wordCache)) {
@@ -2009,11 +2007,12 @@ $.extend(SVGEditableTextBox.prototype, {
       tspans = that._wrapper.createText(); 
       
       // split paragraph into sections by \r
-      sections = [];
-      regex = /[^\r]+\r?|\r/g;
+      var sections = [];
+      var regex = /(([^\r]+)?[\r])|([^\r]+$)/g;
       while ((w = regex.exec(paragraph)) != null) {
         sections.push(w[0]);
       }
+      console.log(sections); 
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
@@ -2029,16 +2028,13 @@ $.extend(SVGEditableTextBox.prototype, {
         // more remainingWords
         
         // Split into words and spaces
-        regex = /[ \u00A0]{1}|[^ \u00A0]+/g; 
-        remainingWords = []; 
+        var regex = /\r|[ \u00A0]{1}|[^ \u00A0]+/g; 
+        var remainingWords = []; 
         
         while ((w = regex.exec(section)) != null) {
-//           if (w[0] == "\r") {
-//             w[0] == "\u00A0\r";
-//           }
           remainingWords.push(w[0]);
         }
-                
+        console.log("section:", remainingWords); 
         var tmpRow = '';  
         var tmpText; 
         var tmpRowWidth = 0; 
@@ -2074,7 +2070,13 @@ $.extend(SVGEditableTextBox.prototype, {
           
           if ((tmpRowWidth + wordWidth) <= maxWidth || maxWidth == -1) {
             // We're OK, add the word to the row
-            tmpRow = tmpRow + remainingWords.shift(); 
+            var word = remainingWords.shift(); 
+//             if (word == "\r") {
+//               tmpRow = "\u00A0"; 
+//             }
+//             else {
+              tmpRow = tmpRow + word; 
+//             }
             tmpRowWidth += wordWidth; 
           } 
           else { 
@@ -2153,10 +2155,6 @@ $.extend(SVGEditableTextBox.prototype, {
               // Always end with a space, even if the line is too long. 
               if (!/[ \u00A0]{1}$/.test(tmpRow) && /^[ \u00A0]{1}$/.test(remainingWords[0])) {
                 tmpRow += remainingWords.shift(); 
-              }
-              
-              if (tmpRow.length == 0) {
-                console.log("gurka");
               }
               
               // Save this row
@@ -2930,7 +2928,6 @@ $.extend(SVGEditableTextBox.prototype, {
         var diff = new Date().getTime() - dclicktime;
         
         if (!diff || (diff > 300 || this._selection) && !this._tplClickState) {
-          
           if (this._selection) {
             this._selection = null;
             $('.marking').remove();
@@ -2940,12 +2937,12 @@ $.extend(SVGEditableTextBox.prototype, {
           var coord = this._coordInText(g,e,true);
           
           if (!this._selectionDisabled) {
-	          SVGTextMarker.show(this._wrapper, $.extend(coord, {
-	            width   : 2 / g.getCTM().a,
-	            height  : lineHeight * 1.2,
-	            desx    : coord.x
-	          }));
-	        }
+            SVGTextMarker.show(this._wrapper, $.extend(coord, {
+              width   : 2 / g.getCTM().a,
+              height  : lineHeight * 1.2,
+              desx    : coord.x
+            }));
+          }
           
           row = coord.row-1;
           paragraph = coord.paragraph-1; 
@@ -3262,7 +3259,10 @@ $.extend(SVGEditableImage, {
 
 //$.extend(SVGEditableImage.prototype, new SVGEditableGElement);
 $.extend(SVGEditableImage.prototype, {
-	_classType: "image",
+  _classType: "image",
+  _renderTimer: -1,
+  _height: 0,
+  _width: 0,
 
 	init: function(parent, value, width, height, settings) {
   
@@ -3285,6 +3285,12 @@ $.extend(SVGEditableImage.prototype, {
     
   },
   
+  update: function() {
+    var self = this;
+    clearTimeout(this._renderTimer);
+    this._renderTimer = setTimeout(function(){self._render()},0);
+  },
+  
   _render: function() {
   	var self = this; 
     var x = this._settings.x; 
@@ -3299,23 +3305,28 @@ $.extend(SVGEditableImage.prototype, {
     
     // build an image to display
     var img = new Image();
-		img.onload = function() {
-		
-			var imageProportion = this.width/this.height;
-			
-			var height = width / imageProportion;
-			
-			self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
-			
-			var bgRect = self._wrapper.rect(g, 0, 0, width + padding['right'] + padding['left'], height + padding['top']+ num(padding['bottom']), 
+    img.onload = function() {
+    
+      var imageProportion = this.width / this.height;
+      
+      var height = width / imageProportion;
+      
+      self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
+      
+      var bgRect = self._wrapper.rect(g, 0, 0, width + padding['right'] + padding['left'], height + padding['top']+ num(padding['bottom']), 
                                     {class: 'background'} 
-                                   );
-	    g.insertBefore( bgRect, g.firstChild );
-	    // keep group in focus if selected
-	    g.reload();
-			
-		}
-		img.src = this._src;
+                                  );
+      g.insertBefore( bgRect, g.firstChild );
+      // keep group in focus if selected
+      g.reload();
+      
+      var eChangeSize = $.Event("changeSize", {target: self._group});
+      self.trigger(eChangeSize, [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
+            console.log("triggering", [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
+    }
+    img.src = this._src;
+    
+    return this; 
   },
   
   _getGPadding: function(g) {
@@ -3324,8 +3335,16 @@ $.extend(SVGEditableImage.prototype, {
       'right'  : num(StyleSheet.get( 'rect.background', 'padding-right', g)),
       'bottom' : num(StyleSheet.get( 'rect.background', 'padding-bottom', g)),
       'left'   : num(StyleSheet.get( 'rect.background', 'padding-left', g))
-    }
+    };
     return padding; 
+  },
+  
+  getHeight: function() {
+    return this._height; 
+  },
+  
+  getWidth: function() {
+    return this._width; 
   },
   
   disableSelection: function() {},

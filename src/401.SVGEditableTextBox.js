@@ -196,9 +196,9 @@ $.extend(SVGEditableTextBox.prototype, {
   },
   
   update: function() {
-    var that = this;
+    var self = this;
     clearTimeout(this._renderTimer);
-    this._renderTimer = setTimeout(function(){that._render()},0);
+    this._renderTimer = setTimeout(function(){self._render()},0);
   },
   
   _getGPadding: function(g) {
@@ -211,7 +211,7 @@ $.extend(SVGEditableTextBox.prototype, {
     return padding; 
   },
   
-  _preProcessText: function(text, textPosition) {
+  _preProcessSetText: function(text, textPosition) {
     return [text, textPosition]; 
   },
   
@@ -257,7 +257,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var lastRow = 0; 
     var tspans; // tspans to be rendered
     var paragraphs = []; 
-    regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by \n preserving any \n.
+    var regex = /(([^\n]+)?[\n])|([^\n]+$)/g; // split by \n preserving any \n.
 //     this._text = this._preProcessText(this._text); 
     while ((w = regex.exec(this._text)) != null) {
       paragraphs.push(w[0]); //.replace(/\n$/, ' '));
@@ -285,8 +285,6 @@ $.extend(SVGEditableTextBox.prototype, {
       + style.fontVariant + ','
       + style.letterSpacing; 
     
-//     console.log(fontSettings, this._text); I AM HERE
-        
     $(tmp).remove();
     
     if (!(fontSettings in SVGEditableTextBox._wordCache)) {
@@ -312,11 +310,12 @@ $.extend(SVGEditableTextBox.prototype, {
       tspans = that._wrapper.createText(); 
       
       // split paragraph into sections by \r
-      sections = [];
-      regex = /[^\r]+\r?|\r/g;
+      var sections = [];
+      var regex = /(([^\r]+)?[\r])|([^\r]+$)/g;
       while ((w = regex.exec(paragraph)) != null) {
         sections.push(w[0]);
       }
+      console.log(sections); 
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
@@ -332,16 +331,13 @@ $.extend(SVGEditableTextBox.prototype, {
         // more remainingWords
         
         // Split into words and spaces
-        regex = /[ \u00A0]{1}|[^ \u00A0]+/g; 
-        remainingWords = []; 
+        var regex = /\r|[ \u00A0]{1}|[^ \u00A0]+/g; 
+        var remainingWords = []; 
         
         while ((w = regex.exec(section)) != null) {
-//           if (w[0] == "\r") {
-//             w[0] == "\u00A0\r";
-//           }
           remainingWords.push(w[0]);
         }
-                
+        console.log("section:", remainingWords); 
         var tmpRow = '';  
         var tmpText; 
         var tmpRowWidth = 0; 
@@ -377,7 +373,13 @@ $.extend(SVGEditableTextBox.prototype, {
           
           if ((tmpRowWidth + wordWidth) <= maxWidth || maxWidth == -1) {
             // We're OK, add the word to the row
-            tmpRow = tmpRow + remainingWords.shift(); 
+            var word = remainingWords.shift(); 
+//             if (word == "\r") {
+//               tmpRow = "\u00A0"; 
+//             }
+//             else {
+              tmpRow = tmpRow + word; 
+//             }
             tmpRowWidth += wordWidth; 
           } 
           else { 
@@ -456,10 +458,6 @@ $.extend(SVGEditableTextBox.prototype, {
               // Always end with a space, even if the line is too long. 
               if (!/[ \u00A0]{1}$/.test(tmpRow) && /^[ \u00A0]{1}$/.test(remainingWords[0])) {
                 tmpRow += remainingWords.shift(); 
-              }
-              
-              if (tmpRow.length == 0) {
-                console.log("gurka");
               }
               
               // Save this row
@@ -1233,7 +1231,6 @@ $.extend(SVGEditableTextBox.prototype, {
         var diff = new Date().getTime() - dclicktime;
         
         if (!diff || (diff > 300 || this._selection) && !this._tplClickState) {
-          
           if (this._selection) {
             this._selection = null;
             $('.marking').remove();
@@ -1243,12 +1240,12 @@ $.extend(SVGEditableTextBox.prototype, {
           var coord = this._coordInText(g,e,true);
           
           if (!this._selectionDisabled) {
-	          SVGTextMarker.show(this._wrapper, $.extend(coord, {
-	            width   : 2 / g.getCTM().a,
-	            height  : lineHeight * 1.2,
-	            desx    : coord.x
-	          }));
-	        }
+            SVGTextMarker.show(this._wrapper, $.extend(coord, {
+              width   : 2 / g.getCTM().a,
+              height  : lineHeight * 1.2,
+              desx    : coord.x
+            }));
+          }
           
           row = coord.row-1;
           paragraph = coord.paragraph-1; 
