@@ -27,7 +27,10 @@ $.extend(SVGEditableImage, {
 
 //$.extend(SVGEditableImage.prototype, new SVGEditableGElement);
 $.extend(SVGEditableImage.prototype, {
-	_classType: "image",
+  _classType: "image",
+  _renderTimer: -1,
+  _height: 0,
+  _width: 0,
 
 	init: function(parent, value, width, height, settings) {
   
@@ -50,6 +53,12 @@ $.extend(SVGEditableImage.prototype, {
     
   },
   
+  update: function() {
+    var self = this;
+    clearTimeout(this._renderTimer);
+    this._renderTimer = setTimeout(function(){self._render()},0);
+  },
+  
   _render: function() {
   	var self = this; 
     var x = this._settings.x; 
@@ -64,23 +73,28 @@ $.extend(SVGEditableImage.prototype, {
     
     // build an image to display
     var img = new Image();
-		img.onload = function() {
-		
-			var imageProportion = this.width/this.height;
-			
-			var height = width / imageProportion;
-			
-			self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
-			
-			var bgRect = self._wrapper.rect(g, 0, 0, width + padding['right'] + padding['left'], height + padding['top']+ num(padding['bottom']), 
+    img.onload = function() {
+    
+      var imageProportion = this.width / this.height;
+      
+      var height = width / imageProportion;
+      
+      self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
+      
+      var bgRect = self._wrapper.rect(g, 0, 0, width + padding['right'] + padding['left'], height + padding['top']+ num(padding['bottom']), 
                                     {class: 'background'} 
-                                   );
-	    g.insertBefore( bgRect, g.firstChild );
-	    // keep group in focus if selected
-	    g.reload();
-			
-		}
-		img.src = this._src;
+                                  );
+      g.insertBefore( bgRect, g.firstChild );
+      // keep group in focus if selected
+      g.reload();
+      
+      var eChangeSize = $.Event("changeSize", {target: self._group});
+      self.trigger(eChangeSize, [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
+            console.log("triggering", [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
+    }
+    img.src = this._src;
+    
+    return this; 
   },
   
   _getGPadding: function(g) {
@@ -89,8 +103,16 @@ $.extend(SVGEditableImage.prototype, {
       'right'  : num(StyleSheet.get( 'rect.background', 'padding-right', g)),
       'bottom' : num(StyleSheet.get( 'rect.background', 'padding-bottom', g)),
       'left'   : num(StyleSheet.get( 'rect.background', 'padding-left', g))
-    }
+    };
     return padding; 
+  },
+  
+  getHeight: function() {
+    return this._height; 
+  },
+  
+  getWidth: function() {
+    return this._width; 
   },
   
   disableSelection: function() {},
