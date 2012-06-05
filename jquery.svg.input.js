@@ -604,7 +604,7 @@ $.extend(SVGInputElements.prototype, {
       args.settings = args.y;
       args.x = args.y = null;
     }
-    return this._list(
+    return this._text(
       args.parent, 
       args.value, 
       $.extend({
@@ -2008,11 +2008,10 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // split paragraph into sections by \r
       var sections = [];
-      var regex = /(([^\r]+)?[\r])|([^\r]+$)/g;
+      var regex = /(([^\r]+)?\r)|([^\r]+$)/g;
       while ((w = regex.exec(paragraph)) != null) {
-        sections.push(w[0]);
+        sections.push(w[0].replace("\r", "\u00A0"));
       }
-      console.log(sections); 
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
@@ -2034,7 +2033,6 @@ $.extend(SVGEditableTextBox.prototype, {
         while ((w = regex.exec(section)) != null) {
           remainingWords.push(w[0]);
         }
-        console.log("section:", remainingWords); 
         var tmpRow = '';  
         var tmpText; 
         var tmpRowWidth = 0; 
@@ -3100,6 +3098,42 @@ $.extend(SVGEditableList.prototype, {
     return true; 
   },
 });/** 
+ *  SVGEditableList
+**/
+
+// $.svg.addExtension('list', SVGEditableList);
+
+function SVGEditableText(wrapper){
+  this._wrapper = wrapper; // The attached SVG wrapper object
+}
+
+// SVGEditableList.inheritsFrom( SVGEditableTextBox );
+
+
+/* ------- PUBLIC INSTANCE ------- */
+
+$.extend(SVGEditableText.prototype, new SVGEditableTextBox);
+$.extend(SVGEditableText.prototype, {
+  _classType: "text", 
+  
+  _getGPadding: function(g) {
+    var padding = {};
+    padding['top']    = num(StyleSheet.get( 'rect.text', 'padding-top', g ))*1.2;
+    padding['right']  = num(StyleSheet.get( 'rect.text', 'padding-right', g ));
+    padding['bottom'] = num(StyleSheet.get( 'rect.text', 'padding-bottom', g ));
+    padding['left']   = num(StyleSheet.get( 'rect.text', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
+    return padding; 
+  },
+  
+  _preProcessSetText: function(text, textPosition) {
+    var before = text.length; 
+    text = text.replace(/[\n\r]{1}/g, ""); 
+    var after = text.length; 
+    var diff = before - after; 
+    textPosition = textPosition - diff; 
+    return [text, textPosition]; 
+  },
+});/** 
  *  SVGTextMarker
 **/
 
@@ -3286,7 +3320,6 @@ $.extend(SVGEditableImage.prototype, {
       
       var eChangeSize = $.Event("changeSize", {target: self._group});
       self.trigger(eChangeSize, [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
-            console.log("triggering", [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
     }
     img.src = this._src;
     
