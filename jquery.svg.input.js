@@ -604,7 +604,7 @@ $.extend(SVGInputElements.prototype, {
       args.settings = args.y;
       args.x = args.y = null;
     }
-    return this._list(
+    return this._text(
       args.parent, 
       args.value, 
       $.extend({
@@ -2008,11 +2008,10 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // split paragraph into sections by \r
       var sections = [];
-      var regex = /(([^\r]+)?[\r])|([^\r]+$)/g;
+      var regex = /(([^\r]+)?\r)|([^\r]+$)/g;
       while ((w = regex.exec(paragraph)) != null) {
-        sections.push(w[0]);
+        sections.push(w[0].replace("\r", "\u00A0"));
       }
-      console.log(sections); 
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
@@ -2034,7 +2033,6 @@ $.extend(SVGEditableTextBox.prototype, {
         while ((w = regex.exec(section)) != null) {
           remainingWords.push(w[0]);
         }
-        console.log("section:", remainingWords); 
         var tmpRow = '';  
         var tmpText; 
         var tmpRowWidth = 0; 
@@ -3105,7 +3103,7 @@ $.extend(SVGEditableList.prototype, {
 
 // $.svg.addExtension('list', SVGEditableList);
 
-function SVGEditableList(wrapper){
+function SVGEditableText(wrapper){
   this._wrapper = wrapper; // The attached SVG wrapper object
 }
 
@@ -3114,8 +3112,8 @@ function SVGEditableList(wrapper){
 
 /* ------- PUBLIC INSTANCE ------- */
 
-$.extend(SVGEditableList.prototype, new SVGEditableTextBox);
-$.extend(SVGEditableList.prototype, {
+$.extend(SVGEditableText.prototype, new SVGEditableTextBox);
+$.extend(SVGEditableText.prototype, {
   _classType: "text", 
   
   _getGPadding: function(g) {
@@ -3325,7 +3323,6 @@ $.extend(SVGEditableImage.prototype, {
       
       var eChangeSize = $.Event("changeSize", {target: self._group});
       self.trigger(eChangeSize, [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
-            console.log("triggering", [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
     }
     img.src = this._src;
     

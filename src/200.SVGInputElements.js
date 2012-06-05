@@ -108,7 +108,7 @@ $.extend(SVGInputElements.prototype, {
       args.settings = args.y;
       args.x = args.y = null;
     }
-    return this._list(
+    return this._text(
       args.parent, 
       args.value, 
       $.extend({

@@ -5,8 +5,8 @@ SVG Input Elements
 2.0 version would be greatly appreciated! *
 
 Better documentation will be included in the 1.0 release. For now, use the 
-instructions in [Getting Started](#getting-started). For a demo of the 0.2.2 
-release (essentially the same as 0.3 but without lists) go to 
+instructions in [Getting Started](#getting-started). A demo (updated 5 June 
+2012) can be found at 
 [josf.se/svg-input-elements/](http://josf.se/svg-input-elements/). 
 
 This project started out as a sub-project to a master thesis project, 

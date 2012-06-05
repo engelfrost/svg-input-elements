@@ -311,11 +311,10 @@ $.extend(SVGEditableTextBox.prototype, {
       
       // split paragraph into sections by \r
       var sections = [];
-      var regex = /(([^\r]+)?[\r])|([^\r]+$)/g;
+      var regex = /(([^\r]+)?\r)|([^\r]+$)/g;
       while ((w = regex.exec(paragraph)) != null) {
-        sections.push(w[0]);
+        sections.push(w[0].replace("\r", "\u00A0"));
       }
-      console.log(sections); 
       if (sections.length == 0 || (sections.length == 1 && sections[0] == "\n")) {
         sections = ["\u00A0"]; 
       }
@@ -337,7 +336,6 @@ $.extend(SVGEditableTextBox.prototype, {
         while ((w = regex.exec(section)) != null) {
           remainingWords.push(w[0]);
         }
-        console.log("section:", remainingWords); 
         var tmpRow = '';  
         var tmpText; 
         var tmpRowWidth = 0; 

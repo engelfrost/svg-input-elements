@@ -93,7 +93,6 @@ $.extend(SVGEditableImage.prototype, {
       
       var eChangeSize = $.Event("changeSize", {target: self._group});
       self.trigger(eChangeSize, [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
-            console.log("triggering", [bgRect.getAttribute("width"), bgRect.getAttribute("height")]); 
     }
     img.src = this._src;
     

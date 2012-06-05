@@ -4,7 +4,7 @@
 
 // $.svg.addExtension('list', SVGEditableList);
 
-function SVGEditableList(wrapper){
+function SVGEditableText(wrapper){
   this._wrapper = wrapper; // The attached SVG wrapper object
 }
 
@@ -13,8 +13,8 @@ function SVGEditableList(wrapper){
 
 /* ------- PUBLIC INSTANCE ------- */
 
-$.extend(SVGEditableList.prototype, new SVGEditableTextBox);
-$.extend(SVGEditableList.prototype, {
+$.extend(SVGEditableText.prototype, new SVGEditableTextBox);
+$.extend(SVGEditableText.prototype, {
   _classType: "text", 
   
   _getGPadding: function(g) {
