@@ -96,8 +96,8 @@ $.extend(SVGEditableImage.prototype, {
       
       // add our button
       var f = self._wrapper.other(g, 'foreignObject', {width: width*ctm.a, height: 24, x: 0, y: 10, transform: 'scale(' + (1/ctm.a) + ')'});
-      $(f).append("<div id='imagetool'><button>" + self._settings.buttonText + "</button></div>");
-      var it = $('#imagetool')
+      var it = $("<div class='imagetool'><button>" + self._settings.buttonText + "</button></div>");
+      $(f).append(it);
       it.bind('click', function(e){
       	self._group.select(e);
       	self.trigger("edit");
