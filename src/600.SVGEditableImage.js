@@ -82,7 +82,7 @@ $.extend(SVGEditableImage.prototype, {
       var img = self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
       
       img.setAttribute('xlink:href', self._src);
-      img.removeAttribute('href');
+//       img.removeAttribute('href');
       
       var bgRect = self._wrapper.rect(g, 0, 0, width + padding['right'] + padding['left'], height + padding['top']+ num(padding['bottom']), 
                                     {class: 'background'} 

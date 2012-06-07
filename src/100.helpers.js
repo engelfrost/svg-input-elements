@@ -366,35 +366,39 @@ while (element.hasChildNodes()) {
 
 /* Extend TextBox SVG types with more locatability functionality */
 $.each(types, function(i,t){
-  $.extend(t.prototype, {
-    width: function() {
-      if (t === SVGTSpanElement){ 
-        var len = this.getSubStringLength(0, this.firstChild.data.length);
+  if (t !== SVGRectElement && t !== SVGImageElement) {
+    $.extend(t.prototype, {
+      width: function() {
+        if (t === SVGTSpanElement){ 
+          var len = this.getSubStringLength(0, this.firstChild.data.length);
+          
+          if ($.browser.mozilla) { // Mozilla(FF)
+            len = Math.max(0,Math.ceil(len-8)); // Ugly-fix!!
+          }   
         
-        if ($.browser.mozilla) { // Mozilla(FF)
-          len = Math.max(0,Math.ceil(len-8)); // Ugly-fix!!
-        }   
-      
-        return len;
-      } else {
-        return this.getBBox().width;
-      }
-    },
-    height: function() {
-      if (t === SVGTSpanElement){ 
-        g = SVGSelectableGElement._getGroupTarget(this);
-        return num(StyleSheet.get('text', 'line-height', g));
-      } else {
-        var height = this.getBBox().height;
-        
-        if ($.browser.mozilla && t === SVGGElement) {
-          var tpad = num(StyleSheet.get( 'text', 'padding-bottom', this ));
-          height += Math.min(num(StyleSheet.get( 'rect.textbox', 'padding-bottom', this )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
+          return len;
+        } else {
+          return this.getBBox().width;
         }
-      
-        return height;
+      },
+      height: function() {
+        if (t === SVGTSpanElement){ 
+          g = SVGSelectableGElement._getGroupTarget(this);
+          return num(StyleSheet.get('text', 'line-height', g));
+        } else {
+            var height = this.getBBox().height;
+          
+          if ($.browser.mozilla && t === SVGGElement) {
+              var tpad = num(StyleSheet.get( 'text', 'padding-bottom', this ));
+            height += Math.min(num(StyleSheet.get( 'rect.textbox', 'padding-bottom', this )), tpad/(tpad>10?1.2:(tpad>6?0.9:0.8)));
+          }
+        
+          return height;
+        }
       }
-    },
+    });
+  }
+  $.extend(t.prototype, {
     offset: function() { // position within parentNode element
       if (t === SVGTSpanElement){ 
         
