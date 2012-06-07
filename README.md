@@ -1,8 +1,8 @@
 SVG Input Elements
 ==================
 
-*We are soon ready for a 1.0 version. Help coding a better and more general 
-2.0 version would be greatly appreciated! *
+_We are soon ready for a 1.0 version. Help coding a better and more general 
+2.0 version would be greatly appreciated!_
 
 Better documentation will be included in the 1.0 release. For now, use the 
 instructions in [Getting Started](#getting-started). A demo (updated 5 June 

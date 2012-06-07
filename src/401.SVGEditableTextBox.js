@@ -1219,7 +1219,11 @@ $.extend(SVGEditableTextBox.prototype, {
   mousedown: function(g,e) {
   
     // if target inside / or the group element
-    if (g && g._selectable && g._selectable.selected){
+    var image = (g) && (-1 != $.inArray(
+      "image", 
+      g.getAttribute("class").split(" ")
+    ));
+    if (g && g._selectable && g._selectable.selected && !image){
     
       if (e.button != 2) { // contextmenu
         
