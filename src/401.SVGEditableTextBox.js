@@ -248,7 +248,6 @@ $.extend(SVGEditableTextBox.prototype, {
     var textSettings = {
       'style': StyleSheet.getAllStyles('text', g)
     };
-    console.log(this._settings);
     if (this._settings.clipPath) {
       textSettings['clip-path'] = this._settings.clipPath;
     }
