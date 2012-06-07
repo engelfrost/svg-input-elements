@@ -1945,7 +1945,7 @@ $.extend(SVGEditableTextBox.prototype, {
     var textSettings = {
       'style': StyleSheet.getAllStyles('text', g)
     };
-    console.log(this._settings): 
+    console.log(this._settings);
     if (this._settings.clipPath) {
       textSettings['clip-path'] = this._settings.clipPath;
     }
@@ -2182,7 +2182,7 @@ $.extend(SVGEditableTextBox.prototype, {
       paragraphCount.push(rowCount); 
       
       // Append the text to its group: 
-      t = that._wrapper.text(g, 0, num(textY), tspans);
+      t = that._wrapper.text(g, 0, num(textY), tspans, textSettings);
       
       
       
