@@ -34,6 +34,8 @@ $.extend(SVGEditableImage.prototype, {
 
 	init: function(parent, value, width, height, settings) {
   
+  	var self = this;
+  	
     this._parent = parent; 
     this._src = value.toString();
     this._width = width; // value -1 means "no maxwidth"
@@ -41,12 +43,20 @@ $.extend(SVGEditableImage.prototype, {
     SVGEditableImage._textareaCount++; 
     this._id = (settings.id || 'textarea-' + SVGEditableTextBox._textareaCount.toString());
     this._class += " " + this._classType + " " + (settings.class || '');
-    this._settings = settings;
+    
+    var _settings = {
+    	buttonText: 'edit',
+    };
+    
+    this._settings = $.extend(_settings, settings);
   
     // bind to events
     SVGEditableImage.setup();
     
     this.super.init.apply(this);
+    
+    
+    $(window).bind('resize', function(){self.update()});
     
     // Render Objects
     return this._render();
@@ -83,6 +93,16 @@ $.extend(SVGEditableImage.prototype, {
       
       img.setAttribute('xlink:href', self._src);
 //       img.removeAttribute('href');
+      
+      // add our button
+      var f = self._wrapper.other(g, 'foreignObject', {width: width*ctm.a, height: 24, x: 0, y: 10, transform: 'scale(' + (1/ctm.a) + ')'});
+      $(f).append("<div id='imagetool'><button>" + self._settings.buttonText + "</button></div>");
+      var it = $('#imagetool')
+      it.bind('click', function(e){
+      	self._group.select(e);
+      	self.trigger("edit");
+      });
+      
       
       var bgRect = self._wrapper.rect(g, 0, 0, width + padding['right'] + padding['left'], height + padding['top']+ num(padding['bottom']), 
                                     {class: 'background'} 
