@@ -1943,9 +1943,12 @@ $.extend(SVGEditableTextBox.prototype, {
 //       'xml:space': 'preserve'
     };
     var textSettings = {
-      //TODO: Make sure this styling is complete!!!
       'style': StyleSheet.getAllStyles('text', g)
     };
+    console.log(this._settings): 
+    if (this._settings.clipPath) {
+      textSettings['clip-path'] = this._settings.clipPath;
+    }
     
 //     console.log(textSettings); 
     
