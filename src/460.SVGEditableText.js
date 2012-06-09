@@ -17,15 +17,6 @@ $.extend(SVGEditableText.prototype, new SVGEditableTextBox);
 $.extend(SVGEditableText.prototype, {
   _classType: "text", 
   
-  _getGPadding: function(g) {
-    var padding = {};
-    padding['top']    = num(StyleSheet.get( 'rect.text', 'padding-top', g ))*1.2;
-    padding['right']  = num(StyleSheet.get( 'rect.text', 'padding-right', g ));
-    padding['bottom'] = num(StyleSheet.get( 'rect.text', 'padding-bottom', g ));
-    padding['left']   = num(StyleSheet.get( 'rect.text', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
-    return padding; 
-  },
-  
   _preProcessSetText: function(text, textPosition) {
     var before = text.length; 
     text = text.replace(/[\n\r]{1}/g, ""); 

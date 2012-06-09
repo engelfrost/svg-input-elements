@@ -22,17 +22,17 @@ $.extend(SVGEditableList.prototype, {
     padding['top']    = num(StyleSheet.get( 'rect.list', 'padding-top', g ))*1.2;
     padding['right']  = num(StyleSheet.get( 'rect.list', 'padding-right', g ));
     padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom', g ));
-    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
+    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g))*2;
     return padding; 
   },
   
   _postParagraphHook: function(group, text) {
     var height = num(text.getAttribute("y"));
-    var paddingLeft = num(StyleSheet.get("rect.list", "padding-left", text.parent));
-    var lineHeight = num(StyleSheet.get("text", "line-height", text));
-    var fontSize = num(StyleSheet.get("text", "font-size", text));
+    var paddingLeft = num(StyleSheet.get("rect.list", "padding-left", group));
+    var lineHeight = num(StyleSheet.get("text", "line-height", group));
+    var fontSize = num(StyleSheet.get("text", "font-size", group));
     var radius = fontSize * 0.2; 
-    this._wrapper.circle(group, paddingLeft, height + lineHeight - fontSize/2 + radius/2, radius); 
+    this._wrapper.circle(group, fontSize + paddingLeft, height + lineHeight - fontSize/2 + radius/2, radius); 
     return true; 
   },
 });

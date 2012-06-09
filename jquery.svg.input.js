@@ -3094,17 +3094,17 @@ $.extend(SVGEditableList.prototype, {
     padding['top']    = num(StyleSheet.get( 'rect.list', 'padding-top', g ))*1.2;
     padding['right']  = num(StyleSheet.get( 'rect.list', 'padding-right', g ));
     padding['bottom'] = num(StyleSheet.get( 'rect.list', 'padding-bottom', g ));
-    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
+    padding['left']   = num(StyleSheet.get( 'rect.list', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g))*2;
     return padding; 
   },
   
   _postParagraphHook: function(group, text) {
     var height = num(text.getAttribute("y"));
-    var paddingLeft = num(StyleSheet.get("rect.list", "padding-left", text.parent));
-    var lineHeight = num(StyleSheet.get("text", "line-height", text));
-    var fontSize = num(StyleSheet.get("text", "font-size", text));
+    var paddingLeft = num(StyleSheet.get("rect.list", "padding-left", group));
+    var lineHeight = num(StyleSheet.get("text", "line-height", group));
+    var fontSize = num(StyleSheet.get("text", "font-size", group));
     var radius = fontSize * 0.2; 
-    this._wrapper.circle(group, paddingLeft, height + lineHeight - fontSize/2 + radius/2, radius); 
+    this._wrapper.circle(group, fontSize + paddingLeft, height + lineHeight - fontSize/2 + radius/2, radius); 
     return true; 
   },
 });/** 
@@ -3125,15 +3125,6 @@ function SVGEditableText(wrapper){
 $.extend(SVGEditableText.prototype, new SVGEditableTextBox);
 $.extend(SVGEditableText.prototype, {
   _classType: "text", 
-  
-  _getGPadding: function(g) {
-    var padding = {};
-    padding['top']    = num(StyleSheet.get( 'rect.text', 'padding-top', g ))*1.2;
-    padding['right']  = num(StyleSheet.get( 'rect.text', 'padding-right', g ));
-    padding['bottom'] = num(StyleSheet.get( 'rect.text', 'padding-bottom', g ));
-    padding['left']   = num(StyleSheet.get( 'rect.text', 'padding-left', g )) + num(StyleSheet.get('text', "font-size", g));
-    return padding; 
-  },
   
   _preProcessSetText: function(text, textPosition) {
     var before = text.length; 
@@ -3310,7 +3301,7 @@ $.extend(SVGEditableImage.prototype, {
   },
   
   _render: function() {
-  	var self = this; 
+    var self = this; 
     var x = this._settings.x; 
     var y = this._settings.y; 
     var gSettings = {class: this._class, transform: 'translate('+x+','+y+')'};
@@ -3336,8 +3327,8 @@ $.extend(SVGEditableImage.prototype, {
       
       // add our button
       var f = self._wrapper.other(g, 'foreignObject', {width: width*ctm.a, height: 24, x: 0, y: 10, transform: 'scale(' + (1/ctm.a) + ')'});
-      $(f).append("<div id='imagetool'><button>" + self._settings.buttonText + "</button></div>");
-      var it = $('#imagetool')
+      var it = $("<div class='imagetool'><button>" + self._settings.buttonText + "</button></div>");
+      $(f).append(it);
       it.bind('click', function(e){
       	self._group.select(e);
       	self.trigger("edit");

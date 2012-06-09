@@ -70,7 +70,7 @@ $.extend(SVGEditableImage.prototype, {
   },
   
   _render: function() {
-  	var self = this; 
+    var self = this; 
     var x = this._settings.x; 
     var y = this._settings.y; 
     var gSettings = {class: this._class, transform: 'translate('+x+','+y+')'};
