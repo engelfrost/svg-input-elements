@@ -2003,7 +2003,7 @@ $.extend(SVGEditableTextBox.prototype, {
       rowCount = [];
       
       // Find the correct y-offset if there are previous text areas:
-      if (el = $(g).find("text").last()[0]) {
+      if (el = $(g).find("text, image").last()[0]) {
         textY = num(el.getAttribute('y')); //parseInt(/translate\(\d+\, (\d+)\)/.exec(e.getAttribute('transform'))[1]); // Better way of doing this? Value is not the same as e.getCTM().f
         var height =  el.getBoundingClientRect().height;
         
@@ -3331,8 +3331,8 @@ $.extend(SVGEditableImage.prototype, {
       
       var img = self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
       
-      img.setAttribute('xlink:href', self._src);
-//       img.removeAttribute('href');
+      img.setAttribute('xlink:href', self._src); // needed in Chrome
+//       img.removeAttribute('href'); // Don't remove href! needed in Firefox
       
       // add our button
       var f = self._wrapper.other(g, 'foreignObject', {width: width*ctm.a, height: 24, x: 0, y: 10, transform: 'scale(' + (1/ctm.a) + ')'});

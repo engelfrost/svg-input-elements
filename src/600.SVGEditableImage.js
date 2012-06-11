@@ -96,8 +96,8 @@ $.extend(SVGEditableImage.prototype, {
       
       var img = self._wrapper.image(g, padding['left'], padding['top'], width, height, self._src);
       
-      img.setAttribute('xlink:href', self._src);
-//       img.removeAttribute('href');
+      img.setAttribute('xlink:href', self._src); // needed in Chrome
+//       img.removeAttribute('href'); // Don't remove href! needed in Firefox
       
       // add our button
       var f = self._wrapper.other(g, 'foreignObject', {width: width*ctm.a, height: 24, x: 0, y: 10, transform: 'scale(' + (1/ctm.a) + ')'});
