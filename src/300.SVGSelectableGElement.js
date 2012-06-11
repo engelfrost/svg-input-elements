@@ -395,6 +395,10 @@ $.extend(SVGSelectableGElement.prototype, {
     this.deselect(); // pass along the event
   },
   
+  setValue: function(value) {
+  	this._value = value;
+  },
+  
   // extension point (hooks)
   select: function(g,e){}, // a hook to capture the selection
   deselect: function(){},

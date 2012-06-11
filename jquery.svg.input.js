@@ -1064,6 +1064,10 @@ $.extend(SVGSelectableGElement.prototype, {
     this.deselect(); // pass along the event
   },
   
+  setValue: function(value) {
+  	this._value = value;
+  },
+  
   // extension point (hooks)
   select: function(g,e){}, // a hook to capture the selection
   deselect: function(){},
@@ -3294,6 +3298,11 @@ $.extend(SVGEditableImage.prototype, {
     
   },
   
+  setValue: function(value) {
+  	this._src = value;
+  	this.update();
+  },
+  
   update: function() {
     var self = this;
     clearTimeout(this._renderTimer);
@@ -3331,7 +3340,7 @@ $.extend(SVGEditableImage.prototype, {
       $(f).append(it);
       it.bind('click', function(e){
       	self._group.select(e);
-      	self.trigger("edit");
+      	self.trigger(new $.Event("edit", {target: self._group}));
       });
       
       

@@ -63,6 +63,11 @@ $.extend(SVGEditableImage.prototype, {
     
   },
   
+  setValue: function(value) {
+  	this._src = value;
+  	this.update();
+  },
+  
   update: function() {
     var self = this;
     clearTimeout(this._renderTimer);
@@ -100,7 +105,7 @@ $.extend(SVGEditableImage.prototype, {
       $(f).append(it);
       it.bind('click', function(e){
       	self._group.select(e);
-      	self.trigger("edit");
+      	self.trigger(new $.Event("edit", {target: self._group}));
       });
       
       
