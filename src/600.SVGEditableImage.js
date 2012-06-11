@@ -17,8 +17,23 @@ $.extend(SVGEditableImage, {
     // do all times
     
     if (!this.once){
+    	
+    	$(window).bind('keydown.' + this.name, function(e){
+    	
+    		var selectedGroup = SVGSelectableGElement.selectedGroup();
+	    	var self = this;
+	    	
+	    	if (selectedGroup 
+          && selectedGroup.constructor === SVGEditableImage) {
+	    		if ((e.keyCode == 46 || e.keyCode == 8)) {
+	    			e.preventDefault();
+	    			selectedGroup._delete();
+	    		}
+    		}
+    	});
     
     	this.once = true;
+    	
     }
   }
 });

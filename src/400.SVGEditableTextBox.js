@@ -282,6 +282,8 @@ $.extend(SVGEditableTextBox, {
                   
                   cancelUpdate = false;
                   
+                  break;
+                  
                 }
                 
                 break;
@@ -320,7 +322,7 @@ $.extend(SVGEditableTextBox, {
                   
                   selectedGroup._setText(selectedGroup._text, selectedGroup._textPosition);
                   
-                } else {
+                } else if (SVGTextMarker.isVisible()) {
                   selectedGroup._setText( 
                     selectedGroup._text.substring(0, charPosition-1) 
                     + selectedGroup._text.substring(charPosition), 
@@ -328,6 +330,12 @@ $.extend(SVGEditableTextBox, {
                   );
                   
                 }
+                
+                // send a delete event when user wants to delete the group
+                if (!selectedGroup._contextMenu && !(selectedGroup._selection || SVGTextMarker.isVisible())) {
+                  selectedGroup._delete();
+                }
+                
                 cancelUpdate = false;
                 break;
                 
@@ -533,7 +541,7 @@ $.extend(SVGEditableTextBox, {
                 if (selectedGroup._selection) {
                   selectedGroup.removeSelection();
                   
-                } else {
+                } else if (selectedGroup._selection || SVGTextMarker.isVisible()) {
                   selectedGroup._setText(
                     selectedGroup._text.substring(0, charPosition) 
                     + selectedGroup._text.substring(charPosition+1), 
@@ -544,6 +552,11 @@ $.extend(SVGEditableTextBox, {
                   
                   break;
                   
+                }
+                
+                // send a delete event when user wants to delete the group
+                if (!selectedGroup._contextMenu && !(selectedGroup._selection || SVGTextMarker.isVisible())) {
+                  selectedGroup._delete();
                 }
                 
                 cancelUpdate = false;

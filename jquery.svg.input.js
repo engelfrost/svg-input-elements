@@ -950,6 +950,7 @@ $.extend(SVGSelectableGElement.prototype, {
   _class: 'selectable',
   _events: null,
   _parent: null,
+  _destroyed: false,
   
   bind: function() {
     this._events.bind.apply(this._events, arguments);
@@ -972,6 +973,7 @@ $.extend(SVGSelectableGElement.prototype, {
   destroy: function() {
   
     SVGSelectableGElement.destroy( this );
+    this._destroyed = true;
     
   },
   
@@ -986,7 +988,7 @@ $.extend(SVGSelectableGElement.prototype, {
   
   _render: function() {
     var that = this; 
-    if (this._wrapper) {
+    if (this._wrapper && !this._destroyed) {
 
       var classes;
 
@@ -1036,7 +1038,7 @@ $.extend(SVGSelectableGElement.prototype, {
         },
         
         _render: function() {
-          if (this._selected) {
+          if (this._selected && !that._destroyed) {
             // add a select highlighter inside the grouping element
 //             console.log("300", $(this)[0]);
 //             console.log($(this));
@@ -1062,6 +1064,15 @@ $.extend(SVGSelectableGElement.prototype, {
     this.selected = false;
     this._group._selected = false;
     this.deselect(); // pass along the event
+  },
+  
+  _delete: function(){
+  	this.trigger('delete');
+  },
+  
+  remove: function(){
+  	$(this._group).remove();
+  	this.destroy();
   },
   
   setValue: function(value) {
@@ -1363,6 +1374,8 @@ $.extend(SVGEditableTextBox, {
                   
                   cancelUpdate = false;
                   
+                  break;
+                  
                 }
                 
                 break;
@@ -1401,7 +1414,7 @@ $.extend(SVGEditableTextBox, {
                   
                   selectedGroup._setText(selectedGroup._text, selectedGroup._textPosition);
                   
-                } else {
+                } else if (SVGTextMarker.isVisible()) {
                   selectedGroup._setText( 
                     selectedGroup._text.substring(0, charPosition-1) 
                     + selectedGroup._text.substring(charPosition), 
@@ -1409,6 +1422,12 @@ $.extend(SVGEditableTextBox, {
                   );
                   
                 }
+                
+                // send a delete event when user wants to delete the group
+                if (!selectedGroup._contextMenu && !(selectedGroup._selection || SVGTextMarker.isVisible())) {
+                  selectedGroup._delete();
+                }
+                
                 cancelUpdate = false;
                 break;
                 
@@ -1614,7 +1633,7 @@ $.extend(SVGEditableTextBox, {
                 if (selectedGroup._selection) {
                   selectedGroup.removeSelection();
                   
-                } else {
+                } else if (selectedGroup._selection || SVGTextMarker.isVisible()) {
                   selectedGroup._setText(
                     selectedGroup._text.substring(0, charPosition) 
                     + selectedGroup._text.substring(charPosition+1), 
@@ -1625,6 +1644,11 @@ $.extend(SVGEditableTextBox, {
                   
                   break;
                   
+                }
+                
+                // send a delete event when user wants to delete the group
+                if (!selectedGroup._contextMenu && !(selectedGroup._selection || SVGTextMarker.isVisible())) {
+                  selectedGroup._delete();
                 }
                 
                 cancelUpdate = false;
@@ -1932,6 +1956,9 @@ $.extend(SVGEditableTextBox.prototype, {
 //     console.log("this class", this._class);
     var gSettings = {class: this._class, transform: 'translate('+x+','+y+')'};
     var g = this.super._render.call(this, this._parent, this._id, gSettings);
+    
+    if (g) {
+    
     var padding = this._getGPadding(g);
     var maxWidth = this._width - padding['left'] - padding['right'];
 //     console.log(maxWidth);
@@ -2243,7 +2270,9 @@ $.extend(SVGEditableTextBox.prototype, {
       this.trigger(eChangeSize, [width, height]); 
     }
     
-//     this._group = g; 
+//     this._group = g;
+
+		}
     
     return this;
   },
@@ -3252,8 +3281,23 @@ $.extend(SVGEditableImage, {
     // do all times
     
     if (!this.once){
+    	
+    	$(window).bind('keydown.' + this.name, function(e){
+    	
+    		var selectedGroup = SVGSelectableGElement.selectedGroup();
+	    	var self = this;
+	    	
+	    	if (selectedGroup 
+          && selectedGroup.constructor === SVGEditableImage) {
+	    		if ((e.keyCode == 46 || e.keyCode == 8)) {
+	    			e.preventDefault();
+	    			selectedGroup._delete();
+	    		}
+    		}
+    	});
     
     	this.once = true;
+    	
     }
   }
 });
