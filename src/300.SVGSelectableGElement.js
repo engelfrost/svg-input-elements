@@ -281,6 +281,7 @@ $.extend(SVGSelectableGElement.prototype, {
   _class: 'selectable',
   _events: null,
   _parent: null,
+  _destroyed: false,
   
   bind: function() {
     this._events.bind.apply(this._events, arguments);
@@ -303,6 +304,7 @@ $.extend(SVGSelectableGElement.prototype, {
   destroy: function() {
   
     SVGSelectableGElement.destroy( this );
+    this._destroyed = true;
     
   },
   
@@ -317,7 +319,7 @@ $.extend(SVGSelectableGElement.prototype, {
   
   _render: function() {
     var that = this; 
-    if (this._wrapper) {
+    if (this._wrapper && !this._destroyed) {
 
       var classes;
 
@@ -367,7 +369,7 @@ $.extend(SVGSelectableGElement.prototype, {
         },
         
         _render: function() {
-          if (this._selected) {
+          if (this._selected && !that._destroyed) {
             // add a select highlighter inside the grouping element
 //             console.log("300", $(this)[0]);
 //             console.log($(this));
@@ -393,6 +395,15 @@ $.extend(SVGSelectableGElement.prototype, {
     this.selected = false;
     this._group._selected = false;
     this.deselect(); // pass along the event
+  },
+  
+  _delete: function(){
+  	this.trigger('delete');
+  },
+  
+  remove: function(){
+  	$(this._group).remove();
+  	this.destroy();
   },
   
   setValue: function(value) {

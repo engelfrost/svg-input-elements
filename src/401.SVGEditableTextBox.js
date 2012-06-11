@@ -227,6 +227,9 @@ $.extend(SVGEditableTextBox.prototype, {
 //     console.log("this class", this._class);
     var gSettings = {class: this._class, transform: 'translate('+x+','+y+')'};
     var g = this.super._render.call(this, this._parent, this._id, gSettings);
+    
+    if (g) {
+    
     var padding = this._getGPadding(g);
     var maxWidth = this._width - padding['left'] - padding['right'];
 //     console.log(maxWidth);
@@ -538,7 +541,9 @@ $.extend(SVGEditableTextBox.prototype, {
       this.trigger(eChangeSize, [width, height]); 
     }
     
-//     this._group = g; 
+//     this._group = g;
+
+		}
     
     return this;
   },
