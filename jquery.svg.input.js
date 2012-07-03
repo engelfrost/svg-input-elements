@@ -2030,7 +2030,7 @@ $.extend(SVGEditableTextBox.prototype, {
       rowCount = [];
       
       // Find the correct y-offset if there are previous text areas:
-      if (el = $(g).find("text, image").last()[0]) {
+      if (el = $(g).find("text").last()[0]) {
         textY = num(el.getAttribute('y')); //parseInt(/translate\(\d+\, (\d+)\)/.exec(e.getAttribute('transform'))[1]); // Better way of doing this? Value is not the same as e.getCTM().f
         var height =  el.getBoundingClientRect().height;
         
