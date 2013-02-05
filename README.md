@@ -101,11 +101,12 @@ You should now have a working text area!
 SVG Input Elements trigger events that you can bind: 
 ```
 textArea.bind("change", function(e, text) {
-  alert("text changed: " + text);
-}
-textArea.bind("changeSize", function(e, height, width) {
-  alert("dimensions changed: " + width + "x" + height);
-}
+  console.log("text changed: " + text);
+});
+
+textArea.bind("changeSize", function(e, width, height) {
+  console.log("dimensions changed: " + width + " x " + height);
+});
 ```
 
 The changeSize event is useful because the textArea is contained within a 
