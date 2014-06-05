@@ -1,6 +1,19 @@
 SVG Input Elements
 ==================
 
+_This readme is outdated. Work is being done on rewriting this library. Only
+the future will tell if the rewrite is successful or not... _
+
+Goals and limits for the new version: 
+* Faster rendering
+* No jQuery dependency
+* Fewer features (No CSS subset, no lists and image boxes)
+* Modern browsers only (no IE9)
+* Tests!
+
+Old README
+==========
+
 _We are soon ready for a 1.0 version. Help coding a better and more general 
 2.0 version would be greatly appreciated!_
 
