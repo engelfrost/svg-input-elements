@@ -1,3 +1,5 @@
+
+//100
 // Function.inheritsFrom
 Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
   if ( parentClassOrObject.constructor == Function ) 

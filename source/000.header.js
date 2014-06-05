@@ -1,30 +1,4 @@
-<?php
- 
-  header("Content-type: text/javascript");
-  header( "Expires: " . gmdate( 'D, d M Y H:i:s' ) . ' GMT' ); 
-	header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' ); 
-	header( 'Cache-Control: no-cache, must-revalidate' ); 
-	header( 'Pragma: no-cache' ); 
-	  
-	require("./jsmin.php");  
-	
-  function compare_filenames($a, $b) {
-    return strcmp($a['basename'], $b['basename']);
-  }
-
-  if ($handle = opendir('../src')) {
-    $paths = array();
-    while (false !== ($entry = readdir($handle))) {
-      if ($entry != "." && $entry != "..") {
-        $path = pathinfo($entry);
-        $paths[] = $path; 
-      }
-    }
-    closedir($handle);
-    
-    usort($paths, 'compare_filenames');
-    
-    $license = '/* SVG Input Elements for SVG jQuery (1.4.4).
+/* SVG Input Elements for SVG jQuery (1.4.4).
    https://github.com/silence150/SVG-Input-Elements
    
    Written by 
@@ -51,24 +25,5 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
    THE SOFTWARE. */
-   
-'; 
-   $js = '(function($) { // Hide scope, no $ conflict
 
-';
-    
-    foreach ($paths as $path) {
-      if ($path['extension'] == 'js') {
-        $js .= file_get_contents("../src/".$path['basename']);
-      }
-    }
-    
-    $js .= "\n\n})(jQuery);";
-    
-    file_put_contents("../jquery.svg.input.js", $license . $js);
-    file_put_contents("../jquery.svg.input.min.js", $license . JSMin::minify($js));
-    
-    echo $license . $js; 
-  }
-  
-?>
+(function ($)) {

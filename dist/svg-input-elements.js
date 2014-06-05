@@ -25,9 +25,10 @@
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
    THE SOFTWARE. */
-   
-(function($) { // Hide scope, no $ conflict
 
+(function ($)) {
+
+//100
 // Function.inheritsFrom
 Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
   if ( parentClassOrObject.constructor == Function ) 
@@ -253,86 +254,88 @@ var StyleSheet = {
       
       // This is a function so that it can be called recursively
       function _parseRules(cssRules) {
-        $.each( cssRules, function( i, ruleBundle ) {
-          // parse all rules
-          
-          // Is this an @import rule? 
-          if (ruleBundle.styleSheet) {
-            cssRules = ruleBundle.styleSheet.cssRules;
-            _parseRules(cssRules); 
-          }
-          else {
-            if (ruleBundle.selectorText) {
-              $.each( ruleBundle.selectorText.split(","), function ( i, rule ) {
-                // split all grouped styles
-                
-                var heritageOk = true; 
-                if (heritageRegExp.test(rule.trim())) {
-                  // The rule uses parents, check if parent qualifies
-                  
-                  var heritage = heritageRegExp.exec(rule.trim()); 
-                  
-                  // Does parent match the rule? 
-                  heritageOk = $(parent).is(heritage[1]);
-                  
-                  // Still got to make sure the child qualifies
-                  rule = heritage[3];
-                }
-                
-                r = selectorRegExp.exec( rule.trim() );
-                s = selectorRegExp.exec( selector );
-                
-                // We ignore some stuff, like pseudo-elements, rules with parents etc. 
-                // We only handle what the regexp can handle.
-                
-                // This can probably be re-written with jQuery .is()...
-                if ( r != null && s != null ) {
-                  
-                  // Check if rule requires a specific tag
-                  tagOk = ( r[1] == '' ||  r[1] == s[1] ); 
-                  
-                  // Check if rule requires ID 
-                  idOk = ( r[2] == undefined || r[2] == s[2] ); 
-                  
-                  // Check if rule requires class
-                  classOk = ( r[3] == undefined || r[3] == s[3] ); 
-                  
-                  if ( tagOk && idOk && classOk && heritageOk ) {
-                    // If this is a match, update result with any new stuff
-                    
-                    if (style === undefined) {
-                      $.each(ruleBundle.style, function(key, val) {
-                        if (val) {
-                          result += 
-                            val
-                            + ": " 
-                            + ruleBundle.style[val] 
-                            + "; "; 
-                        }
-                      });
-                    }
-                    else {
-                      if ( typeof ruleBundle.style[style] != 'undefined' 
-                        && ruleBundle.style[style] !== '' ) {
-                        
-                        // Save the result, but don't return it yet. Other rules may 
-                        // overwrite it later, since the rules are cascading. 
-                        result = ruleBundle.style[style];
-                      }
-                      else if ( typeof ruleBundle.style[ccStyle] != 'undefined' 
-                        && ruleBundle.style[ccStyle] !== '' ) {
-                          
-                        // Some browsers use camelCase
-                        result = ruleBundle.style[ccStyle];
-                      }
-                    }
+          if (cssRules) {
+              $.each(cssRules, function (i, ruleBundle) {
+                  // parse all rules
+
+                  // Is this an @import rule? 
+                  if (ruleBundle.styleSheet) {
+                      cssRules = ruleBundle.styleSheet.cssRules;
+                      _parseRules(cssRules);
                   }
-                }
+                  else {
+                      if (ruleBundle.selectorText) {
+                          $.each(ruleBundle.selectorText.split(","), function (i, rule) {
+                              // split all grouped styles
+
+                              var heritageOk = true;
+                              if (heritageRegExp.test(rule.trim())) {
+                                  // The rule uses parents, check if parent qualifies
+
+                                  var heritage = heritageRegExp.exec(rule.trim());
+
+                                  // Does parent match the rule? 
+                                  heritageOk = $(parent).is(heritage[1]);
+
+                                  // Still got to make sure the child qualifies
+                                  rule = heritage[3];
+                              }
+
+                              r = selectorRegExp.exec(rule.trim());
+                              s = selectorRegExp.exec(selector);
+
+                              // We ignore some stuff, like pseudo-elements, rules with parents etc. 
+                              // We only handle what the regexp can handle.
+
+                              // This can probably be re-written with jQuery .is()...
+                              if (r != null && s != null) {
+
+                                  // Check if rule requires a specific tag
+                                  tagOk = (r[1] == '' || r[1] == s[1]);
+
+                                  // Check if rule requires ID 
+                                  idOk = (r[2] == undefined || r[2] == s[2]);
+
+                                  // Check if rule requires class
+                                  classOk = (r[3] == undefined || r[3] == s[3]);
+
+                                  if (tagOk && idOk && classOk && heritageOk) {
+                                      // If this is a match, update result with any new stuff
+
+                                      if (style === undefined) {
+                                          $.each(ruleBundle.style, function (key, val) {
+                                              if (val) {
+                                                  result +=
+                                                    val
+                                                    + ": "
+                                                    + ruleBundle.style[val]
+                                                    + "; ";
+                                              }
+                                          });
+                                      }
+                                      else {
+                                          if (typeof ruleBundle.style[style] != 'undefined'
+                                            && ruleBundle.style[style] !== '') {
+
+                                              // Save the result, but don't return it yet. Other rules may 
+                                              // overwrite it later, since the rules are cascading. 
+                                              result = ruleBundle.style[style];
+                                          }
+                                          else if (typeof ruleBundle.style[ccStyle] != 'undefined'
+                                            && ruleBundle.style[ccStyle] !== '') {
+
+                                              // Some browsers use camelCase
+                                              result = ruleBundle.style[ccStyle];
+                                          }
+                                      }
+                                  }
+                              }
+                          });
+                      }
+                  }
               });
-            }
           }
-        });
-      }
+        }
     });
     
     // Return the final result. 
@@ -498,6 +501,9 @@ String.prototype.rtrim = function() {
   return this.replace(/\s+$/,"");
 }
 */
+
+//200
+
 $.svg.addExtension('input', SVGInputElements);
 
 function SVGInputElements(wrapper) {
@@ -667,6 +673,8 @@ $.extend(SVGInputElements.prototype, {
   }
 });
 
+
+//300
 /** 
  *  SVGSelection
 **/
@@ -1090,6 +1098,8 @@ $.extend(SVGSelectableGElement.prototype, {
   tplclick: function(g,e){},
   contextmenu: function(g,e){}
 });
+
+//400
 /** 
  *  SVGEditableTextBox
 **/
@@ -1728,6 +1738,7 @@ $.extend(SVGEditableTextBox, {
   }
 });
 
+//401
 /* ------- PUBLIC INSTANCE ------- */
 
 $.extend(SVGEditableTextBox.prototype, {
@@ -3103,6 +3114,8 @@ $.extend(SVGEditableTextBox.prototype, {
     this.openContextMenu(g,e);
   }
 });
+
+// 450
 /** 
  *  SVGEditableList
 **/
@@ -3140,7 +3153,10 @@ $.extend(SVGEditableList.prototype, {
     this._wrapper.circle(group, fontSize + paddingLeft, height + lineHeight - fontSize/2 + radius/2, radius); 
     return true; 
   },
-});/** 
+});
+//460
+
+/** 
  *  SVGEditableList
 **/
 
@@ -3167,7 +3183,9 @@ $.extend(SVGEditableText.prototype, {
     textPosition = textPosition - diff; 
     return [text, textPosition]; 
   },
-});/** 
+});
+// 500
+/** 
  *  SVGTextMarker
 **/
 
@@ -3262,7 +3280,9 @@ $.extend(SVGTextMarker, {
 
   }
   
-});/** 
+});
+// 600
+/** 
  *  SVGEditableList
 **/
 
@@ -3436,5 +3456,4 @@ $.extend(SVGEditableImage.prototype, {
   tplclick: function(g,e){},
   contextmenu: function(g,e){}
 });
-
-})(jQuery);
+}(jQuery));

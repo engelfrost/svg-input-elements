@@ -1,6 +1,8 @@
 .DS_Store
 .com.apple.timemachine.supported
 .DS_Store
+node_modules/
+bower_components/
 _notes/
 *.kate-swp
 *.orig

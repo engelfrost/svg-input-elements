@@ -1,0 +1,51 @@
+{
+  "name": "SVG-Input-Elements",
+  "version": "0.3.1",
+  "description": "A JavaScript implementation of an inline SVG textarea",
+  "main": "gulpfile.js",
+  "directories": {
+    "example": "examples",
+    "lib": "dist"
+  },
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/silence150/SVG-Input-Elements.git"
+  },
+  "keywords": [
+    "svg",
+    "js",
+    "textarea", 
+    "input", 
+    "edit"
+  ],
+  "author": {
+    "name": "Josef Engelfrost",
+    "email": "josef@josf.se"
+  },
+  "contributors": [
+    {
+      "name": "Tim Brandin",
+      "email": "info@sypreme.se"
+    },
+    {
+      "name": "Josef Engelfrost",
+      "email": "josef@josf.se"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/silence150/SVG-Input-Elements/issues"
+  },
+  "devDependencies": {
+    "gulp": "~3.6.2",
+    "gulp-concat": "~2.2.0",
+    "gulp-cached": "~0.0.3",
+    "gulp-remember": "~0.2.0",
+    "karma": "~0.12.16",
+    "karma-chrome-launcher": "~0.1.4",
+    "karma-jasmine": "~0.1.5",
+  }
+}
