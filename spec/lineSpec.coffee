@@ -7,17 +7,17 @@ describe "The svgieLine object", ->
 		lineObject = svgieLine(svgInputElements().gElement)
 	it "has a property maxWidth() which returns a number", ->
 		expect(lineObject.maxWidth()).toEqual jasmine.any Number
-	it "has a property wordChain which is null or holds a reference to an svgieWord", ->
-		if lineObject.wordChain?
-			expect(lineObject.wordChain).toEqual jasmine.any Object 
+	it "has a property words which is null or holds a reference to an wordObject", ->
+		if lineObject.words?
+			expect(lineObject.words).toEqual jasmine.any Object 
 		else
-			expect(lineObject.wordChain).toBe null
+			expect(lineObject.words).toBe null
 	it "has a property textElement which holds null or a text node", ->
 		if lineObject.textElement? 
 			expect(lineObject.textElement.nodeName).toEqual "text"
 	it "has one or more tspans", ->
-		expect(lineObject.textElement.getElementsByTagNameNS(svgNS, "tspan")).toBeGreaterThan 0
-	it "has no empty tspans, unless the prev and next properties are both null, in which case it may have exactly 1 empty tspan and no other tspans", ->
+		expect(lineObject.textElement.getElementsByTagNameNS(svgNS, "tspan").length).toBeGreaterThan 0
+	it "has no empty tspans, unless the prev and next properties are both null, in which case it shall have exactly 1 empty tspan", ->
 		if lineObject.next == null and lineObject.prev is null
 			tspans = lineObject.textElement.getElementsByTagNameNS svgNS, "tspan"
 			expect(tspans.length).toBeGreaterThan 0
@@ -26,4 +26,5 @@ describe "The svgieLine object", ->
 					do (tspan) ->
 						expect(tspan.textContent.length).toBeGreaterThan 0
 	describe "has a text element which", ->
-		it "is never longer than maxWidth()"
+		it "is never longer than maxWidth()", ->
+			expect(true).toBe true

@@ -4,7 +4,7 @@ var gulp   = require('gulp'),
 	coffee   = require('gulp-coffee');
 
 var karmaConf = {
-	browsers: ['Chrome'],
+	browsers: ['PhantomJS'],
 	frameworks: ['jasmine', 'fixture'],
 	preprocessors: {
 		'**/*.coffee': ['coffee'], 

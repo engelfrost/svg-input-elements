@@ -3,15 +3,18 @@ xlinkNS = 'http://www.w3.org/1999/xlink'
 
 describe "The svgieWord object", ->
 	beforeEach ->
+		svgFixture = fixture.load("svg.html")[0]
+		gElements = svgFixture.getElementsByTagNameNS svgNS, "g"
+		lineObject = svgieLine(gElements[0], "")
 		this.svgieWords = [
-			svgieWord("three"),
-			svgieWord(" "),
-			svgieWord("strings.")
+			svgieWord(null, null, null, "three"),
+			svgieWord(null, null, null, " "),
+			svgieWord(null, null, null, "strings.")
 		]
-		this.svgieWords.next = this.svgieWords[1]
-		this.svgieWords.prev = this.svgieWords[0]
-		this.svgieWords.next = this.svgieWords[2]
-		this.svgieWords.prev = this.svgieWords[1]
+		this.svgieWords[0].next = this.svgieWords[1]
+		this.svgieWords[1].prev = this.svgieWords[0]
+		this.svgieWords[1].next = this.svgieWords[2]
+		this.svgieWords[2].prev = this.svgieWords[1]
 	afterEach ->
 		delete this.svgieWords
 
