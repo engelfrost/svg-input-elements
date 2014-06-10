@@ -1,20 +1,23 @@
 SVG Input Elements
 ==================
 
-To develop
-----------
-
-`npm install`
-`gulp`
+This project is in development mode. Do not expect it to be stable!
 
 Examples can be found the example folder. 
+
+To get started with development, run: 
+
+`npm install`
+
+`gulp`
 
 Goals and limits for the new version
 ------------------------------------
 
-* Faster rendering
+* Faster rendering!
 * No jQuery dependency
-* Fewer features (No CSS subset, no lists and image boxes)
+* No dependencies at all
+* Fewer features (No CSS subset, no lists and no image boxes. Just a textarea.)
 * Modern browsers only (no IE9)
 * Tests!
 
