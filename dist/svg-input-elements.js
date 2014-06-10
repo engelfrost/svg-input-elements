@@ -1,18 +1,18 @@
 (function() {
-  var popWord, regexp, svgNS, whitespaceRegexp, xlinkNS,
+  var popWord, svgNS, whitespaceRegexp, wordRegexp, xlinkNS,
     __slice = [].slice;
 
   svgNS = 'http://www.w3.org/2000/svg';
 
   xlinkNS = 'http://www.w3.org/1999/xlink';
 
-  regexp = /^(\S+|\s)(.*)/;
+  wordRegexp = /^(\S+|\s)(.*)/;
 
   whitespaceRegexp = /\s/;
 
   popWord = function(str) {
     var strings;
-    strings = regexp.exec(str);
+    strings = wordRegexp.exec(str);
     if (strings != null) {
       return [strings[2], strings[1]];
     } else {
@@ -33,6 +33,7 @@
       textElement: textElement,
       words: null
     };
+    lineObject.words = svgieWord(lineObject, null, null, str);
     return lineObject;
   };
 
@@ -65,18 +66,22 @@
       };
     })();
     return function(lineObject, prev, next, str) {
-      var rest, tspanElement, word, wordObject, _ref;
+      var rest, result, tspanElement, word, wordNode, wordObject;
       if (str == null) {
         return null;
       } else if (str.length === 0) {
         return null;
       } else {
-        word = null;
-        rest = null;
-        _ref = regexp.exec(str) != null, str = _ref[0], word = _ref[1], rest = _ref[2];
+        result = wordRegexp.exec(str) != null;
+        str = result[0];
+        word = result[1];
+        rest = result[2];
         tspanElement = document.createElementNS(svgNS, "tspan");
-        tspanElement.textContent = word;
-        lineObject.textElement.insertBefore(next, tspanElement);
+        lineObject.textElement.insertBefore(tspanElement, next);
+        if (!whitespaceRegexp.test(word)) {
+          wordNode = document.createTextNode(word);
+          tspanElement.appendChild(wordNode);
+        }
         wordObject = Object.create(svgieWordPrototype);
         wordObject.tspan = tspanElement;
         wordObject.prev = prev;
@@ -90,28 +95,18 @@
   })();
 
   this.svgInputElements = function() {
-    var arg, args, defaultHeight, defaultWidth, i, options, svgElement, svgieTextarea, svgieTextareaPrototype, _i, _len;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    var args, defaultHeight, defaultWidth, options, svgElement, svgieTextarea, svgieTextareaPrototype;
+    svgElement = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     defaultWidth = 100;
     defaultHeight = 100;
     options = null;
-    svgElement = null;
-    for (i = _i = 0, _len = args.length; _i < _len; i = ++_i) {
-      arg = args[i];
-      (function(arg, i) {
-        if (i === 0 && arg.nodeName === "svg") {
-          return svgElement = arg;
-        } else if (i < 2 && options === null && typeof arg === "object") {
-          return options = arg;
-        }
-      });
-    }
     if (svgElement == null) {
       svgElement = document.createElementNS(svgNS, "svg");
       svgElement.setAttributeNS(null, "version", "1.1");
       svgElement.setAttributeNS(null, "width", String(defaultWidth) + "px");
       svgElement.setAttributeNS(null, "height", String(defaultHeight) + "px");
-    } else {
+    }
+    if (options == null) {
       options = {
         width: defaultWidth,
         height: defaultHeight
@@ -121,6 +116,7 @@
       var prototype;
       return prototype = {
         parse: function(str) {
+          console.log(str);
           return this.lines = svgieLine(this.gElement, str);
         }
       };

@@ -5,8 +5,8 @@ describe "The svgieTextarea object", ->
 	textarea = null
 	textarea2 = null
 	beforeEach ->
-		textarea = svgInputElements()
-		textarea2 = svgInputElements()
+		textarea = svgInputElements(fixture.load("svg.html")[0])
+		textarea2 = svgInputElements(fixture.load("svg.html")[0])
 
 	it "has a g element", ->
 		expect(textarea.gElement).toBeDefined()
@@ -24,6 +24,7 @@ describe "The svgieTextarea object", ->
 			expect(newNumberOfTextElements).toEqual numberOfTextElements + 1
 		it "puts each word into a tspan element, treating single whitespace characters as a separate word", ->
 			textarea.parse("  a regular string! ")
-			text = textarea.gElement.getElementsByTagNameNS(svgNS, "text")[0]
-			tspans = text.getElementsByTagNameNS(svgNS, "tspan")
-			expect(tspans.length).toBe 8
+			test = -> 
+				tspans = textarea.gElement.getElementsByTagNameNS(svgNS, "tspan")
+				expect(tspans.length).toBe(8)
+			setTimeout test, 100

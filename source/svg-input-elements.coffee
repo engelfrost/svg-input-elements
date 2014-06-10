@@ -3,12 +3,12 @@ xlinkNS = 'http://www.w3.org/1999/xlink'
 
 
 # Define how words should be split
-regexp = /^(\S+|\s)(.*)/
+wordRegexp = /^(\S+|\s)(.*)/
 # Define whitespace. Must be the same definition as in the wordsplit regexp
 whitespaceRegexp = /\s/
 
 popWord = (str) ->
-	strings = regexp.exec str
+	strings = wordRegexp.exec str
 	if strings?
 		[strings[2], strings[1]]
 	else
@@ -25,7 +25,7 @@ this.svgieLine = (gElement, str) ->
 		prev: null, 
 		textElement: textElement, 
 		words: null
-	#lineObject.words = svgieWord lineObject, null, null, str
+	lineObject.words = svgieWord lineObject, null, null, str
 	lineObject
 
 this.svgieWord = do -> 
@@ -54,13 +54,16 @@ this.svgieWord = do ->
 		else if str.length is 0
 			null
 		else
-			word = null
-			rest = null
-			[str, word, rest] = regexp.exec(str)?
-			#if word?
+			result = wordRegexp.exec(str)?
+			str = result[0]
+			word = result[1]
+			rest = result[2]
 			tspanElement = document.createElementNS svgNS, "tspan"
-			tspanElement.textContent = word
-			lineObject.textElement.insertBefore next, tspanElement
+			lineObject.textElement.insertBefore tspanElement, next
+
+			unless whitespaceRegexp.test word
+				wordNode = document.createTextNode word
+				tspanElement.appendChild wordNode
 
 			wordObject = Object.create svgieWordPrototype
 			wordObject.tspan = tspanElement
@@ -72,20 +75,20 @@ this.svgieWord = do ->
 			wordObject
 
 # args: [svgElement][, options]
-this.svgInputElements = (args...) ->
+this.svgInputElements = (svgElement, args...) ->
 	defaultWidth = 100
 	defaultHeight = 100
 	options = null
-	svgElement = null
+	#svgElement = null
 
-	for arg, i in args
-		(arg, i) ->
-			# Only the first argument can be the SVG element
-			if i == 0 and arg.nodeName is "svg"
-				svgElement = arg
-			# Options can be the first or second argument
-			else if i < 2 and options is null and typeof arg is "object"
-				options = arg
+	# for arg, i in args
+	# 	(arg, i) ->
+	# 		# Only the first argument can be the SVG element
+	# 		if i == 0 and arg.nodeName is "svg"
+	# 			svgElement = arg
+	# 		# Options can be the first or second argument
+	# 		else if i < 2 and options is null and typeof arg is "object"
+	# 			options = arg
 
 	unless svgElement?
 		svgElement = document.createElementNS svgNS, "svg"
@@ -98,7 +101,7 @@ this.svgInputElements = (args...) ->
 	# 		throw "Missing width property in settings object"
 	# 	unless options.height?
 	# 		throw "Missing height property in settings object"
-	else
+	unless options?
 		options = 
 			width: defaultWidth
 			height: defaultHeight
@@ -106,7 +109,8 @@ this.svgInputElements = (args...) ->
 	svgieTextareaPrototype = do ->
 		prototype = 
 			parse: (str) ->
-				this.lines = svgieLine(this.gElement, str)
+				console.log str
+				this.lines = svgieLine this.gElement, str
 				#textElement = document.createElementNS svgNS, "text"
 				#popWord str, textElement
 
