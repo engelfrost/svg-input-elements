@@ -54,7 +54,7 @@ this.svgieWord = do ->
 		else if str.length is 0
 			null
 		else
-			result = wordRegexp.exec(str)?
+			result = wordRegexp.exec(str)
 			str = result[0]
 			word = result[1]
 			rest = result[2]

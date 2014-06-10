@@ -72,7 +72,7 @@
       } else if (str.length === 0) {
         return null;
       } else {
-        result = wordRegexp.exec(str) != null;
+        result = wordRegexp.exec(str);
         str = result[0];
         word = result[1];
         rest = result[2];
