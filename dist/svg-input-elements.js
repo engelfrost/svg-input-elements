@@ -95,12 +95,32 @@
   })();
 
   this.svgInputElements = function() {
-    var args, defaultHeight, defaultWidth, options, svgElement, svgieTextarea, svgieTextareaPrototype;
-    svgElement = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    var arg, args, defaultHeight, defaultWidth, i, options, svgElement, svgieTextarea, svgieTextareaPrototype, _fn, _i, _len;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     defaultWidth = 100;
     defaultHeight = 100;
     options = null;
-    if (svgElement == null) {
+    _fn = function(arg, i) {
+      var svgElement;
+      if (i === 0 && arg.nodeName === "svg") {
+        return svgElement = arg;
+      } else if ((arg != null) && (args[i + 1] == null)) {
+        options = arg;
+        if (options.width == null) {
+          throw "Missing width property in settings object";
+        }
+        if (options.height == null) {
+          throw "Missing height property in settings object";
+        }
+      } else {
+        throw "Invalid argument";
+      }
+    };
+    for (i = _i = 0, _len = args.length; _i < _len; i = ++_i) {
+      arg = args[i];
+      _fn(arg, i);
+    }
+    if (typeof svgElement === "undefined" || svgElement === null) {
       svgElement = document.createElementNS(svgNS, "svg");
       svgElement.setAttributeNS(null, "version", "1.1");
       svgElement.setAttributeNS(null, "width", String(defaultWidth) + "px");
@@ -116,7 +136,6 @@
       var prototype;
       return prototype = {
         parse: function(str) {
-          console.log(str);
           return this.lines = svgieLine(this.gElement, str);
         }
       };

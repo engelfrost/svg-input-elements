@@ -1,21 +1,19 @@
 var gulp   = require('gulp'),
 	concat   = require('gulp-concat'),
-	karma    = require('karma').server,
-	coffee   = require('gulp-coffee');
+	coffee   = require('gulp-coffee'),
+	karma    = require('karma').server;
 
 var karmaConf = {
 	browsers: ['PhantomJS'],
-	frameworks: ['jasmine', 'fixture'],
 	preprocessors: {
 		'**/*.coffee': ['coffee'], 
-		'**/*.json': ['html2js'],
-		'**/*.html': ['html2js']
 	},
+	frameworks: ['jasmine'],
 	coffeePreprocessor: {
 		// options passed to the coffee compiler
 		options: {
 			bare: true,
-			sourceMap: false
+			sourceMap: true
 		},
 		// transforming the filenames
 		transformPath: function(path) {
@@ -24,10 +22,7 @@ var karmaConf = {
 	},
 	files: [
 		'dist/*.js',
-		'spec/*.coffee', 
-		{
-			pattern: 'spec/fixtures/**/*'
-		}
+		'spec/*.coffee'
 	]
 };
 

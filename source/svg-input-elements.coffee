@@ -75,20 +75,25 @@ this.svgieWord = do ->
 			wordObject
 
 # args: [svgElement][, options]
-this.svgInputElements = (svgElement, args...) ->
+this.svgInputElements = (args...) ->
 	defaultWidth = 100
 	defaultHeight = 100
 	options = null
-	#svgElement = null
 
-	# for arg, i in args
-	# 	(arg, i) ->
-	# 		# Only the first argument can be the SVG element
-	# 		if i == 0 and arg.nodeName is "svg"
-	# 			svgElement = arg
-	# 		# Options can be the first or second argument
-	# 		else if i < 2 and options is null and typeof arg is "object"
-	# 			options = arg
+	for arg, i in args
+		do (arg, i) ->
+			# Only the first argument can be the SVG element
+			if i == 0 and arg.nodeName is "svg"
+				svgElement = arg
+			# Options can be the first or second argument
+			else if arg? and not args[i + 1]?
+				options = arg
+				unless options.width?
+					throw "Missing width property in settings object"
+				unless options.height?
+					throw "Missing height property in settings object"
+			else 
+				throw "Invalid argument"
 
 	unless svgElement?
 		svgElement = document.createElementNS svgNS, "svg"
@@ -96,12 +101,7 @@ this.svgInputElements = (svgElement, args...) ->
 		svgElement.setAttributeNS null, "width", String(defaultWidth) + "px"
 		svgElement.setAttributeNS null, "height", String(defaultHeight) + "px"
 
-	# if options? 
-	# 	unless options.width?
-	# 		throw "Missing width property in settings object"
-	# 	unless options.height?
-	# 		throw "Missing height property in settings object"
-	unless options?
+	unless options? 
 		options = 
 			width: defaultWidth
 			height: defaultHeight
@@ -109,7 +109,6 @@ this.svgInputElements = (svgElement, args...) ->
 	svgieTextareaPrototype = do ->
 		prototype = 
 			parse: (str) ->
-				console.log str
 				this.lines = svgieLine this.gElement, str
 				#textElement = document.createElementNS svgNS, "text"
 				#popWord str, textElement

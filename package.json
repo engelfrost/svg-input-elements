@@ -44,13 +44,10 @@
     "gulp-concat": "~2.2.0",
     "gulp-cached": "~0.0.3",
     "gulp-remember": "~0.2.0",
+    "gulp-coffee": "~2.0.0",
     "karma": "~0.12.16",
-    //"karma-chrome-launcher": "~0.1.4",
     "karma-jasmine": "~0.1.5",
     "karma-coffee-preprocessor": "~0.2.1",
-    "karma-fixture": "~0.2.1-1",
-    "karma-html2js-preprocessor": "~0.1.0",
-    "gulp-coffee": "~2.0.0",
     "karma-phantomjs-launcher": "~0.1.4"
   }
 }

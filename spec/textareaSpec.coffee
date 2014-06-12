@@ -5,11 +5,13 @@ describe "The svgieTextarea object", ->
 	textarea = null
 	textarea2 = null
 	beforeEach ->
-		textarea = svgInputElements(fixture.load("svg.html")[0])
-		textarea2 = svgInputElements(fixture.load("svg.html")[0])
+		textarea = svgInputElements()
+		textarea2 = svgInputElements()
 
 	it "has a g element", ->
 		expect(textarea.gElement).toBeDefined()
+		expect(textarea.gElement.nodeName).toBe "g"
+		expect(textarea2.gElement.nodeName).toBe "g"
 	it "has its own textarea", ->
 		expect(textarea.gElement).toBe textarea.gElement
 		expect(textarea.gElement).not.toBe textarea2.gElement
