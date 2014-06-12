@@ -16,6 +16,8 @@ popWord = (str) ->
 
 this.svgieLine = (gElement, str) ->
 	textElement = document.createElementNS svgNS, "text"
+	textElement.setAttributeNS null, "x", "0"
+	textElement.setAttributeNS null, "y", "20"
 	gElement.appendChild textElement
 	lineObject = 
 		maxWidth: ->
@@ -78,6 +80,7 @@ this.svgieWord = do ->
 this.svgInputElements = (args...) ->
 	defaultWidth = 100
 	defaultHeight = 100
+	svgElement = null
 	options = null
 
 	for arg, i in args
@@ -119,7 +122,6 @@ this.svgInputElements = (args...) ->
 		g = document.createElementNS svgNS, "g"
 		svgElement.appendChild g
 		g
-
 	svgieTextarea
 
 #id="svg" version="1.1" width="100px" height="100px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"

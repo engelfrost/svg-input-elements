@@ -23,6 +23,8 @@
   this.svgieLine = function(gElement, str) {
     var lineObject, textElement;
     textElement = document.createElementNS(svgNS, "text");
+    textElement.setAttributeNS(null, "x", "0");
+    textElement.setAttributeNS(null, "y", "20");
     gElement.appendChild(textElement);
     lineObject = {
       maxWidth: function() {
@@ -99,9 +101,9 @@
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     defaultWidth = 100;
     defaultHeight = 100;
+    svgElement = null;
     options = null;
     _fn = function(arg, i) {
-      var svgElement;
       if (i === 0 && arg.nodeName === "svg") {
         return svgElement = arg;
       } else if ((arg != null) && (args[i + 1] == null)) {
@@ -120,7 +122,7 @@
       arg = args[i];
       _fn(arg, i);
     }
-    if (typeof svgElement === "undefined" || svgElement === null) {
+    if (svgElement == null) {
       svgElement = document.createElementNS(svgNS, "svg");
       svgElement.setAttributeNS(null, "version", "1.1");
       svgElement.setAttributeNS(null, "width", String(defaultWidth) + "px");

@@ -6,10 +6,11 @@
 		<script src="../dist/svg-input-elements.js"></script>
 </head>
 <body>
-	<svg id="svg" version="1.1" width="100px" height="100px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<svg id="svg" version="1.1" width="100px" height="100px" xmlns="http://www.w3.org/2000/svg">
 	</svg>
 	<script type="text/javascript">
-		var textarea = svgInputElements(document.getElementById("svg"), {});
+		var svg = document.getElementById("svg")
+		var textarea = svgInputElements(svg);
 		textarea.parse("hello world");
 	</script>
 </body>
