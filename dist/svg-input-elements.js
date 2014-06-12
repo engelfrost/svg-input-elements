@@ -1,26 +1,15 @@
 (function() {
-  var popWord, svgNS, whitespaceRegexp, wordRegexp, xlinkNS,
-    __slice = [].slice;
+  var svgNS, xlinkNS;
+
+  if (this.SVGIE == null) {
+    this.SVGIE = {};
+  }
 
   svgNS = 'http://www.w3.org/2000/svg';
 
   xlinkNS = 'http://www.w3.org/1999/xlink';
 
-  wordRegexp = /^(\S+|\s)(.*)/;
-
-  whitespaceRegexp = /\s/;
-
-  popWord = function(str) {
-    var strings;
-    strings = wordRegexp.exec(str);
-    if (strings != null) {
-      return [strings[2], strings[1]];
-    } else {
-      return null;
-    }
-  };
-
-  this.svgieLine = function(gElement, str) {
+  SVGIE.line = function(gElement, str) {
     var lineObject, textElement;
     textElement = document.createElementNS(svgNS, "text");
     textElement.setAttributeNS(null, "x", "0");
@@ -35,74 +24,34 @@
       textElement: textElement,
       words: null
     };
-    lineObject.words = svgieWord(lineObject, null, null, str);
+    lineObject.words = SVGIE.word(lineObject, null, null, str);
     return lineObject;
   };
 
-  this.svgieWord = (function() {
-    var svgieWordPrototype;
-    svgieWordPrototype = (function() {
-      var prototype;
-      return prototype = {
-        chars: function() {
-          if (this.tspan != null) {
-            return this.tspan.textContent.length;
-          } else {
-            return 0;
-          }
-        },
-        width: function() {
-          if (this.tspan != null) {
-            return this.tspan.scrollWidth;
-          } else {
-            return 0;
-          }
-        },
-        whitespace: function() {
-          if (this.tspan != null) {
-            return whitespaceRegexp.test(this.tspan.textContent);
-          } else {
-            return null;
-          }
-        }
-      };
-    })();
-    return function(lineObject, prev, next, str) {
-      var rest, result, tspanElement, word, wordNode, wordObject;
-      if (str == null) {
-        return null;
-      } else if (str.length === 0) {
-        return null;
-      } else {
-        result = wordRegexp.exec(str);
-        str = result[0];
-        word = result[1];
-        rest = result[2];
-        tspanElement = document.createElementNS(svgNS, "tspan");
-        lineObject.textElement.insertBefore(tspanElement, next);
-        if (!whitespaceRegexp.test(word)) {
-          wordNode = document.createTextNode(word);
-          tspanElement.appendChild(wordNode);
-        }
-        wordObject = Object.create(svgieWordPrototype);
-        wordObject.tspan = tspanElement;
-        wordObject.prev = prev;
-        wordObject.next = next;
-        if (rest != null) {
-          wordObject.next = svgieWord(lineObject, wordObject, wordObject.next, rest);
-        }
-        return wordObject;
-      }
-    };
-  })();
+}).call(this);
 
-  this.svgInputElements = function() {
-    var arg, args, defaultHeight, defaultWidth, i, options, svgElement, svgieTextarea, svgieTextareaPrototype, _fn, _i, _len;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    defaultWidth = 100;
-    defaultHeight = 100;
-    svgElement = null;
-    options = null;
+(function() {
+  var defaultHeight, defaultWidth, getArguments, options, prototype, svgElement, svgNS, xlinkNS,
+    __slice = [].slice;
+
+  if (this.SVGIE == null) {
+    this.SVGIE = {};
+  }
+
+  svgNS = 'http://www.w3.org/2000/svg';
+
+  xlinkNS = 'http://www.w3.org/1999/xlink';
+
+  defaultWidth = 100;
+
+  defaultHeight = 100;
+
+  svgElement = null;
+
+  options = null;
+
+  getArguments = function(args) {
+    var arg, i, _fn, _i, _len;
     _fn = function(arg, i) {
       if (i === 0 && arg.nodeName === "svg") {
         return svgElement = arg;
@@ -134,23 +83,107 @@
         height: defaultHeight
       };
     }
-    svgieTextareaPrototype = (function() {
-      var prototype;
-      return prototype = {
-        parse: function(str) {
-          return this.lines = svgieLine(this.gElement, str);
-        }
-      };
-    })();
-    svgieTextarea = Object.create(svgieTextareaPrototype);
-    svgieTextarea.lines = null;
-    svgieTextarea.gElement = (function() {
+    return [svgElement, options];
+  };
+
+  prototype = {
+    parse: function(str) {
+      return this.lines = SVGIE.line(this.gElement, str);
+    }
+  };
+
+  SVGIE.textarea = function() {
+    var args, model, _ref;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    _ref = getArguments(args), svgElement = _ref[0], options = _ref[1];
+    model = Object.create(prototype);
+    model.lines = null;
+    model.gElement = (function() {
       var g;
       g = document.createElementNS(svgNS, "g");
       svgElement.appendChild(g);
       return g;
     })();
-    return svgieTextarea;
+    return model;
+  };
+
+}).call(this);
+
+(function() {
+  var popWord, prototype, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
+
+  if (this.SVGIE == null) {
+    this.SVGIE = {};
+  }
+
+  svgNS = 'http://www.w3.org/2000/svg';
+
+  xlinkNS = 'http://www.w3.org/1999/xlink';
+
+  wordRegexp = /^(\S+|\s)(.*)/;
+
+  whitespaceRegexp = /\s/;
+
+  popWord = function(str) {
+    var strings;
+    strings = wordRegexp.exec(str);
+    if (strings != null) {
+      return [strings[2], strings[1]];
+    } else {
+      return null;
+    }
+  };
+
+  prototype = {
+    chars: function() {
+      if (this.tspan != null) {
+        return this.tspan.textContent.length;
+      } else {
+        return 0;
+      }
+    },
+    width: function() {
+      if (this.tspan != null) {
+        return this.tspan.scrollWidth;
+      } else {
+        return 0;
+      }
+    },
+    whitespace: function() {
+      if (this.tspan != null) {
+        return whitespaceRegexp.test(this.tspan.textContent);
+      } else {
+        return null;
+      }
+    }
+  };
+
+  SVGIE.word = function(lineObject, prev, next, str) {
+    var rest, result, tspanElement, word, wordNode, wordObject;
+    if (str == null) {
+      return null;
+    } else if (str.length === 0) {
+      return null;
+    } else {
+      result = wordRegexp.exec(str);
+      str = result[0];
+      word = result[1];
+      rest = result[2];
+      tspanElement = document.createElementNS(svgNS, "tspan");
+      lineObject.textElement.insertBefore(tspanElement, next);
+      if (!whitespaceRegexp.test(word)) {
+        wordNode = document.createTextNode(word);
+        tspanElement.appendChild(wordNode);
+      }
+      wordObject = Object.create(prototype);
+      wordObject.tspan = tspanElement;
+      wordObject.prev = prev;
+      wordObject.next = next;
+      if (rest != null) {
+        wordObject.next = SVGIE.word(lineObject, wordObject, wordObject.next, rest);
+      }
+      return wordObject;
+    }
   };
 
 }).call(this);

@@ -1,10 +1,10 @@
 svgNS = 'http://www.w3.org/2000/svg'
 xlinkNS = 'http://www.w3.org/1999/xlink'
 
-describe "The svgieLine object", ->
+describe "The line model", ->
 	lineObject = null
 	beforeEach ->
-		lineObject = svgieLine(svgInputElements().gElement)
+		lineObject = SVGIE.line(SVGIE.textarea().gElement)
 	it "has a property maxWidth() which returns a number", ->
 		expect(lineObject.maxWidth()).toEqual jasmine.any Number
 	it "has a property words which is null or holds a reference to an wordObject", ->

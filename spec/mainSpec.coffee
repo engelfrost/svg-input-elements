@@ -1,11 +1,11 @@
 svgNS = 'http://www.w3.org/2000/svg'
 xlinkNS = 'http://www.w3.org/1999/xlink'
 
-describe "The svgInputElements function", ->
-	it "is a function called svgInputElements", ->
-		expect(svgInputElements).toEqual jasmine.any Function 
+describe "The SVGIE.textarea function", ->
+	it "is a function called SVGIE.textarea", ->
+		expect(SVGIE.textarea).toEqual jasmine.any Function 
 	it "returns an object with the textareas g element in the property .gElement", ->
-		g = svgInputElements().gElement
+		g = SVGIE.textarea().gElement
 		expect(g.nodeName).toBe "g"
 	it "takes an optional SVG element as a first parameter", ->
 		svgElement = document.createElementNS svgNS, "svg"
@@ -14,8 +14,8 @@ describe "The svgInputElements function", ->
 		svgElement.setAttributeNS null, "height", "100px"
 		svgElement.setAttributeNS null, "id", "test"
 
-		textarea = svgInputElements()
-		textarea2 = svgInputElements(svgElement)
+		textarea = SVGIE.textarea()
+		textarea2 = SVGIE.textarea(svgElement)
 
 		expect(textarea.gElement).toBe textarea.gElement
 		expect(textarea2.gElement).not.toBe textarea.gElement
@@ -25,17 +25,17 @@ describe "The svgInputElements function", ->
 			width: 100,
 			height: 100
 		expect(svgElement.nodeName).toBe "svg"
-		expect(-> svgInputElements(options)).not.toThrow()
-		expect(-> svgInputElements(svgElement, options)).not.toThrow()
-		expect(-> svgInputElements(options, svgElement)).toThrow()
+		expect(-> SVGIE.textarea(options)).not.toThrow()
+		expect(-> SVGIE.textarea(svgElement, options)).not.toThrow()
+		expect(-> SVGIE.textarea(options, svgElement)).toThrow()
 	it "requires that the options object has the properties width and height", ->
 		options = 
 			width: 100,
 			height: 100
-		expect(-> svgInputElements(options)).not.toThrow()
-		expect(-> svgInputElements({})).toThrow()
+		expect(-> SVGIE.textarea(options)).not.toThrow()
+		expect(-> SVGIE.textarea({})).toThrow()
 	it "returns a g element within a new SVG element if no svg parameter was passed", ->
-		expect(svgInputElements().gElement.parentNode.nodeName).toEqual "svg"
-		expect(svgInputElements().gElement.parentNode.namespaceURI).toEqual svgNS
+		expect(SVGIE.textarea().gElement.parentNode.nodeName).toEqual "svg"
+		expect(SVGIE.textarea().gElement.parentNode.namespaceURI).toEqual svgNS
 
 

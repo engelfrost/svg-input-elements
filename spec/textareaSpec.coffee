@@ -1,12 +1,12 @@
 svgNS = 'http://www.w3.org/2000/svg'
 xlinkNS = 'http://www.w3.org/1999/xlink'
 
-describe "The svgieTextarea object", ->
+describe "The textarea model", ->
 	textarea = null
 	textarea2 = null
 	beforeEach ->
-		textarea = svgInputElements()
-		textarea2 = svgInputElements()
+		textarea = SVGIE.textarea()
+		textarea2 = SVGIE.textarea()
 
 	it "has a g element", ->
 		expect(textarea.gElement).toBeDefined()

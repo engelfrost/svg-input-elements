@@ -1,14 +1,14 @@
 svgNS = 'http://www.w3.org/2000/svg'
 xlinkNS = 'http://www.w3.org/1999/xlink'
 
-describe "The svgieWord object", ->
+describe "The word model", ->
 	wordObjects = null
 	beforeEach ->
-		lineObject = svgieLine(svgInputElements().gElement)
+		lineObject = SVGIE.line(SVGIE.textarea().gElement)
 		wordObjects = [
-			svgieWord(lineObject, null, null, "three"),
-			svgieWord(lineObject, null, null, " "),
-			svgieWord(lineObject, null, null, "strings.")
+			SVGIE.word(lineObject, null, null, "three"),
+			SVGIE.word(lineObject, null, null, " "),
+			SVGIE.word(lineObject, null, null, "strings.")
 		]
 		wordObjects[0].next = wordObjects[1]
 		wordObjects[1].prev = wordObjects[0]
