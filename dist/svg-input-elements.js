@@ -159,7 +159,7 @@
   };
 
   SVGIE.word = function(lineObject, prev, next, str) {
-    var rest, result, tspanElement, word, wordNode, wordObject;
+    var model, rest, result, tspanElement, word, wordNode;
     if (str == null) {
       return null;
     } else if (str.length === 0) {
@@ -175,14 +175,14 @@
         wordNode = document.createTextNode(word);
         tspanElement.appendChild(wordNode);
       }
-      wordObject = Object.create(prototype);
-      wordObject.tspan = tspanElement;
-      wordObject.prev = prev;
-      wordObject.next = next;
+      model = Object.create(prototype);
+      model.tspan = tspanElement;
+      model.prev = prev;
+      model.next = next;
       if (rest != null) {
-        wordObject.next = SVGIE.word(lineObject, wordObject, wordObject.next, rest);
+        model.next = SVGIE.word(lineObject, model, model.next, rest);
       }
-      return wordObject;
+      return model;
     }
   };
 

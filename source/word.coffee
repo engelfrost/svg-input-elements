@@ -51,14 +51,14 @@ SVGIE.word = (lineObject, prev, next, str) ->
 			wordNode = document.createTextNode word
 			tspanElement.appendChild wordNode
 
-		wordObject = Object.create prototype
-		wordObject.tspan = tspanElement
-		wordObject.prev = prev
-		wordObject.next = next
+		model = Object.create prototype
+		model.tspan = tspanElement
+		model.prev = prev
+		model.next = next
 
 		if rest? 
-			wordObject.next = SVGIE.word lineObject, wordObject, wordObject.next, rest
-		wordObject
+			model.next = SVGIE.word lineObject, model, model.next, rest
+		model
 
 # args: [svgElement][, options]
 #this.svgInputElements = (args...) ->
