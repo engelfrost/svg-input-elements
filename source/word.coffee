@@ -7,58 +7,56 @@ xlinkNS = 'http://www.w3.org/1999/xlink'
 wordRegexp = /^(\S+|\s)(.*)/
 # Define whitespace. Must be the same definition as in the wordsplit regexp
 whitespaceRegexp = /\s/
-
-popWord = (str) ->
-	strings = wordRegexp.exec str
-	if strings?
-		[strings[2], strings[1]]
-	else
-		null
+dx = 0
 
 prototype = 
-	chars: ->
-		if this.tspan? 
-			this.tspan.textContent.length
+	dx: (x) ->
+		if x? 
+			dx = x
 		else 
-			0
-	,
-	width: ->
-		if this.tspan? 
-			this.tspan.scrollWidth
-		else 
-			0
-	,
+			dx
 	whitespace: ->
-		if this.tspan? 
-			whitespaceRegexp.test this.tspan.textContent
-		else 
-			null
+		self = this
+		whitespaceRegexp.test self.s
 
-SVGIE.word = (lineObject, prev, next, str) ->
-	unless str?
-		null
-	else if str.length is 0
+SVGIE.word = (textarea, prev, s) ->
+	unless textarea?
+		throw "Textarea must be a textarea object"
+	unless arguments.length is 3
+		throw "word() takes three arguments"
+	unless prev? or typeof prev is 'object'
+		throw "Second argument should be a word or null"
+	unless typeof s is 'string'
+		throw "expected third parameter to be a string"
+
+	if s.length is 0
 		null
 	else
-		result = wordRegexp.exec(str)
-		str = result[0]
-		word = result[1]
+		result = wordRegexp.exec s
 		rest = result[2]
-		tspanElement = document.createElementNS svgNS, "tspan"
-		lineObject.textElement.insertBefore tspanElement, next
+		view = document.createElementNS svgNS, "text"
 
-		unless whitespaceRegexp.test word
-			wordNode = document.createTextNode word
-			tspanElement.appendChild wordNode
 
-		model = Object.create prototype
-		model.tspan = tspanElement
-		model.prev = prev
-		model.next = next
+		textarea.view.appendChild view
+		# This makes it work...
+		# setTimeout -> 
+		# 		textarea.view.appendChild view
+		# 	,
+		# 	0
+
+		word = Object.create prototype
+		word.s = result[1]
+		word.prev = prev
+		word.next = null
+		word.line = 1
+		word.width = 0
+		word.height = 0
+		word.view = view
+		word.textarea = textarea
 
 		if rest? 
-			model.next = SVGIE.word lineObject, model, model.next, rest
-		model
+			word.next = SVGIE.word textarea, word, rest
+		word
 
 # args: [svgElement][, options]
 #this.svgInputElements = (args...) ->

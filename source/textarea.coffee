@@ -3,49 +3,40 @@ this.SVGIE ?= {}
 svgNS = 'http://www.w3.org/2000/svg'
 xlinkNS = 'http://www.w3.org/1999/xlink'
 
-defaultWidth = 100
-defaultHeight = 100
-svgElement = null
-options = null
 
 # Parse the arguments
 getArguments = (args) ->
+	options = {}
+	s = ""
+
 	for arg, i in args
 		do (arg, i) ->
-			# Only the first argument can be the SVG element
-			if i == 0 and arg.nodeName is "svg"
-				svgElement = arg
-			# Options is the last argument
-			else if arg? and not args[i + 1]?
+			if typeof arg is 'object'
 				options = arg
-				unless options.width?
-					throw "Missing width property in settings object"
-				unless options.height?
-					throw "Missing height property in settings object"
+			else if not args[i + 1]? and typeof arg is 'string'
+				s = arg
 			else 
 				throw "Invalid argument"
-	unless svgElement?
-		svgElement = document.createElementNS svgNS, "svg"
-		svgElement.setAttributeNS null, "version", "1.1"
-		svgElement.setAttributeNS null, "width", String(defaultWidth) + "px"
-		svgElement.setAttributeNS null, "height", String(defaultHeight) + "px"
-	unless options? 
-		options = 
-			width: defaultWidth
-			height: defaultHeight
-	[svgElement, options]
+	[options, s]
 
 prototype =
-	parse: (str) ->
-		this.lines = SVGIE.line this.gElement, str
+	val: (str) ->
+		self = this
+		this.words = SVGIE.word self, null, str
 
-SVGIE.textarea = (args...) ->
-	[svgElement, options] = getArguments args
+SVGIE.textarea = (el, args...) ->
+	unless el? and (el.nodeName is "svg" or el.nodeName is "g")
+		throw "Missing first argument, no <svg> or <g> passed"
 
-	model = Object.create prototype
-	model.lines = null
-	model.gElement = do ->
-		g = document.createElementNS svgNS, "g"
-		svgElement.appendChild g
-		g
-	model
+	[options, s] = getArguments args
+
+	textarea = Object.create prototype
+	textarea.height = if options.height? then options.height else null
+	textarea.width = if options.width? then options.width else null
+	if el.nodeName is 'g'
+		textarea.view = el
+	else
+		textarea.view = document.createElementNS svgNS, "g"
+		el.appendChild textarea.view
+	textarea.words = SVGIE.word textarea, null, s
+	textarea

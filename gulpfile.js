@@ -5,6 +5,7 @@ var gulp   = require('gulp'),
 
 var karmaConf = {
 	browsers: ['PhantomJS'],
+	//browsers: ['Chrome'],
 	preprocessors: {
 		'**/*.coffee': ['coffee'], 
 	},

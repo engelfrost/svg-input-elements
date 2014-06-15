@@ -3,30 +3,47 @@ xlinkNS = 'http://www.w3.org/1999/xlink'
 
 describe "The textarea model", ->
 	textarea = null
-	textarea2 = null
+	svg = ->
+		svgElement = document.createElementNS svgNS, "svg"
+		svgElement.setAttributeNS null, "version", "1.1"
+		svgElement.setAttributeNS null, "width", "100px"
+		svgElement.setAttributeNS null, "height", "100px"
+		svgElement
 	beforeEach ->
-		textarea = SVGIE.textarea()
-		textarea2 = SVGIE.textarea()
+		textarea = SVGIE.textarea svg()
 
-	it "has a g element", ->
-		expect(textarea.gElement).toBeDefined()
-		expect(textarea.gElement.nodeName).toBe "g"
-		expect(textarea2.gElement.nodeName).toBe "g"
-	it "has its own textarea", ->
-		expect(textarea.gElement).toBe textarea.gElement
-		expect(textarea.gElement).not.toBe textarea2.gElement
+	it "has a 'width' property which it null if no width was set", ->
+		expect(textarea.width).toBe null
+	it "has a 'width' property which is a numer if a width was set", ->
+		textarea2 = SVGIE.textarea svg(), { width: 100 }
+		expect(textarea2.width).toBe 100
+	it "has a 'height' property which is null if no height was set", ->
+		expect(textarea.height).toBe null
+	it "has a 'height' property which is a numer if a height was set", ->
+		textarea2 = SVGIE.textarea svg(), { height: 100 }
+		expect(textarea2.height).toBe 100
+	it "has a 'words' property which is null if no string was passed to SVGIE.textarea", ->
+		expect(textarea.words).toBe null
+	it "has a 'words' property which is an object if a string was passed to SVGIE.textarea", ->
+		textarea2 = SVGIE.textarea svg(), "string"
+		expect(textarea2.words).toEqual jasmine.any Object
 
-	describe "has a text parser which", ->
-		it "is a function called parse", ->
-			expect(textarea.parse).toEqual jasmine.any Function
-		it "takes a string as input and creates a text element", ->
-			numberOfTextElements = textarea.gElement.getElementsByTagNameNS(svgNS, "text").length
-			textarea.parse "string"
-			newNumberOfTextElements = textarea.gElement.getElementsByTagNameNS(svgNS, "text").length
-			expect(newNumberOfTextElements).toEqual numberOfTextElements + 1
-		it "puts each word into a tspan element, treating single whitespace characters as a separate word", ->
-			textarea.parse("  a regular string! ")
-			test = -> 
-				tspans = textarea.gElement.getElementsByTagNameNS(svgNS, "tspan")
-				expect(tspans.length).toBe(8)
-			setTimeout test, 100
+	describe "has a 'view' property which", ->
+		it "is a <g> element", ->
+			expect(textarea.view.nodeName).toBe "g"
+		it "is appended to the <svg> element", ->
+			svgElement = svg()
+			textarea = SVGIE.textarea svgElement
+			expect(textarea.view.parentNode).toBe svgElement
+
+	describe "has a 'val' method which", ->
+		it "takes a string argument and replaces the value of the textarea with new content", ->
+			numberOfTextElements = textarea.view.getElementsByTagNameNS(svgNS, "text").length
+			textarea.val "string"
+			setTimeout ->
+
+				newNumberOfTextElements = textarea.view.getElementsByTagNameNS(svgNS, "text").length
+				test = -> expect(newNumberOfTextElements).toEqual numberOfTextElements + 1
+				setTimeout test, 100
+				, 
+				100

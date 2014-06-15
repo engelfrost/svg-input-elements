@@ -31,7 +31,7 @@
 }).call(this);
 
 (function() {
-  var defaultHeight, defaultWidth, getArguments, options, prototype, svgElement, svgNS, xlinkNS,
+  var getArguments, prototype, svgNS, xlinkNS,
     __slice = [].slice;
 
   if (this.SVGIE == null) {
@@ -42,27 +42,15 @@
 
   xlinkNS = 'http://www.w3.org/1999/xlink';
 
-  defaultWidth = 100;
-
-  defaultHeight = 100;
-
-  svgElement = null;
-
-  options = null;
-
   getArguments = function(args) {
-    var arg, i, _fn, _i, _len;
+    var arg, i, options, s, _fn, _i, _len;
+    options = {};
+    s = "";
     _fn = function(arg, i) {
-      if (i === 0 && arg.nodeName === "svg") {
-        return svgElement = arg;
-      } else if ((arg != null) && (args[i + 1] == null)) {
-        options = arg;
-        if (options.width == null) {
-          throw "Missing width property in settings object";
-        }
-        if (options.height == null) {
-          throw "Missing height property in settings object";
-        }
+      if (typeof arg === 'object') {
+        return options = arg;
+      } else if ((args[i + 1] == null) && typeof arg === 'string') {
+        return s = arg;
       } else {
         throw "Invalid argument";
       }
@@ -71,46 +59,41 @@
       arg = args[i];
       _fn(arg, i);
     }
-    if (svgElement == null) {
-      svgElement = document.createElementNS(svgNS, "svg");
-      svgElement.setAttributeNS(null, "version", "1.1");
-      svgElement.setAttributeNS(null, "width", String(defaultWidth) + "px");
-      svgElement.setAttributeNS(null, "height", String(defaultHeight) + "px");
-    }
-    if (options == null) {
-      options = {
-        width: defaultWidth,
-        height: defaultHeight
-      };
-    }
-    return [svgElement, options];
+    return [options, s];
   };
 
   prototype = {
-    parse: function(str) {
-      return this.lines = SVGIE.line(this.gElement, str);
+    val: function(str) {
+      var self;
+      self = this;
+      return this.words = SVGIE.word(self, null, str);
     }
   };
 
   SVGIE.textarea = function() {
-    var args, model, _ref;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    _ref = getArguments(args), svgElement = _ref[0], options = _ref[1];
-    model = Object.create(prototype);
-    model.lines = null;
-    model.gElement = (function() {
-      var g;
-      g = document.createElementNS(svgNS, "g");
-      svgElement.appendChild(g);
-      return g;
-    })();
-    return model;
+    var args, el, options, s, textarea, _ref;
+    el = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    if (!((el != null) && (el.nodeName === "svg" || el.nodeName === "g"))) {
+      throw "Missing first argument, no <svg> or <g> passed";
+    }
+    _ref = getArguments(args), options = _ref[0], s = _ref[1];
+    textarea = Object.create(prototype);
+    textarea.height = options.height != null ? options.height : null;
+    textarea.width = options.width != null ? options.width : null;
+    if (el.nodeName === 'g') {
+      textarea.view = el;
+    } else {
+      textarea.view = document.createElementNS(svgNS, "g");
+      el.appendChild(textarea.view);
+    }
+    textarea.words = SVGIE.word(textarea, null, s);
+    return textarea;
   };
 
 }).call(this);
 
 (function() {
-  var popWord, prototype, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
+  var dx, prototype, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -124,65 +107,57 @@
 
   whitespaceRegexp = /\s/;
 
-  popWord = function(str) {
-    var strings;
-    strings = wordRegexp.exec(str);
-    if (strings != null) {
-      return [strings[2], strings[1]];
-    } else {
-      return null;
-    }
-  };
+  dx = 0;
 
   prototype = {
-    chars: function() {
-      if (this.tspan != null) {
-        return this.tspan.textContent.length;
+    dx: function(x) {
+      if (x != null) {
+        return dx = x;
       } else {
-        return 0;
-      }
-    },
-    width: function() {
-      if (this.tspan != null) {
-        return this.tspan.scrollWidth;
-      } else {
-        return 0;
+        return dx;
       }
     },
     whitespace: function() {
-      if (this.tspan != null) {
-        return whitespaceRegexp.test(this.tspan.textContent);
-      } else {
-        return null;
-      }
+      var self;
+      self = this;
+      return whitespaceRegexp.test(self.s);
     }
   };
 
-  SVGIE.word = function(lineObject, prev, next, str) {
-    var model, rest, result, tspanElement, word, wordNode;
-    if (str == null) {
-      return null;
-    } else if (str.length === 0) {
+  SVGIE.word = function(textarea, prev, s) {
+    var rest, result, view, word;
+    if (textarea == null) {
+      throw "Textarea must be a textarea object";
+    }
+    if (arguments.length !== 3) {
+      throw "word() takes three arguments";
+    }
+    if (!((prev != null) || typeof prev === 'object')) {
+      throw "Second argument should be a word or null";
+    }
+    if (typeof s !== 'string') {
+      throw "expected third parameter to be a string";
+    }
+    if (s.length === 0) {
       return null;
     } else {
-      result = wordRegexp.exec(str);
-      str = result[0];
-      word = result[1];
+      result = wordRegexp.exec(s);
       rest = result[2];
-      tspanElement = document.createElementNS(svgNS, "tspan");
-      lineObject.textElement.insertBefore(tspanElement, next);
-      if (!whitespaceRegexp.test(word)) {
-        wordNode = document.createTextNode(word);
-        tspanElement.appendChild(wordNode);
-      }
-      model = Object.create(prototype);
-      model.tspan = tspanElement;
-      model.prev = prev;
-      model.next = next;
+      view = document.createElementNS(svgNS, "text");
+      textarea.view.appendChild(view);
+      word = Object.create(prototype);
+      word.s = result[1];
+      word.prev = prev;
+      word.next = null;
+      word.line = 1;
+      word.width = 0;
+      word.height = 0;
+      word.view = view;
+      word.textarea = textarea;
       if (rest != null) {
-        model.next = SVGIE.word(lineObject, model, model.next, rest);
+        word.next = SVGIE.word(textarea, word, rest);
       }
-      return model;
+      return word;
     }
   };
 
