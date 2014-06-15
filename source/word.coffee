@@ -7,14 +7,19 @@ xlinkNS = 'http://www.w3.org/1999/xlink'
 wordRegexp = /^(\S+|\s)(.*)/
 # Define whitespace. Must be the same definition as in the wordsplit regexp
 whitespaceRegexp = /\s/
-dx = 0
+dxValue = 0
 
 prototype = 
 	dx: (x) ->
-		if x? 
-			dx = x
+		self = this
+		if x?
+			if self.textarea.width? and (self.width + x) > self.textarea.width
+				self.line = self.line + 1
+				dxValue = 0
+			else
+				dxValue = x
 		else 
-			dx
+			dxValue
 	whitespace: ->
 		self = this
 		whitespaceRegexp.test self.s

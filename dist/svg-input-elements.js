@@ -1,36 +1,4 @@
 (function() {
-  var svgNS, xlinkNS;
-
-  if (this.SVGIE == null) {
-    this.SVGIE = {};
-  }
-
-  svgNS = 'http://www.w3.org/2000/svg';
-
-  xlinkNS = 'http://www.w3.org/1999/xlink';
-
-  SVGIE.line = function(gElement, str) {
-    var lineObject, textElement;
-    textElement = document.createElementNS(svgNS, "text");
-    textElement.setAttributeNS(null, "x", "0");
-    textElement.setAttributeNS(null, "y", "20");
-    gElement.appendChild(textElement);
-    lineObject = {
-      maxWidth: function() {
-        return 100;
-      },
-      next: null,
-      prev: null,
-      textElement: textElement,
-      words: null
-    };
-    lineObject.words = SVGIE.word(lineObject, null, null, str);
-    return lineObject;
-  };
-
-}).call(this);
-
-(function() {
   var getArguments, prototype, svgNS, xlinkNS,
     __slice = [].slice;
 
@@ -93,7 +61,7 @@
 }).call(this);
 
 (function() {
-  var dx, prototype, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
+  var dxValue, prototype, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -107,14 +75,21 @@
 
   whitespaceRegexp = /\s/;
 
-  dx = 0;
+  dxValue = 0;
 
   prototype = {
     dx: function(x) {
+      var self;
+      self = this;
       if (x != null) {
-        return dx = x;
+        if ((self.textarea.width != null) && (self.width + x) > self.textarea.width) {
+          self.line = self.line + 1;
+          return dxValue = 0;
+        } else {
+          return dxValue = x;
+        }
       } else {
-        return dx;
+        return dxValue;
       }
     },
     whitespace: function() {

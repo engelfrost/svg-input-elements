@@ -66,7 +66,7 @@ describe "The word object", ->
 			word.dx(10)
 			expect(word.dx()).toBe 10
 		it "increases the line number and resets dx if textarea.width < dx + width", ->
-			word.dx = 0
+			word.dx(0)
 			word.line = 1
 			word.width = 100
 			word.textarea.width = 200
