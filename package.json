@@ -49,6 +49,8 @@
     "karma-jasmine": "~0.1.5",
     "karma-coffee-preprocessor": "~0.2.1",
     "karma-phantomjs-launcher": "~0.1.4",
-    "karma-chrome-launcher": "~0.1.4"
+    "karma-chrome-launcher": "~0.1.4",
+    "gulp-uglify": "~0.3.0",
+    "gulp-rename": "~1.2.0"
   }
 }

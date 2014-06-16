@@ -21,8 +21,13 @@ getArguments = (args) ->
 
 prototype =
 	val: (str) ->
-		self = this
-		this.words = SVGIE.word self, null, str
+		if str?
+			self = this
+			while @view.firstChild
+				@view.removeChild @view.firstChild
+			this.words = SVGIE.word self, null, str
+		else 
+			@toString()
 
 SVGIE.textarea = (el, args...) ->
 	unless el? and (el.nodeName is "svg" or el.nodeName is "g")
@@ -52,8 +57,15 @@ SVGIE.textarea = (el, args...) ->
 	#while rect.height is 0
 	#	rect = testWord.getBoundingClientRect() 
 	textarea.view.removeChild testWord
-
 	textarea.lineheight = rect.height
-
 	textarea.words = SVGIE.word textarea, null, s
+	textarea.toString = ->
+		s = ""
+		word = textarea.words
+		while word?
+			s += word.s 
+			word = word.next
+		s
+
+
 	textarea

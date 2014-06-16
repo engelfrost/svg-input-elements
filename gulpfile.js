@@ -1,7 +1,9 @@
 var gulp   = require('gulp'),
 	concat   = require('gulp-concat'),
 	coffee   = require('gulp-coffee'),
-	karma    = require('karma').server;
+	karma    = require('karma').server,
+	uglify   = require('gulp-uglify'), 
+	rename   = require('gulp-rename');
 
 var karmaConf = {
 	browsers: ['PhantomJS'],
@@ -40,6 +42,13 @@ gulp.task('watch:chrome', function (done) {
 	karmaConf.browsers = ["Chrome"];
 	karma.start(karmaConf, done); 
 	var sourceWatcher = gulp.watch(sourceGlob, ['build']);
+});
+
+gulp.task('minify', function () {
+	return gulp.src("dist/svg-input-elements.js")
+		.pipe(rename({extname: '.min.js'}))
+		.pipe(uglify())
+		.pipe(gulp.dest('dist/'));
 });
 
 gulp.task('build', function () {

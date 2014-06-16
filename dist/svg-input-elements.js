@@ -33,8 +33,15 @@
   prototype = {
     val: function(str) {
       var self;
-      self = this;
-      return this.words = SVGIE.word(self, null, str);
+      if (str != null) {
+        self = this;
+        while (this.view.firstChild) {
+          this.view.removeChild(this.view.firstChild);
+        }
+        return this.words = SVGIE.word(self, null, str);
+      } else {
+        return this.toString();
+      }
     }
   };
 
@@ -62,6 +69,16 @@
     textarea.view.removeChild(testWord);
     textarea.lineheight = rect.height;
     textarea.words = SVGIE.word(textarea, null, s);
+    textarea.toString = function() {
+      var word;
+      s = "";
+      word = textarea.words;
+      while (word != null) {
+        s += word.s;
+        word = word.next;
+      }
+      return s;
+    };
     return textarea;
   };
 
