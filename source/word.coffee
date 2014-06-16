@@ -11,17 +11,17 @@ whitespaceRegexp = /\s/
 
 prototype = 
 	dx: (x) ->
-		if @prev? 
-			dx = @prev.dx() + @prev.width
-			if @textarea.width is null or (dx + @width) < @textarea.width
-				@view.setAttributeNS null, "x", dx
+		if word.prev? 
+			dx = word.prev.dx() + word.prev.width
+			if word.textarea.width is null or (dx + word.width) < word.textarea.width
+				word.view.setAttributeNS null, "x", dx
 				dx
 			else 
-				@view.setAttributeNS null, "x", 0
-				@line = @prev.line + 1
+				word.view.setAttributeNS null, "x", 0
+				word.line = word.prev.line + 1
 				0
 		else 
-			@view.setAttributeNS null, "x", 0
+			word.view.setAttributeNS null, "x", 0
 			0
 	whitespace: ->
 		self = this
@@ -59,9 +59,21 @@ SVGIE.word = (textarea, prev, s) ->
 		word.width = do ->
 			view.getBoundingClientRect().width
 
+		if word.prev? 
+			dx = word.prev.dx + word.prev.width
+			if word.textarea.width is null or (dx + word.width) < word.textarea.width
+				word.view.setAttributeNS null, "x", dx
+				word.dx = dx
+			else 
+				word.view.setAttributeNS null, "x", 0
+				word.line = word.prev.line + 1
+				word.dx = 0
+		else 
+			word.view.setAttributeNS null, "x", 0
+			word.dx = 0
+
 		# Attributes for <text>
-		view.setAttributeNS null, "x", word.dx()
-		console.log textarea.lineheight?, word.textarea.lineheight, word.line
+		view.setAttributeNS null, "x", word.dx
 		view.setAttributeNS null, "y", word.textarea.lineheight * word.line
 
 		if rest? 

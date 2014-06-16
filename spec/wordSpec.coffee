@@ -51,17 +51,6 @@ describe "The word object", ->
 	it "has the property 'textarea' which is a reference to the textarea object", ->
 		expect(word.textarea).toBe textarea
 
-	describe "has the method 'dx' which ", ->
-		textarea = null
-		word = null
-		beforeEach ->
-			textarea = SVGIE.textarea svg(), { width: 200 }, "string"
-			word = textarea.words
-
-		it "returns a number if called with no parameters", ->
-			expect(word.dx()).toEqual jasmine.any Number
-		# it "increases the line number and resets dx if textarea.width < dx + width", ->
-		# 	word.textarea.width = 200
-		# 	expect(word.line).toBe 1
-		# 	expect(word.line).toBe 2
+	it "has the property 'dx' which is a number", ->
+		expect(word.dx).toEqual jasmine.any Number
 

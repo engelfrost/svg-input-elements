@@ -87,18 +87,18 @@
   prototype = {
     dx: function(x) {
       var dx;
-      if (this.prev != null) {
-        dx = this.prev.dx() + this.prev.width;
-        if (this.textarea.width === null || (dx + this.width) < this.textarea.width) {
-          this.view.setAttributeNS(null, "x", dx);
+      if (word.prev != null) {
+        dx = word.prev.dx() + word.prev.width;
+        if (word.textarea.width === null || (dx + word.width) < word.textarea.width) {
+          word.view.setAttributeNS(null, "x", dx);
           return dx;
         } else {
-          this.view.setAttributeNS(null, "x", 0);
-          this.line = this.prev.line + 1;
+          word.view.setAttributeNS(null, "x", 0);
+          word.line = word.prev.line + 1;
           return 0;
         }
       } else {
-        this.view.setAttributeNS(null, "x", 0);
+        word.view.setAttributeNS(null, "x", 0);
         return 0;
       }
     },
@@ -110,7 +110,7 @@
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var dxValue, rest, result, textNode, view, word;
+    var dx, dxValue, rest, result, textNode, view, word;
     if (textarea == null) {
       throw "Textarea must be a textarea object";
     }
@@ -144,8 +144,21 @@
       word.width = (function() {
         return view.getBoundingClientRect().width;
       })();
-      view.setAttributeNS(null, "x", word.dx());
-      console.log(textarea.lineheight != null, word.textarea.lineheight, word.line);
+      if (word.prev != null) {
+        dx = word.prev.dx + word.prev.width;
+        if (word.textarea.width === null || (dx + word.width) < word.textarea.width) {
+          word.view.setAttributeNS(null, "x", dx);
+          word.dx = dx;
+        } else {
+          word.view.setAttributeNS(null, "x", 0);
+          word.line = word.prev.line + 1;
+          word.dx = 0;
+        }
+      } else {
+        word.view.setAttributeNS(null, "x", 0);
+        word.dx = 0;
+      }
+      view.setAttributeNS(null, "x", word.dx);
       view.setAttributeNS(null, "y", word.textarea.lineheight * word.line);
       if (rest != null) {
         word.next = SVGIE.word(textarea, word, rest);
