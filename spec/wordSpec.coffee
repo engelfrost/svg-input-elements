@@ -44,8 +44,6 @@ describe "The word object", ->
 		expect(word).toBe null
 	it "has the property 'width' which is a number", ->
 		expect(word.width).toEqual jasmine.any Number
-	it "has the property 'height' which is a number", ->
-		expect(word.height).toEqual jasmine.any Number
 	it "has the property 'prev' which is null or another word object", ->
 		expect(word.prev).toBe null
 	it "has the property 'line' which is a positive integer", ->
@@ -62,16 +60,8 @@ describe "The word object", ->
 
 		it "returns a number if called with no parameters", ->
 			expect(word.dx()).toEqual jasmine.any Number
-		it "sets the dx value if called with a parameter", ->
-			word.dx(10)
-			expect(word.dx()).toBe 10
-		it "increases the line number and resets dx if textarea.width < dx + width", ->
-			word.dx(0)
-			word.line = 1
-			word.width = 100
-			word.textarea.width = 200
-			word.dx(100)
-			expect(word.line).toBe 1
-			word.dx(101)
-			expect(word.line).toBe 2
+		# it "increases the line number and resets dx if textarea.width < dx + width", ->
+		# 	word.textarea.width = 200
+		# 	expect(word.line).toBe 1
+		# 	expect(word.line).toBe 2
 

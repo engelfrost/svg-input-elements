@@ -36,6 +36,12 @@ gulp.task('watch', function (done) {
 	var sourceWatcher = gulp.watch(sourceGlob, ['build']);
 });
 
+gulp.task('watch:chrome', function (done) {
+	karmaConf.browsers = ["Chrome"];
+	karma.start(karmaConf, done); 
+	var sourceWatcher = gulp.watch(sourceGlob, ['build']);
+});
+
 gulp.task('build', function () {
 	return gulp.src(sourceGlob)
 		.pipe(coffee())
@@ -44,39 +50,3 @@ gulp.task('build', function () {
 });
 
 gulp.task('default', ['watch']);
-
-// gulp.task('test', function () {
-// 	return gulp.source(karmaConf)
-// 		.pipe(karma({
-// 			configFile: 'karma.conf.js', 
-// 			action: 'run'
-// 		}))
-// 		.on('error', function (error) {
-//			 // Make sure failed tests cause gulp to exit non-zero
-//			 throw error;
-//		 });
-// });
-
-// gulp.task('build:debug', function () {
-// 	return gulp.source(sourceGlob)
-// 		.pipe(concat('svg-input-elements.js'))
-// 		.pipe(gulp.dest('dist/'));
-// });
-
-// gulp.task('scripts', function () {
-// 	return gulp.source(sourceGlob)
-// 		.pipe(cached('scripts'))
-// 		.pipe(remember('scripts'))
-// 		.pipe(concat('svg-input-elements.js'))
-// 		.pipe(gulp.dest('dist/'));
-// });
-
-// gulp.task('watch', function () {
-// 	var watcher = gulp.watch(sourceGlob, ['scripts']);
-// 	watcher.on('change', function (event) {
-// 		if (event.type === 'deleted') {
-// 			delete cache.caches['scripts'][event.path]; 
-// 			remember.forget('scripts', event.path);
-// 		}
-// 	});
-// });

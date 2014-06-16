@@ -39,7 +39,7 @@
   };
 
   SVGIE.textarea = function() {
-    var args, el, options, s, textarea, _ref;
+    var args, el, options, rect, s, testTextNode, testWord, textarea, _ref;
     el = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     if (!((el != null) && (el.nodeName === "svg" || el.nodeName === "g"))) {
       throw "Missing first argument, no <svg> or <g> passed";
@@ -54,6 +54,13 @@
       textarea.view = document.createElementNS(svgNS, "g");
       el.appendChild(textarea.view);
     }
+    testWord = document.createElementNS(svgNS, "text");
+    textarea.view.appendChild(testWord);
+    testTextNode = document.createTextNode("SVGIE");
+    testWord.appendChild(testTextNode);
+    rect = testWord.getBoundingClientRect();
+    textarea.view.removeChild(testWord);
+    textarea.lineheight = rect.height;
     textarea.words = SVGIE.word(textarea, null, s);
     return textarea;
   };
@@ -61,7 +68,7 @@
 }).call(this);
 
 (function() {
-  var dxValue, prototype, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
+  var prototype, spaceNS, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -69,27 +76,30 @@
 
   svgNS = 'http://www.w3.org/2000/svg';
 
+  spaceNS = "http://www.w3.org/XML/1998/namespace";
+
   xlinkNS = 'http://www.w3.org/1999/xlink';
 
   wordRegexp = /^(\S+|\s)(.*)/;
 
   whitespaceRegexp = /\s/;
 
-  dxValue = 0;
-
   prototype = {
     dx: function(x) {
-      var self;
-      self = this;
-      if (x != null) {
-        if ((self.textarea.width != null) && (self.width + x) > self.textarea.width) {
-          self.line = self.line + 1;
-          return dxValue = 0;
+      var dx;
+      if (this.prev != null) {
+        dx = this.prev.dx() + this.prev.width;
+        if (this.textarea.width === null || (dx + this.width) < this.textarea.width) {
+          this.view.setAttributeNS(null, "x", dx);
+          return dx;
         } else {
-          return dxValue = x;
+          this.view.setAttributeNS(null, "x", 0);
+          this.line = this.prev.line + 1;
+          return 0;
         }
       } else {
-        return dxValue;
+        this.view.setAttributeNS(null, "x", 0);
+        return 0;
       }
     },
     whitespace: function() {
@@ -100,7 +110,7 @@
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var rest, result, view, word;
+    var dxValue, rest, result, textNode, view, word;
     if (textarea == null) {
       throw "Textarea must be a textarea object";
     }
@@ -116,19 +126,27 @@
     if (s.length === 0) {
       return null;
     } else {
+      dxValue = 0;
       result = wordRegexp.exec(s);
       rest = result[2];
       view = document.createElementNS(svgNS, "text");
+      view.setAttributeNS(spaceNS, "xml:space", 'preserve');
+      textNode = document.createTextNode(result[1]);
+      view.appendChild(textNode);
       textarea.view.appendChild(view);
       word = Object.create(prototype);
       word.s = result[1];
       word.prev = prev;
       word.next = null;
-      word.line = 1;
-      word.width = 0;
-      word.height = 0;
+      word.line = !(prev != null ? prev.line : void 0) ? 1 : prev.line;
       word.view = view;
       word.textarea = textarea;
+      word.width = (function() {
+        return view.getBoundingClientRect().width;
+      })();
+      view.setAttributeNS(null, "x", word.dx());
+      console.log(textarea.lineheight != null, word.textarea.lineheight, word.line);
+      view.setAttributeNS(null, "y", word.textarea.lineheight * word.line);
       if (rest != null) {
         word.next = SVGIE.word(textarea, word, rest);
       }

@@ -38,5 +38,22 @@ SVGIE.textarea = (el, args...) ->
 	else
 		textarea.view = document.createElementNS svgNS, "g"
 		el.appendChild textarea.view
+
+	# Calculate lineheight
+	testWord = document.createElementNS svgNS, "text"
+	textarea.view.appendChild testWord
+	#while !textarea.view.contains testWord
+	#	wait = true
+	testTextNode = document.createTextNode "SVGIE"
+	testWord.appendChild testTextNode
+	#while !testWord.contains(testTextNode)
+	#	wait = true
+	rect = testWord.getBoundingClientRect() 
+	#while rect.height is 0
+	#	rect = testWord.getBoundingClientRect() 
+	textarea.view.removeChild testWord
+
+	textarea.lineheight = rect.height
+
 	textarea.words = SVGIE.word textarea, null, s
 	textarea
