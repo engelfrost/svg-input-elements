@@ -2,7 +2,6 @@ this.SVGIE ?= {}
 
 svgNS = 'http://www.w3.org/2000/svg'
 spaceNS = "http://www.w3.org/XML/1998/namespace"
-xlinkNS = 'http://www.w3.org/1999/xlink'
 
 # Define how words should be split
 wordRegexp = /^(\S+|\s)(.*)/
@@ -10,22 +9,26 @@ wordRegexp = /^(\S+|\s)(.*)/
 whitespaceRegexp = /\s/
 
 prototype = 
-	dx: (x) ->
-		if word.prev? 
-			dx = word.prev.dx() + word.prev.width
-			if word.textarea.width is null or (dx + word.width) < word.textarea.width
-				word.view.setAttributeNS null, "x", dx
-				dx
-			else 
-				word.view.setAttributeNS null, "x", 0
-				word.line = word.prev.line + 1
-				0
-		else 
-			word.view.setAttributeNS null, "x", 0
-			0
 	whitespace: ->
 		self = this
 		whitespaceRegexp.test self.s
+	repos: ->
+		dx = if @prev? then @prev.dx + @prev.width else 0
+		unless @dx is dx
+			prevLine = if @prev? then @prev.line else 1
+			if @textarea.width is null or (dx + @width) < @textarea.width
+				# This will break if word is wider than textarea
+				@dx = dx
+				@line = prevLine
+			else 
+				@dx = 0
+				@line = prevLine + 1
+			@view.setAttributeNS null, "x", @dx
+			@view.setAttributeNS null, "y", @line * @textarea.lineheight
+			if @next? 
+				@next.repos()
+		@dx
+
 
 SVGIE.word = (textarea, prev, s) ->
 	unless textarea?
@@ -40,7 +43,6 @@ SVGIE.word = (textarea, prev, s) ->
 	if s.length is 0
 		null
 	else
-		dxValue = 0
 		result = wordRegexp.exec s
 		rest = result[2]
 		view = document.createElementNS svgNS, "text"
@@ -53,34 +55,15 @@ SVGIE.word = (textarea, prev, s) ->
 		word.s = result[1]
 		word.prev = prev
 		word.next = null
+		word.dx = 0
 		word.line = unless prev?.line then 1 else prev.line
 		word.view = view
 		word.textarea = textarea
 		word.width = do ->
 			view.getBoundingClientRect().width
 
-		if word.prev? 
-			dx = word.prev.dx + word.prev.width
-			if word.textarea.width is null or (dx + word.width) < word.textarea.width
-				word.view.setAttributeNS null, "x", dx
-				word.dx = dx
-			else 
-				word.view.setAttributeNS null, "x", 0
-				word.line = word.prev.line + 1
-				word.dx = 0
-		else 
-			word.view.setAttributeNS null, "x", 0
-			word.dx = 0
-
-		# Attributes for <text>
-		view.setAttributeNS null, "x", word.dx
-		view.setAttributeNS null, "y", word.textarea.lineheight * word.line
+		word.repos()
 
 		if rest? 
 			word.next = SVGIE.word textarea, word, rest
 		word
-
-# args: [svgElement][, options]
-#this.svgInputElements = (args...) ->
-
-#id="svg" version="1.1" width="100px" height="100px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"

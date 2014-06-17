@@ -1,7 +1,6 @@
 this.SVGIE ?= {}
 
 svgNS = 'http://www.w3.org/2000/svg'
-xlinkNS = 'http://www.w3.org/1999/xlink'
 
 
 # Parse the arguments
@@ -28,6 +27,13 @@ prototype =
 			this.words = SVGIE.word self, null, str
 		else 
 			@toString()
+	toString: ->
+		s = ""
+		word = textarea.words
+		while word?
+			s += word.s 
+			word = word.next
+		s
 
 SVGIE.textarea = (el, args...) ->
 	unless el? and (el.nodeName is "svg" or el.nodeName is "g")
@@ -35,7 +41,20 @@ SVGIE.textarea = (el, args...) ->
 
 	[options, s] = getArguments args
 
+	# Maybe this is not a facet... but a controller...
+	facet = {
+		width: (w) ->
+			if w is undefined #it may be null
+				textarea.width = w
+				textarea.words?.repos()
+				w
+			else 
+				textarea.width
+	}
+
+	# ... and this is the model? If so, I can't use a prototype for the controller... I think?
 	textarea = Object.create prototype
+	textarea.facet = facet
 	textarea.height = if options.height? then options.height else null
 	textarea.width = if options.width? then options.width else null
 	if el.nodeName is 'g'
@@ -59,13 +78,5 @@ SVGIE.textarea = (el, args...) ->
 	textarea.view.removeChild testWord
 	textarea.lineheight = rect.height
 	textarea.words = SVGIE.word textarea, null, s
-	textarea.toString = ->
-		s = ""
-		word = textarea.words
-		while word?
-			s += word.s 
-			word = word.next
-		s
-
 
 	textarea

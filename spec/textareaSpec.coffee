@@ -12,11 +12,14 @@ describe "The textarea model", ->
 	beforeEach ->
 		textarea = SVGIE.textarea svg()
 
-	it "has a 'width' property which it null if no width was set", ->
+	it "has a 'width' method which returns null if no width was set", ->
 		expect(textarea.width).toBe null
-	it "has a 'width' property which is a numer if a width was set", ->
+	it "has a 'width' method which returns a numer if a width was set", ->
 		textarea2 = SVGIE.textarea svg(), { width: 100 }
 		expect(textarea2.width).toBe 100
+	# it "has a 'width' method which sets the width to the number specified", ->
+	# 	textarea.width(200)
+	# 	expect(textarea.width()).toBe 200
 	it "has a 'height' property which is null if no height was set", ->
 		expect(textarea.height).toBe null
 	it "has a 'height' property which is a numer if a height was set", ->

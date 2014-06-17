@@ -1,5 +1,5 @@
 (function() {
-  var getArguments, prototype, svgNS, xlinkNS,
+  var getArguments, prototype, svgNS,
     __slice = [].slice;
 
   if (this.SVGIE == null) {
@@ -7,8 +7,6 @@
   }
 
   svgNS = 'http://www.w3.org/2000/svg';
-
-  xlinkNS = 'http://www.w3.org/1999/xlink';
 
   getArguments = function(args) {
     var arg, i, options, s, _fn, _i, _len;
@@ -42,17 +40,42 @@
       } else {
         return this.toString();
       }
+    },
+    toString: function() {
+      var s, word;
+      s = "";
+      word = textarea.words;
+      while (word != null) {
+        s += word.s;
+        word = word.next;
+      }
+      return s;
     }
   };
 
   SVGIE.textarea = function() {
-    var args, el, options, rect, s, testTextNode, testWord, textarea, _ref;
+    var args, el, facet, options, rect, s, testTextNode, testWord, textarea, _ref;
     el = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     if (!((el != null) && (el.nodeName === "svg" || el.nodeName === "g"))) {
       throw "Missing first argument, no <svg> or <g> passed";
     }
     _ref = getArguments(args), options = _ref[0], s = _ref[1];
+    facet = {
+      width: function(w) {
+        var _ref1;
+        if (w === void 0) {
+          textarea.width = w;
+          if ((_ref1 = textarea.words) != null) {
+            _ref1.repos();
+          }
+          return w;
+        } else {
+          return textarea.width;
+        }
+      }
+    };
     textarea = Object.create(prototype);
+    textarea.facet = facet;
     textarea.height = options.height != null ? options.height : null;
     textarea.width = options.width != null ? options.width : null;
     if (el.nodeName === 'g') {
@@ -69,23 +92,13 @@
     textarea.view.removeChild(testWord);
     textarea.lineheight = rect.height;
     textarea.words = SVGIE.word(textarea, null, s);
-    textarea.toString = function() {
-      var word;
-      s = "";
-      word = textarea.words;
-      while (word != null) {
-        s += word.s;
-        word = word.next;
-      }
-      return s;
-    };
     return textarea;
   };
 
 }).call(this);
 
 (function() {
-  var prototype, spaceNS, svgNS, whitespaceRegexp, wordRegexp, xlinkNS;
+  var prototype, spaceNS, svgNS, whitespaceRegexp, wordRegexp;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -95,39 +108,40 @@
 
   spaceNS = "http://www.w3.org/XML/1998/namespace";
 
-  xlinkNS = 'http://www.w3.org/1999/xlink';
-
   wordRegexp = /^(\S+|\s)(.*)/;
 
   whitespaceRegexp = /\s/;
 
   prototype = {
-    dx: function(x) {
-      var dx;
-      if (word.prev != null) {
-        dx = word.prev.dx() + word.prev.width;
-        if (word.textarea.width === null || (dx + word.width) < word.textarea.width) {
-          word.view.setAttributeNS(null, "x", dx);
-          return dx;
-        } else {
-          word.view.setAttributeNS(null, "x", 0);
-          word.line = word.prev.line + 1;
-          return 0;
-        }
-      } else {
-        word.view.setAttributeNS(null, "x", 0);
-        return 0;
-      }
-    },
     whitespace: function() {
       var self;
       self = this;
       return whitespaceRegexp.test(self.s);
+    },
+    repos: function() {
+      var dx, prevLine;
+      dx = this.prev != null ? this.prev.dx + this.prev.width : 0;
+      if (this.dx !== dx) {
+        prevLine = this.prev != null ? this.prev.line : 1;
+        if (this.textarea.width === null || (dx + this.width) < this.textarea.width) {
+          this.dx = dx;
+          this.line = prevLine;
+        } else {
+          this.dx = 0;
+          this.line = prevLine + 1;
+        }
+        this.view.setAttributeNS(null, "x", this.dx);
+        this.view.setAttributeNS(null, "y", this.line * this.textarea.lineheight);
+        if (this.next != null) {
+          this.next.repos();
+        }
+      }
+      return this.dx;
     }
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var dx, dxValue, rest, result, textNode, view, word;
+    var rest, result, textNode, view, word;
     if (textarea == null) {
       throw "Textarea must be a textarea object";
     }
@@ -143,7 +157,6 @@
     if (s.length === 0) {
       return null;
     } else {
-      dxValue = 0;
       result = wordRegexp.exec(s);
       rest = result[2];
       view = document.createElementNS(svgNS, "text");
@@ -155,28 +168,14 @@
       word.s = result[1];
       word.prev = prev;
       word.next = null;
+      word.dx = 0;
       word.line = !(prev != null ? prev.line : void 0) ? 1 : prev.line;
       word.view = view;
       word.textarea = textarea;
       word.width = (function() {
         return view.getBoundingClientRect().width;
       })();
-      if (word.prev != null) {
-        dx = word.prev.dx + word.prev.width;
-        if (word.textarea.width === null || (dx + word.width) < word.textarea.width) {
-          word.view.setAttributeNS(null, "x", dx);
-          word.dx = dx;
-        } else {
-          word.view.setAttributeNS(null, "x", 0);
-          word.line = word.prev.line + 1;
-          word.dx = 0;
-        }
-      } else {
-        word.view.setAttributeNS(null, "x", 0);
-        word.dx = 0;
-      }
-      view.setAttributeNS(null, "x", word.dx);
-      view.setAttributeNS(null, "y", word.textarea.lineheight * word.line);
+      word.repos();
       if (rest != null) {
         word.next = SVGIE.word(textarea, word, rest);
       }
