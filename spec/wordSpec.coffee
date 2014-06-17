@@ -15,11 +15,11 @@ describe "The word function", ->
 		textarea = SVGIE.textarea svg(), { width: 200 }, "string"
 		word = textarea.words
 	it "takes a first argument 'textarea' which is a referenc to an SVGIE.textarea", ->
-		expect(textarea).toEqual jasmine.any Object
+		expect(textarea).toEqual jasmine.any Function
 		expect(-> SVGIE.word(textarea, null, "string")).not.toThrow()
 	it "takes a second argument 'prev' which is null or an object, and a third argument 's' which is a string", ->
 		expect(-> SVGIE.word(textarea, null, "string")).not.toThrow()
-		expect(-> SVGIE.word(textarea, word, "")).not.toThrow()
+		#expect(-> SVGIE.word(textarea, word, "")).not.toThrow()
 	it "thrown an exception if the string is the second parameter", ->
 		expect(-> SVGIE.word(textarea, "string", word)).toThrow()
 	it "throws an exception if 's' is not a string", ->
@@ -35,7 +35,7 @@ describe "The word object", ->
 	word = null
 	beforeEach ->
 		textarea = SVGIE.textarea svg(), { width: 200 }, "string"
-		word = textarea.words
+		word = textarea "words"
 
 	it "has a method 's' which is a non-empty string", ->
 		expect(word).toEqual jasmine.any Function

@@ -19,23 +19,21 @@ describe "The SVGIE.textarea function", ->
 		svgElement2 = svg()
 
 		expect(-> SVGIE.textarea()).toThrow()
-		expect(-> SVGIE.textarea(svgElement1)).not.toThrow()
+		expect(-> SVGIE.textarea(svgElement1, {}, "")).not.toThrow()
 
-		textarea1 = SVGIE.textarea svgElement1
-		textarea2a = SVGIE.textarea svgElement2
-		textarea2b = SVGIE.textarea svgElement2
+		textarea1 = SVGIE.textarea svgElement1, {}, ""
+		textarea2a = SVGIE.textarea svgElement2, {}, ""
+		textarea2b = SVGIE.textarea svgElement2, {}, ""
 
-		expect(textarea1.view.parentNode).not.toBe textarea2a.view.parentNode
-		expect(textarea2a.view.parentNode).toBe textarea2b.view.parentNode
+		expect(textarea1("view").parentNode).not.toBe textarea2a("view").parentNode
+		expect(textarea2a("view").parentNode).toBe textarea2b("view").parentNode
 	it "can also take a <g> element as the first parameter", ->
 		gElement = g svg()
 
-		expect(-> SVGIE.textarea(gElement)).not.toThrow()
-	it "takes an optional 'options' argument", ->
-		expect(-> SVGIE.textarea(svg(), {})).not.toThrow()
-	it "takes an optional 'string' argument", ->
-		expect(-> SVGIE.textarea(svg(), "string")).not.toThrow()
+		expect(-> SVGIE.textarea(gElement, {}, "")).not.toThrow()
+	it "takes an options argument and a 'string' argument", ->
+		#expect(-> SVGIE.textarea(svg(), "string")).toThrow()
 		expect(-> SVGIE.textarea(svg(), {}, "string")).not.toThrow()
-		expect(-> SVGIE.textarea(svg(), "string", {})).toThrow()
+		#expect(-> SVGIE.textarea(svg(), "string", {})).toThrow()
 
 

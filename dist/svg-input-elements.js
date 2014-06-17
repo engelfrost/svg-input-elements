@@ -1,6 +1,5 @@
 (function() {
-  var getArguments, prototype, svgNS,
-    __slice = [].slice;
+  var controller, svgNS;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -8,91 +7,87 @@
 
   svgNS = 'http://www.w3.org/2000/svg';
 
-  getArguments = function(args) {
-    var arg, i, options, s, _fn, _i, _len;
-    options = {};
-    s = "";
-    _fn = function(arg, i) {
-      if (typeof arg === 'object') {
-        return options = arg;
-      } else if ((args[i + 1] == null) && typeof arg === 'string') {
-        return s = arg;
-      } else {
-        throw "Invalid argument";
-      }
-    };
-    for (i = _i = 0, _len = args.length; _i < _len; i = ++_i) {
-      arg = args[i];
-      _fn(arg, i);
-    }
-    return [options, s];
-  };
-
-  prototype = {
-    val: function(str) {
-      var self;
+  controller = {
+    val: function(model, str) {
       if (str != null) {
-        self = this;
-        while (this.view.firstChild) {
-          this.view.removeChild(this.view.firstChild);
+        while (model.view.firstChild) {
+          model.view.removeChild(model.view.firstChild);
         }
-        return this.words = SVGIE.word(self, null, str);
+        return model.words = SVGIE.word(model.facet, null, str);
       } else {
-        return this.toString();
+        return model.facet.toString();
       }
     },
-    toString: function() {
+    toString: function(model) {
       var s, word;
       s = "";
-      word = textarea.words;
+      word = model.words;
       while (word != null) {
-        s += word.s;
-        word = word.next;
+        s += word("s");
+        word = word("next");
       }
       return s;
+    },
+    width: function(model, w) {
+      var _ref;
+      if (w !== void 0) {
+        model.width = w;
+        if ((_ref = model.words) != null) {
+          _ref.repos();
+        }
+      }
+      return model.width;
+    },
+    height: function(model) {
+      return model.height;
+    },
+    lineheight: function(model) {
+      return model.lineheight;
+    },
+    words: function(model) {
+      return model.words;
+    },
+    view: function(model) {
+      return model.view;
+    },
+    height: function(model) {
+      return model.height;
     }
   };
 
-  SVGIE.textarea = function() {
-    var args, el, facet, options, rect, s, testTextNode, testWord, textarea, _ref;
-    el = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+  SVGIE.textarea = function(el, options, s) {
+    var facet, model, rect;
     if (!((el != null) && (el.nodeName === "svg" || el.nodeName === "g"))) {
       throw "Missing first argument, no <svg> or <g> passed";
     }
-    _ref = getArguments(args), options = _ref[0], s = _ref[1];
-    facet = {
-      width: function(w) {
-        var _ref1;
-        if (w === void 0) {
-          textarea.width = w;
-          if ((_ref1 = textarea.words) != null) {
-            _ref1.repos();
-          }
-          return w;
-        } else {
-          return textarea.width;
-        }
-      }
+    facet = function(method, args) {
+      return controller[method](model, args);
     };
-    textarea = Object.create(prototype);
-    textarea.facet = facet;
-    textarea.height = options.height != null ? options.height : null;
-    textarea.width = options.width != null ? options.width : null;
-    if (el.nodeName === 'g') {
-      textarea.view = el;
-    } else {
-      textarea.view = document.createElementNS(svgNS, "g");
-      el.appendChild(textarea.view);
-    }
-    testWord = document.createElementNS(svgNS, "text");
-    textarea.view.appendChild(testWord);
-    testTextNode = document.createTextNode("SVGIE");
-    testWord.appendChild(testTextNode);
-    rect = testWord.getBoundingClientRect();
-    textarea.view.removeChild(testWord);
-    textarea.lineheight = rect.height;
-    textarea.words = SVGIE.word(textarea, null, s);
-    return textarea;
+    rect = null;
+    model = {
+      height: options.height == null ? null : options.height,
+      width: options.width == null ? null : options.width,
+      view: (function() {
+        var testTextNode, testWord, view;
+        if (el.nodeName === 'g') {
+          view = el;
+        } else {
+          view = document.createElementNS(svgNS, "g");
+          el.appendChild(view);
+        }
+        testWord = document.createElementNS(svgNS, "text");
+        view.appendChild(testWord);
+        testTextNode = document.createTextNode("SVGIE");
+        testWord.appendChild(testTextNode);
+        rect = testWord.getBoundingClientRect();
+        view.removeChild(testWord);
+        return view;
+      })(),
+      lineheight: rect.height,
+      facet: facet
+    };
+    model.words = SVGIE.word(facet, null, s);
+    return facet;
   };
 
 }).call(this);
@@ -113,39 +108,39 @@
   whitespaceRegexp = /\s/;
 
   controller = {
-    s: function(model, view) {
+    s: function(model) {
       return model.s;
     },
-    prev: function(model, view) {
+    prev: function(model) {
       return model.prev;
     },
-    next: function(model, view) {
+    next: function(model) {
       return model.next;
     },
-    dx: function(model, view) {
+    dx: function(model) {
       return model.dx;
     },
-    line: function(model, view) {
+    line: function(model) {
       return model.line;
     },
-    width: function(model, view) {
+    width: function(model) {
       return model.width;
     },
-    textarea: function(model, view) {
+    textarea: function(model) {
       return model.textarea;
     },
-    view: function(model, view) {
+    view: function(model) {
       return model.view;
     },
-    whitespace: function(model, view) {
+    whitespace: function(model) {
       return whitespaceRegexp.test(model.s);
     },
-    repos: function(model, view) {
+    repos: function(model) {
       var dx, prevLine;
-      dx = model.prev != null ? model.prev.dx + model.prev.width : 0;
+      dx = model.prev != null ? model.prev("dx") + model.prev("width") : 0;
       if (model.dx !== dx) {
-        prevLine = model.prev != null ? model.prev.line : 1;
-        if (model.textarea.width === null || (dx + model.width) < model.textarea.width) {
+        prevLine = model.prev != null ? model.prev("line") : 1;
+        if (model.textarea("width") === null || (dx + model.width) < model.textarea("width")) {
           model.dx = dx;
           model.line = prevLine;
         } else {
@@ -153,7 +148,7 @@
           model.line = prevLine + 1;
         }
         model.view.setAttributeNS(null, "x", model.dx);
-        model.view.setAttributeNS(null, "y", model.line * model.textarea.lineheight);
+        model.view.setAttributeNS(null, "y", model.line * model.textarea("lineheight"));
         if (model.next != null) {
           model.next.repos();
         }
@@ -163,15 +158,15 @@
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var model, rest, result, textNode, view;
+    var facet, model, rest, result, textNode, view;
     if (textarea == null) {
-      throw "Textarea must be a textarea object";
+      throw "Textarea must be a textarea function";
     }
     if (arguments.length !== 3) {
       throw "word() takes three arguments";
     }
-    if (!((prev != null) || typeof prev === 'object')) {
-      throw "Second argument should be a word or null";
+    if (!(prev === null || typeof prev === 'function')) {
+      throw "Second argument should be a word function or null";
     }
     if (typeof s !== 'string') {
       throw "expected third parameter to be a string";
@@ -185,26 +180,28 @@
       view.setAttributeNS(spaceNS, "xml:space", 'preserve');
       textNode = document.createTextNode(result[1]);
       view.appendChild(textNode);
-      textarea.view.appendChild(view);
+      textarea("view").appendChild(view);
+      facet = function(method, args) {
+        return controller[method](model, view, args);
+      };
       model = {
         s: result[1],
         prev: prev,
         next: null,
         dx: 0,
-        line: !(prev != null ? prev.line : void 0) ? 1 : prev.line,
+        line: !(typeof prev === "function" ? prev("line") : void 0) ? 1 : prev("line"),
         view: view,
         textarea: textarea,
         width: (function() {
           return view.getBoundingClientRect().width;
-        })()
+        })(),
+        facet: facet
       };
-      controller.repos(model, view);
+      controller.repos(model);
       if (rest != null) {
-        model.next = SVGIE.word(textarea, model, rest);
+        model.next = SVGIE.word(textarea, facet, rest);
       }
-      return function(method, args) {
-        return controller[method](model, view, args);
-      };
+      return facet;
     }
   };
 
