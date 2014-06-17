@@ -29,9 +29,9 @@ describe "The textarea model", ->
 		expect(textarea.lineheight).toEqual jasmine.any Number
 	it "has a 'words' property which is null if no string was passed to SVGIE.textarea", ->
 		expect(textarea.words).toBe null
-	it "has a 'words' property which is an object if a string was passed to SVGIE.textarea", ->
+	it "has a 'words' property which is a function if a string was passed to SVGIE.textarea", ->
 		textarea2 = SVGIE.textarea svg(), "string"
-		expect(textarea2.words).toEqual jasmine.any Object
+		expect(textarea2.words).toEqual jasmine.any Function
 
 	describe "has a 'view' property which", ->
 		it "is a <g> element", ->

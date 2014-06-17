@@ -98,7 +98,7 @@
 }).call(this);
 
 (function() {
-  var prototype, spaceNS, svgNS, whitespaceRegexp, wordRegexp;
+  var controller, spaceNS, svgNS, whitespaceRegexp, wordRegexp;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -112,36 +112,58 @@
 
   whitespaceRegexp = /\s/;
 
-  prototype = {
-    whitespace: function() {
-      var self;
-      self = this;
-      return whitespaceRegexp.test(self.s);
+  controller = {
+    s: function(model, view) {
+      return model.s;
     },
-    repos: function() {
+    prev: function(model, view) {
+      return model.prev;
+    },
+    next: function(model, view) {
+      return model.next;
+    },
+    dx: function(model, view) {
+      return model.dx;
+    },
+    line: function(model, view) {
+      return model.line;
+    },
+    width: function(model, view) {
+      return model.width;
+    },
+    textarea: function(model, view) {
+      return model.textarea;
+    },
+    view: function(model, view) {
+      return model.view;
+    },
+    whitespace: function(model, view) {
+      return whitespaceRegexp.test(model.s);
+    },
+    repos: function(model, view) {
       var dx, prevLine;
-      dx = this.prev != null ? this.prev.dx + this.prev.width : 0;
-      if (this.dx !== dx) {
-        prevLine = this.prev != null ? this.prev.line : 1;
-        if (this.textarea.width === null || (dx + this.width) < this.textarea.width) {
-          this.dx = dx;
-          this.line = prevLine;
+      dx = model.prev != null ? model.prev.dx + model.prev.width : 0;
+      if (model.dx !== dx) {
+        prevLine = model.prev != null ? model.prev.line : 1;
+        if (model.textarea.width === null || (dx + model.width) < model.textarea.width) {
+          model.dx = dx;
+          model.line = prevLine;
         } else {
-          this.dx = 0;
-          this.line = prevLine + 1;
+          model.dx = 0;
+          model.line = prevLine + 1;
         }
-        this.view.setAttributeNS(null, "x", this.dx);
-        this.view.setAttributeNS(null, "y", this.line * this.textarea.lineheight);
-        if (this.next != null) {
-          this.next.repos();
+        model.view.setAttributeNS(null, "x", model.dx);
+        model.view.setAttributeNS(null, "y", model.line * model.textarea.lineheight);
+        if (model.next != null) {
+          model.next.repos();
         }
       }
-      return this.dx;
+      return model.dx;
     }
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var rest, result, textNode, view, word;
+    var model, rest, result, textNode, view;
     if (textarea == null) {
       throw "Textarea must be a textarea object";
     }
@@ -164,22 +186,25 @@
       textNode = document.createTextNode(result[1]);
       view.appendChild(textNode);
       textarea.view.appendChild(view);
-      word = Object.create(prototype);
-      word.s = result[1];
-      word.prev = prev;
-      word.next = null;
-      word.dx = 0;
-      word.line = !(prev != null ? prev.line : void 0) ? 1 : prev.line;
-      word.view = view;
-      word.textarea = textarea;
-      word.width = (function() {
-        return view.getBoundingClientRect().width;
-      })();
-      word.repos();
+      model = {
+        s: result[1],
+        prev: prev,
+        next: null,
+        dx: 0,
+        line: !(prev != null ? prev.line : void 0) ? 1 : prev.line,
+        view: view,
+        textarea: textarea,
+        width: (function() {
+          return view.getBoundingClientRect().width;
+        })()
+      };
+      controller.repos(model, view);
       if (rest != null) {
-        word.next = SVGIE.word(textarea, word, rest);
+        model.next = SVGIE.word(textarea, model, rest);
       }
-      return word;
+      return function(method, args) {
+        return controller[method](model, view, args);
+      };
     }
   };
 

@@ -26,8 +26,8 @@ describe "The word function", ->
 		expect(-> SVGIE.word(textarea, null, null)).toThrow()
 	it "throws an exception if not all arguments are passed", ->
 		expect(-> SVGIE.word(textarea, null)).toThrow()
-	it "returns an object if 's' was a non-empty string", ->
-		expect(SVGIE.word(textarea, null, "string")).toEqual jasmine.any Object
+	it "returns a function if 's' was a non-empty string", ->
+		expect(SVGIE.word(textarea, null, "string")).toEqual jasmine.any Function
 		expect(SVGIE.word(textarea, null, "")).toBe null
 
 describe "The word object", ->
@@ -37,20 +37,20 @@ describe "The word object", ->
 		textarea = SVGIE.textarea svg(), { width: 200 }, "string"
 		word = textarea.words
 
-	it "has a property 's' which is a non-empty string", ->
-		expect(word).toEqual jasmine.any Object
-		expect(word.s).toBe "string"
+	it "has a method 's' which is a non-empty string", ->
+		expect(word).toEqual jasmine.any Function
+		expect(word "s").toBe "string"
 		word = SVGIE.word textarea, null, ""
 		expect(word).toBe null
-	it "has the property 'width' which is a number", ->
-		expect(word.width).toEqual jasmine.any Number
-	it "has the property 'prev' which is null or another word object", ->
-		expect(word.prev).toBe null
-	it "has the property 'line' which is a positive integer", ->
-		expect(word.line).toBeGreaterThan 0
-	it "has the property 'textarea' which is a reference to the textarea object", ->
-		expect(word.textarea).toBe textarea
+	it "has the method 'width' which is a number", ->
+		expect(word "width").toEqual jasmine.any Number
+	it "has the method 'prev' which is null or another word object", ->
+		expect(word "prev").toBe null
+	it "has the method 'line' which is a positive integer", ->
+		expect(word "line").toBeGreaterThan 0
+	it "has the method 'textarea' which is a reference to the textarea object", ->
+		expect(word "textarea").toBe textarea
 
-	it "has the property 'dx' which is a number", ->
-		expect(word.dx).toEqual jasmine.any Number
+	it "has the method 'dx' which is a number", ->
+		expect(word "dx").toEqual jasmine.any Number
 

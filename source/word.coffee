@@ -8,26 +8,41 @@ wordRegexp = /^(\S+|\s)(.*)/
 # Define whitespace. Must be the same definition as in the wordsplit regexp
 whitespaceRegexp = /\s/
 
-prototype = 
-	whitespace: ->
-		self = this
-		whitespaceRegexp.test self.s
-	repos: ->
-		dx = if @prev? then @prev.dx + @prev.width else 0
-		unless @dx is dx
-			prevLine = if @prev? then @prev.line else 1
-			if @textarea.width is null or (dx + @width) < @textarea.width
+controller = 
+	s: (model, view) ->
+		return model.s
+	prev: (model, view) ->
+		model.prev
+	next: (model, view) ->
+		model.next
+	dx: (model, view) ->
+		model.dx
+	line: (model, view) ->
+		model.line
+	width: (model, view) ->
+		model.width
+	textarea: (model, view) ->
+		model.textarea
+	view: (model, view) ->
+		model.view
+	whitespace: (model, view) ->
+		whitespaceRegexp.test model.s
+	repos: (model, view) ->
+		dx = if model.prev? then model.prev.dx + model.prev.width else 0
+		unless model.dx is dx
+			prevLine = if model.prev? then model.prev.line else 1
+			if model.textarea.width is null or (dx + model.width) < model.textarea.width
 				# This will break if word is wider than textarea
-				@dx = dx
-				@line = prevLine
+				model.dx = dx
+				model.line = prevLine
 			else 
-				@dx = 0
-				@line = prevLine + 1
-			@view.setAttributeNS null, "x", @dx
-			@view.setAttributeNS null, "y", @line * @textarea.lineheight
-			if @next? 
-				@next.repos()
-		@dx
+				model.dx = 0
+				model.line = prevLine + 1
+			model.view.setAttributeNS null, "x", model.dx
+			model.view.setAttributeNS null, "y", model.line * model.textarea.lineheight
+			if model.next? 
+				model.next.repos()
+		model.dx
 
 
 SVGIE.word = (textarea, prev, s) ->
@@ -51,19 +66,20 @@ SVGIE.word = (textarea, prev, s) ->
 		view.appendChild textNode
 		textarea.view.appendChild view
 
-		word = Object.create prototype
-		word.s = result[1]
-		word.prev = prev
-		word.next = null
-		word.dx = 0
-		word.line = unless prev?.line then 1 else prev.line
-		word.view = view
-		word.textarea = textarea
-		word.width = do ->
-			view.getBoundingClientRect().width
+		model =
+			s: result[1]
+			prev: prev
+			next: null
+			dx: 0
+			line: unless prev?.line then 1 else prev.line
+			view: view
+			textarea: textarea
+			width: do ->
+				view.getBoundingClientRect().width
 
-		word.repos()
+		controller.repos(model, view)
 
 		if rest? 
-			word.next = SVGIE.word textarea, word, rest
-		word
+			model.next = SVGIE.word textarea, model, rest
+		(method, args) ->
+			controller[method](model, view, args)
