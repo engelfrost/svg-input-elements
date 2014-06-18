@@ -188,7 +188,7 @@
         s: result[1],
         prev: prev,
         next: null,
-        dx: 0,
+        dx: -1,
         line: !(typeof prev === "function" ? prev("line") : void 0) ? 1 : prev("line"),
         view: view,
         textarea: textarea,

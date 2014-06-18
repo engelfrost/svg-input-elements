@@ -73,7 +73,7 @@ SVGIE.word = (textarea, prev, s) ->
 			s: result[1]
 			prev: prev
 			next: null
-			dx: 0
+			dx: -1
 			line: unless prev? "line" then 1 else prev "line"
 			view: view
 			textarea: textarea
