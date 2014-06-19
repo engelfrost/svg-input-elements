@@ -9,8 +9,8 @@ wordRegexp = /^(\S+|\s)(.*)/
 whitespaceRegexp = /\s/
 
 controller = 
-	s: (model) ->
-		return model.s
+	val: (model) ->
+		model.s
 	prev: (model) ->
 		model.prev
 	next: (model) ->
@@ -46,14 +46,12 @@ controller =
 
 
 SVGIE.word = (textarea, prev, s) ->
-	unless textarea?
+	unless typeof textarea is 'function'
 		throw "Textarea must be a textarea function"
-	unless arguments.length is 3
-		throw "word() takes three arguments"
 	unless prev is null or typeof prev is 'function'
-		throw "Second argument should be a word function or null"
+		throw "Second argument should be a word controller or null"
 	unless typeof s is 'string'
-		throw "expected third parameter to be a string"
+		throw "Third argument must be a string"
 
 	if s.length is 0
 		null
@@ -66,24 +64,26 @@ SVGIE.word = (textarea, prev, s) ->
 		view.appendChild textNode
 		textarea("view").appendChild view
 
-		facet = (method, args) ->
-			controller[method] model, view, args
+		controllerFacet = (method, args...) ->
+			args = Array.prototype.slice.call args, 0
+			args.unshift model
+			controller[method].apply controller[method], args
 
 		model =
 			s: result[1]
 			prev: prev
 			next: null
 			dx: -1
-			line: unless prev? "line" then 1 else prev "line"
+			line: unless prev? then 1 else prev "line"
 			view: view
 			textarea: textarea
 			width: do ->
 				view.getBoundingClientRect().width
-			facet: facet
+			facet: controllerFacet
 
 		controller.repos(model)
 
 		if rest? 
-			model.next = SVGIE.word textarea, facet, rest
+			model.next = SVGIE.word textarea, controllerFacet, rest
 
-		facet
+		controllerFacet

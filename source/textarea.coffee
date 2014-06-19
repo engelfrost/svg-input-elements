@@ -1,48 +1,57 @@
-this.SVGIE ?= {}
+@SVGIE ?= {}
 
 svgNS = 'http://www.w3.org/2000/svg'
 
-controller =
-	val: (model, str) ->
-		if str?
-			while model.view.firstChild
-				model.view.removeChild model.view.firstChild
-			model.words = SVGIE.word model.facet, null, str
+controllerPrototype =
+	val: (s) ->
+		if s?
+			while @model.view.firstChild
+				@model.view.removeChild @model.view.firstChild
+			@model.words = SVGIE.word @facet, null, s
 		else 
-			model.facet.toString()
-	toString: (model) ->
-		s = ""
-		word = model.words
-		while word?
-			s += word "s" 
-			word = word "next"
-		s
-	width: (model, w) ->
+			s = ""
+			word = @model.words
+			while word?
+				s += word "val" 
+				word = word "next"
+			s
+	width: (w) ->
 		unless w is undefined
-			model.width = w
-			model.words?.repos()
-		model.width
-	height: (model) ->
-		model.height
-	lineheight: (model) ->
-		model.lineheight
-	words: (model) ->
-		model.words
-	view: (model) ->
-		model.view
-	height: (model) ->
-		model.height
+			@model.width = w
+			@model.words?.repos()
+		@model.width
+	height: ->
+		@model.height
+	lineheight: ->
+		@model.lineheight
+	words: ->
+		@model.words
+	view: ->
+		@model.view
+	height: ->
+		@model.height
 			
 
 SVGIE.textarea = (el, options, s) ->
 	unless el? and (el.nodeName is "svg" or el.nodeName is "g")
 		throw "Missing first argument, no <svg> or <g> passed"
-
-	facet = (method, args) ->
-		controller[method] model, args
+	unless typeof options is 'object'
+		if options is undefined
+			options = {}
+		else
+			throw "Options object must be of type object"
+	unless s? 
+		s = ""
 
 	rect = null
-	model = 
+
+	controller = Object.create controllerPrototype
+	controller.facet = (method, args...) ->
+		if method is "facet" or method is "model" or !@[method]?
+			undefined
+		controller[method].apply controller, args
+
+	controller.model = 
 		height: unless options.height? then null else options.height
 		width: unless options.width? then null else options.width
 		view: do ->
@@ -60,7 +69,9 @@ SVGIE.textarea = (el, options, s) ->
 			view.removeChild testWord
 			view
 		lineheight: rect.height
-		facet: facet
-	model.words = SVGIE.word facet, null, s
+		facet: controller.facet
 
-	facet
+	# controller.facet needs controller.model to be defined
+	controller.model.words = SVGIE.word controller.facet, null, s
+
+	controller.facet

@@ -1,5 +1,6 @@
 (function() {
-  var controller, svgNS;
+  var controllerPrototype, svgNS,
+    __slice = [].slice;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -7,64 +8,77 @@
 
   svgNS = 'http://www.w3.org/2000/svg';
 
-  controller = {
-    val: function(model, str) {
-      if (str != null) {
-        while (model.view.firstChild) {
-          model.view.removeChild(model.view.firstChild);
+  controllerPrototype = {
+    val: function(s) {
+      var word;
+      if (s != null) {
+        while (this.model.view.firstChild) {
+          this.model.view.removeChild(this.model.view.firstChild);
         }
-        return model.words = SVGIE.word(model.facet, null, str);
+        return this.model.words = SVGIE.word(this.facet, null, s);
       } else {
-        return model.facet.toString();
+        s = "";
+        word = this.model.words;
+        while (word != null) {
+          s += word("val");
+          word = word("next");
+        }
+        return s;
       }
     },
-    toString: function(model) {
-      var s, word;
-      s = "";
-      word = model.words;
-      while (word != null) {
-        s += word("s");
-        word = word("next");
-      }
-      return s;
-    },
-    width: function(model, w) {
+    width: function(w) {
       var _ref;
       if (w !== void 0) {
-        model.width = w;
-        if ((_ref = model.words) != null) {
+        this.model.width = w;
+        if ((_ref = this.model.words) != null) {
           _ref.repos();
         }
       }
-      return model.width;
+      return this.model.width;
     },
-    height: function(model) {
-      return model.height;
+    height: function() {
+      return this.model.height;
     },
-    lineheight: function(model) {
-      return model.lineheight;
+    lineheight: function() {
+      return this.model.lineheight;
     },
-    words: function(model) {
-      return model.words;
+    words: function() {
+      return this.model.words;
     },
-    view: function(model) {
-      return model.view;
+    view: function() {
+      return this.model.view;
     },
-    height: function(model) {
-      return model.height;
+    height: function() {
+      return this.model.height;
     }
   };
 
   SVGIE.textarea = function(el, options, s) {
-    var facet, model, rect;
+    var controller, rect;
     if (!((el != null) && (el.nodeName === "svg" || el.nodeName === "g"))) {
       throw "Missing first argument, no <svg> or <g> passed";
     }
-    facet = function(method, args) {
-      return controller[method](model, args);
-    };
+    if (typeof options !== 'object') {
+      if (options === void 0) {
+        options = {};
+      } else {
+        throw "Options object must be of type object";
+      }
+    }
+    if (s == null) {
+      s = "";
+    }
     rect = null;
-    model = {
+    controller = Object.create(controllerPrototype);
+    controller.facet = function() {
+      var args, method;
+      method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (method === "facet" || method === "model" || (this[method] == null)) {
+        void 0;
+      }
+      return controller[method].apply(controller, args);
+    };
+    controller.model = {
       height: options.height == null ? null : options.height,
       width: options.width == null ? null : options.width,
       view: (function() {
@@ -84,16 +98,17 @@
         return view;
       })(),
       lineheight: rect.height,
-      facet: facet
+      facet: controller.facet
     };
-    model.words = SVGIE.word(facet, null, s);
-    return facet;
+    controller.model.words = SVGIE.word(controller.facet, null, s);
+    return controller.facet;
   };
 
 }).call(this);
 
 (function() {
-  var controller, spaceNS, svgNS, whitespaceRegexp, wordRegexp;
+  var controller, spaceNS, svgNS, whitespaceRegexp, wordRegexp,
+    __slice = [].slice;
 
   if (this.SVGIE == null) {
     this.SVGIE = {};
@@ -108,7 +123,7 @@
   whitespaceRegexp = /\s/;
 
   controller = {
-    s: function(model) {
+    val: function(model) {
       return model.s;
     },
     prev: function(model) {
@@ -158,18 +173,15 @@
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var facet, model, rest, result, textNode, view;
-    if (textarea == null) {
+    var controllerFacet, model, rest, result, textNode, view;
+    if (typeof textarea !== 'function') {
       throw "Textarea must be a textarea function";
     }
-    if (arguments.length !== 3) {
-      throw "word() takes three arguments";
-    }
     if (!(prev === null || typeof prev === 'function')) {
-      throw "Second argument should be a word function or null";
+      throw "Second argument should be a word controller or null";
     }
     if (typeof s !== 'string') {
-      throw "expected third parameter to be a string";
+      throw "Third argument must be a string";
     }
     if (s.length === 0) {
       return null;
@@ -181,27 +193,31 @@
       textNode = document.createTextNode(result[1]);
       view.appendChild(textNode);
       textarea("view").appendChild(view);
-      facet = function(method, args) {
-        return controller[method](model, view, args);
+      controllerFacet = function() {
+        var args, method;
+        method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        args = Array.prototype.slice.call(args, 0);
+        args.unshift(model);
+        return controller[method].apply(controller[method], args);
       };
       model = {
         s: result[1],
         prev: prev,
         next: null,
         dx: -1,
-        line: !(typeof prev === "function" ? prev("line") : void 0) ? 1 : prev("line"),
+        line: prev == null ? 1 : prev("line"),
         view: view,
         textarea: textarea,
         width: (function() {
           return view.getBoundingClientRect().width;
         })(),
-        facet: facet
+        facet: controllerFacet
       };
       controller.repos(model);
       if (rest != null) {
-        model.next = SVGIE.word(textarea, facet, rest);
+        model.next = SVGIE.word(textarea, controllerFacet, rest);
       }
-      return facet;
+      return controllerFacet;
     }
   };
 
