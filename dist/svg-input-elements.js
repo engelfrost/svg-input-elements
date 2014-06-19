@@ -107,7 +107,7 @@
 }).call(this);
 
 (function() {
-  var controller, spaceNS, svgNS, whitespaceRegexp, wordRegexp,
+  var controllerPrototype, spaceNS, svgNS, whitespaceRegexp, wordRegexp,
     __slice = [].slice;
 
   if (this.SVGIE == null) {
@@ -122,58 +122,65 @@
 
   whitespaceRegexp = /\s/;
 
-  controller = {
-    val: function(model) {
-      return model.s;
+  controllerPrototype = {
+    val: function() {
+      var s;
+      if (this.dx() === 0 && this.model.s === " ") {
+        s = "";
+      } else {
+        s = this.model.s;
+      }
+      this.model.view.textContent = s;
+      return s;
     },
-    prev: function(model) {
-      return model.prev;
+    prev: function() {
+      return this.model.prev;
     },
-    next: function(model) {
-      return model.next;
+    next: function() {
+      return this.model.next;
     },
-    dx: function(model) {
-      return model.dx;
+    dx: function() {
+      return this.model.dx;
     },
-    line: function(model) {
-      return model.line;
+    line: function() {
+      return this.model.line;
     },
-    width: function(model) {
-      return model.width;
+    width: function() {
+      return this.model.width;
     },
-    textarea: function(model) {
-      return model.textarea;
+    textarea: function() {
+      return this.model.textarea;
     },
-    view: function(model) {
-      return model.view;
+    view: function() {
+      return this.model.view;
     },
-    whitespace: function(model) {
-      return whitespaceRegexp.test(model.s);
+    whitespace: function() {
+      return whitespaceRegexp.test(this.model.s);
     },
-    repos: function(model) {
+    repos: function() {
       var dx, prevLine;
-      dx = model.prev != null ? model.prev("dx") + model.prev("width") : 0;
-      if (model.dx !== dx) {
-        prevLine = model.prev != null ? model.prev("line") : 1;
-        if (model.textarea("width") === null || (dx + model.width) < model.textarea("width")) {
-          model.dx = dx;
-          model.line = prevLine;
+      dx = this.model.prev != null ? this.model.prev("dx") + this.model.prev("width") : 0;
+      if (this.model.dx !== dx) {
+        prevLine = this.model.prev != null ? this.model.prev("line") : 1;
+        if (this.model.textarea("width") === null || (dx + this.model.width) < this.model.textarea("width")) {
+          this.model.dx = dx;
+          this.model.line = prevLine;
         } else {
-          model.dx = 0;
-          model.line = prevLine + 1;
+          this.model.dx = 0;
+          this.model.line = prevLine + 1;
         }
-        model.view.setAttributeNS(null, "x", model.dx);
-        model.view.setAttributeNS(null, "y", model.line * model.textarea("lineheight"));
-        if (model.next != null) {
-          model.next.repos();
+        this.model.view.setAttributeNS(null, "x", this.model.dx);
+        this.model.view.setAttributeNS(null, "y", this.model.line * this.model.textarea("lineheight"));
+        if (this.model.next != null) {
+          this.model.next.repos();
         }
       }
-      return model.dx;
+      return this.model.dx;
     }
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var controllerFacet, model, rest, result, textNode, view;
+    var controller, rest, result, view;
     if (typeof textarea !== 'function') {
       throw "Textarea must be a textarea function";
     }
@@ -188,19 +195,25 @@
     } else {
       result = wordRegexp.exec(s);
       rest = result[2];
-      view = document.createElementNS(svgNS, "text");
-      view.setAttributeNS(spaceNS, "xml:space", 'preserve');
-      textNode = document.createTextNode(result[1]);
-      view.appendChild(textNode);
-      textarea("view").appendChild(view);
-      controllerFacet = function() {
+      view = (function() {
+        var textNode, v;
+        v = document.createElementNS(svgNS, "text");
+        v.setAttributeNS(spaceNS, "xml:space", "preserve");
+        textNode = document.createTextNode(result[1]);
+        v.appendChild(textNode);
+        textarea("view").appendChild(v);
+        return v;
+      })();
+      controller = Object.create(controllerPrototype);
+      controller.facet = function() {
         var args, method;
         method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-        args = Array.prototype.slice.call(args, 0);
-        args.unshift(model);
-        return controller[method].apply(controller[method], args);
+        if (method === "facet" || method === "model" || (this[method] == null)) {
+          void 0;
+        }
+        return controller[method].apply(controller, args);
       };
-      model = {
+      controller.model = {
         s: result[1],
         prev: prev,
         next: null,
@@ -211,13 +224,14 @@
         width: (function() {
           return view.getBoundingClientRect().width;
         })(),
-        facet: controllerFacet
+        facet: controller.facet
       };
-      controller.repos(model);
+      controller.repos();
+      console.log(controller.dx(), controller.val());
       if (rest != null) {
-        model.next = SVGIE.word(textarea, controllerFacet, rest);
+        controller.model.next = SVGIE.word(textarea, controller.facet, rest);
       }
-      return controllerFacet;
+      return controller.facet;
     }
   };
 
