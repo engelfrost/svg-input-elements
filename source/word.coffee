@@ -9,14 +9,24 @@ wordRegexp = /^(\S+|\s)(.*)/
 whitespaceRegexp = /\s/
 
 controllerPrototype = 
-  val: ->
-    if @model.dx is 0 and @model.s is " "
-      @model.width = 0
-      s = ""
-    else
-      s = @model.s
-    @model.view.textContent = s 
-    s
+  val: (s) ->
+    if s? 
+      #change text
+      @model.s = s
+      @model.view.textContent = s
+      #recalculate width
+      @model.width = @model.view.getBoundingClientRect().width
+      #repos next word
+      next = @next()
+      next?.repos()
+    @model.s
+    # if @model.dx is 0 and @model.s is " "
+    #   @model.width = 0
+    #   @model.view.textContent = s 
+    #   s = ""
+    # else
+    #   s = @model.s
+    # s
     #@model.s
   prev: ->
     @model.prev
@@ -27,15 +37,33 @@ controllerPrototype =
   line: ->
     @model.line
   width: ->
-    @model.width
+    @model.width = @model.view.getBoundingClientRect().width
   textarea: ->
     @model.textarea
   view: ->
     @model.view
   whitespace: ->
     whitespaceRegexp.test @model.s
+  firstInLine: ->
+    prev = @prev()
+    if prev? 
+      prev("line") < @line()
+    true
+  autoWrapped: ->
+    unless @model.prev? 
+    	return false
+    unless @model.textarea("width") isnt null
+    	return false
+    unless (@model.prev("dx") + @model.prev("width") + @width()) < @model.textarea("width")
+      return @model.prev("whitespace") isnt "linebreak"
   repos: ->
-    dx = if @model.prev? then @model.prev("dx") + @model.prev("width") else 0
+    dx = 0
+    if @model.prev?
+      # Ignore a single leading space
+      if not @whitespace() and @model.prev("whitespace") and @model.prev("autoWrapped")
+        dx = 0
+      else 
+        dx = @model.prev("dx") + @model.prev("width")
     unless @model.dx is dx
       prevLine = if @model.prev? then @model.prev("line") else 1
       if @model.textarea("width") is null or (dx + @model.width) < @model.textarea("width")
@@ -64,34 +92,31 @@ SVGIE.word = (textarea, prev, s) ->
   else
     result = wordRegexp.exec s
     rest = result[2]
-    view = do ->
-    	v = document.createElementNS svgNS, "text"
-	    v.setAttributeNS spaceNS, "xml:space", "preserve"
-	    textNode = document.createTextNode result[1]
-	    v.appendChild textNode
-	    textarea("view").appendChild v
-	    v
 
     controller = Object.create controllerPrototype
 
     controller.facet = (method, args...) ->
-	    if method is "facet" or method is "model" or !@[method]?
-	      undefined
-	    controller[method].apply controller, args
+      if method is "facet" or method is "model" or !@[method]?
+        undefined
+      controller[method].apply controller, args
     controller.model =
       s: result[1]
       prev: prev
       next: null
       dx: -1
       line: unless prev? then 1 else prev "line"
-      view: view
+      view: do ->
+        v = document.createElementNS svgNS, "text"
+        v.setAttributeNS spaceNS, "xml:space", "preserve"
+        textarea("view").appendChild v
+        v
       textarea: textarea
-      width: do ->
-        view.getBoundingClientRect().width
+      width: 0
       facet: controller.facet
 
+    controller.val(controller.model.s)
+    controller.width()
     controller.repos()
-    console.log controller.dx(), controller.val()
 
     if rest? 
       controller.model.next = SVGIE.word textarea, controller.facet, rest
