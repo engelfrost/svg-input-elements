@@ -18,16 +18,8 @@ controllerPrototype =
       @model.width = @model.view.getBoundingClientRect().width
       #repos next word
       next = @next()
-      next?.repos()
+      next("repos") if next?
     @model.s
-    # if @model.dx is 0 and @model.s is " "
-    #   @model.width = 0
-    #   @model.view.textContent = s 
-    #   s = ""
-    # else
-    #   s = @model.s
-    # s
-    #@model.s
   prev: (prev) ->
     if prev? 
       @model.prev = prev
