@@ -27,11 +27,10 @@
       }
     },
     width: function(w) {
-      var _ref;
       if (w !== void 0) {
         this.model.width = w;
-        if ((_ref = this.model.words) != null) {
-          _ref.repos();
+        if (this.model.words != null) {
+          this.model.words("repos");
         }
       }
       return this.model.width;
@@ -197,20 +196,18 @@
           dx = this.model.prev("dx") + this.model.prev("width");
         }
       }
-      if (this.model.dx !== dx) {
-        prevLine = this.model.prev != null ? this.model.prev("line") : 1;
-        if (this.model.textarea("width") === null || (dx + this.model.width) < this.model.textarea("width")) {
-          this.model.dx = dx;
-          this.model.line = prevLine;
-        } else {
-          this.model.dx = 0;
-          this.model.line = prevLine + 1;
-        }
-        this.model.view.setAttributeNS(null, "x", this.model.dx);
-        this.model.view.setAttributeNS(null, "y", this.model.line * this.model.textarea("lineheight"));
-        if (this.model.next != null) {
-          this.model.next.repos();
-        }
+      prevLine = this.model.prev != null ? this.model.prev("line") : 1;
+      if (this.model.textarea("width") === null || (dx + this.model.width) < this.model.textarea("width")) {
+        this.model.dx = dx;
+        this.model.line = prevLine;
+      } else {
+        this.model.dx = 0;
+        this.model.line = prevLine + 1;
+      }
+      this.model.view.setAttributeNS(null, "x", this.model.dx);
+      this.model.view.setAttributeNS(null, "y", this.model.line * this.model.textarea("lineheight"));
+      if (this.model.next != null) {
+        this.model.next("repos");
       }
       return this.model.dx;
     },

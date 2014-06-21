@@ -17,8 +17,8 @@ controllerPrototype =
       s
   width: (w) ->
     unless w is undefined
-      @model.width = w
-      @model.words?.repos()
+      @model.width = w 
+      @model.words("repos") if @model.words?
     @model.width
   height: ->
     @model.height

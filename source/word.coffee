@@ -71,20 +71,18 @@ controllerPrototype =
         dx = 0
       else 
         dx = @model.prev("dx") + @model.prev("width")
-    # Only reposition of dx has changed.
-    unless @model.dx is dx
-      prevLine = if @model.prev? then @model.prev("line") else 1
-      if @model.textarea("width") is null or (dx + @model.width) < @model.textarea("width")
-        # This will break if word is wider than textarea
-        @model.dx = dx
-        @model.line = prevLine
-      else 
-        @model.dx = 0
-        @model.line = prevLine + 1
-      @model.view.setAttributeNS null, "x", @model.dx
-      @model.view.setAttributeNS null, "y", @model.line * @model.textarea("lineheight")
-      if @model.next? 
-        @model.next.repos()
+    prevLine = if @model.prev? then @model.prev("line") else 1
+    if @model.textarea("width") is null or (dx + @model.width) < @model.textarea("width")
+      # This will break if word is wider than textarea
+      @model.dx = dx
+      @model.line = prevLine
+    else 
+      @model.dx = 0
+      @model.line = prevLine + 1
+    @model.view.setAttributeNS null, "x", @model.dx
+    @model.view.setAttributeNS null, "y", @model.line * @model.textarea("lineheight")
+    if @model.next? 
+      @model.next("repos")
     @model.dx
   insert: (s, pos) ->
     unless pos? and pos <= @model.s.length
@@ -108,8 +106,6 @@ controllerPrototype =
         if next?
           next "prev", words
     @val()
-
-
 
 SVGIE.word = (textarea, prev, s) ->
   unless typeof textarea is 'function'
