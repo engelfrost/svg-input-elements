@@ -23,6 +23,9 @@ describe "The SVGIE.word function", ->
   it "returns null if 's' was an empty string", ->
     expect(SVGIE.word(textarea, null, "")).toBe null
     expect(SVGIE.word(textarea, word, "")).toBe null
+  it "can span new words, which can be referenced through the controllers 'next' action", ->
+    expect(SVGIE.word(textarea, null, "many words")("val")).toBe "many"
+    expect(SVGIE.word(textarea, null, "many words")("next")("next")("val")).toBe "words"
 
 describe "The word controller", ->
   textarea = null
@@ -46,4 +49,20 @@ describe "The word controller", ->
     expect(word "textarea").toBe textarea
   it "has the action 'dx' which returns a number", ->
     expect(word "dx").toEqual jasmine.any Number
-
+  it "has an action 'insert' which inserts a character 's' at position 'pos' of the current string'", ->
+    word("insert", "X", 0)
+    expect(word "val").toBe "Xstring"
+    word("insert", "X", 2)
+    expect(word "val").toBe "XsXtring"
+  it "has an action 'insert' that returns the new string", ->
+    expect(word "insert", "X", 0).toBe "Xstring"
+  it "has an action 'insert' which inserts a character 's' at position 0 of the current string if 'pos' is unset", ->
+    expect(word "insert", "X").toBe "stringX"
+  it "has an action 'insert' which can insert a string", ->
+    expect(word "insert", "ABC", 1).toBe "sABCtring"
+  it "has an action 'insert' that ends the word if a whitespace is inserted", ->
+    expect(word "insert", " ", 1).toBe "s"
+  it "has an action 'insert' that creates new words if it encounters whitespace", ->
+    word "insert", " ", 0
+    expect(word "val").toBe " "
+    expect(word("next")("val")).toBe "string"

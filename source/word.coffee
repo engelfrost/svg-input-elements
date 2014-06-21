@@ -28,10 +28,16 @@ controllerPrototype =
     #   s = @model.s
     # s
     #@model.s
-  prev: ->
-    @model.prev
-  next: ->
-    @model.next
+  prev: (prev) ->
+    if prev? 
+      @model.prev = prev
+    else 
+      @model.prev
+  next: (next) ->
+    if next? 
+      @model.next = next
+    else
+      @model.next
   dx: ->
     @model.dx
   line: ->
@@ -57,6 +63,7 @@ controllerPrototype =
     unless (@model.prev("dx") + @model.prev("width") + @width()) < @model.textarea("width")
       return @model.prev("whitespace") isnt "linebreak"
   repos: ->
+    # Get new dx value
     dx = 0
     if @model.prev?
       # Ignore a single leading space
@@ -64,6 +71,7 @@ controllerPrototype =
         dx = 0
       else 
         dx = @model.prev("dx") + @model.prev("width")
+    # Only reposition of dx has changed.
     unless @model.dx is dx
       prevLine = if @model.prev? then @model.prev("line") else 1
       if @model.textarea("width") is null or (dx + @model.width) < @model.textarea("width")
@@ -78,6 +86,30 @@ controllerPrototype =
       if @model.next? 
         @model.next.repos()
     @model.dx
+  insert: (s, pos) ->
+    unless pos? and pos <= @model.s.length
+      pos = @model.s.length
+    s = @model.s.substr(0, pos) + s + @model.s.substr(pos)
+    next = @model.next
+    parsedS = wordRegexp.exec s
+    @model.s = parsedS[1]
+    rest = parsedS[2]
+
+    @val @model.s 
+
+    if rest? 
+      words = SVGIE.word @model.textarea, this.facet, rest
+      if words? 
+        # Connect new list of words with 'next', and vice versa
+        this.next words
+        while words("next")?
+          words = words("next")
+        words "next", next
+        if next?
+          next "prev", words
+    @val()
+
+
 
 SVGIE.word = (textarea, prev, s) ->
   unless typeof textarea is 'function'
@@ -90,8 +122,11 @@ SVGIE.word = (textarea, prev, s) ->
   if s.length is 0
     null
   else
-    result = wordRegexp.exec s
-    rest = result[2]
+    parsedS = wordRegexp.exec s
+    s = parsedS[1]
+    rest = parsedS[2]
+
+    next = prev("next") if prev?
 
     controller = Object.create controllerPrototype
 
@@ -100,9 +135,9 @@ SVGIE.word = (textarea, prev, s) ->
         undefined
       controller[method].apply controller, args
     controller.model =
-      s: result[1]
+      s: s
       prev: prev
-      next: null
+      next: next
       dx: -1
       line: unless prev? then 1 else prev "line"
       view: do ->
@@ -114,9 +149,11 @@ SVGIE.word = (textarea, prev, s) ->
       width: 0
       facet: controller.facet
 
-    controller.val(controller.model.s)
+    controller.val controller.model.s
     controller.width()
     controller.repos()
+
+    next("prev", controller.facet) if next?
 
     if rest? 
       controller.model.next = SVGIE.word textarea, controller.facet, rest

@@ -136,11 +136,19 @@
       }
       return this.model.s;
     },
-    prev: function() {
-      return this.model.prev;
+    prev: function(prev) {
+      if (prev != null) {
+        return this.model.prev = prev;
+      } else {
+        return this.model.prev;
+      }
     },
-    next: function() {
-      return this.model.next;
+    next: function(next) {
+      if (next != null) {
+        return this.model.next = next;
+      } else {
+        return this.model.next;
+      }
     },
     dx: function() {
       return this.model.dx;
@@ -205,11 +213,37 @@
         }
       }
       return this.model.dx;
+    },
+    insert: function(s, pos) {
+      var next, parsedS, rest, words;
+      if (!((pos != null) && pos <= this.model.s.length)) {
+        pos = this.model.s.length;
+      }
+      s = this.model.s.substr(0, pos) + s + this.model.s.substr(pos);
+      next = this.model.next;
+      parsedS = wordRegexp.exec(s);
+      this.model.s = parsedS[1];
+      rest = parsedS[2];
+      this.val(this.model.s);
+      if (rest != null) {
+        words = SVGIE.word(this.model.textarea, this.facet, rest);
+        if (words != null) {
+          this.next(words);
+          while (words("next") != null) {
+            words = words("next");
+          }
+          words("next", next);
+          if (next != null) {
+            next("prev", words);
+          }
+        }
+      }
+      return this.val();
     }
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var controller, rest, result;
+    var controller, next, parsedS, rest;
     if (typeof textarea !== 'function') {
       throw "Textarea must be a textarea function";
     }
@@ -222,8 +256,12 @@
     if (s.length === 0) {
       return null;
     } else {
-      result = wordRegexp.exec(s);
-      rest = result[2];
+      parsedS = wordRegexp.exec(s);
+      s = parsedS[1];
+      rest = parsedS[2];
+      if (prev != null) {
+        next = prev("next");
+      }
       controller = Object.create(controllerPrototype);
       controller.facet = function() {
         var args, method;
@@ -234,9 +272,9 @@
         return controller[method].apply(controller, args);
       };
       controller.model = {
-        s: result[1],
+        s: s,
         prev: prev,
-        next: null,
+        next: next,
         dx: -1,
         line: prev == null ? 1 : prev("line"),
         view: (function() {
@@ -253,6 +291,9 @@
       controller.val(controller.model.s);
       controller.width();
       controller.repos();
+      if (next != null) {
+        next("prev", controller.facet);
+      }
       if (rest != null) {
         controller.model.next = SVGIE.word(textarea, controller.facet, rest);
       }
