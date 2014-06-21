@@ -1,15 +1,48 @@
 SVG Input Elements
 ==================
 
-This project is in development mode. Do not expect it to be stable!
+Work in progress with the aim of creating a simple editable textarea in SVG. 
 
 Examples can be found the example folder. 
 
-To get started with development, run: 
+To set up the development environment you need npm. Then run
 
 `npm install`
 
+from the command line. 
+
+To start the tests and build the project, just run this in the command line:
+
 `gulp`
+
+How to use
+----------
+
+The features documented here are fairly stable and I will try not to change their behaviour (unless it is incorrect). 
+
+Create a textarea: 
+
+    var textarea = SVGIE.textarea(svg, {width: 600});
+
+Createa a textarea with initial text: 
+
+    var textarea = SVGIE.textarea(svg, {width: 600}, "This is a textarea."); 
+
+Get the width of the textarea: 
+
+    textarea("width");
+
+Change the width of the textarea: 
+
+    textarea("width", 600);
+
+Get the value of the textarea: 
+
+    textarea("val");
+
+Change the value of the textarea: 
+
+    textarea("val", "Some new text for the textarea.");
 
 Goals and limits for the new version
 ------------------------------------
@@ -20,8 +53,6 @@ Goals and limits for the new version
 * Fewer features (No CSS subset, no lists and no image boxes. Just a textarea.)
 * Modern browsers only (no IE9)
 * Tests!
-
-
 
 Old README
 ==========
