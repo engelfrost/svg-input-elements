@@ -130,7 +130,7 @@
         this.model.width = this.model.view.getBoundingClientRect().width;
         next = this.next();
         if (next != null) {
-          next.repos();
+          next("repos");
         }
       }
       return this.model.s;
