@@ -106,7 +106,7 @@
 }).call(this);
 
 (function() {
-  var controllerPrototype, spaceNS, svgNS, whitespaceRegexp, wordRegexp,
+  var controllerPrototype, newlinesRegexp, spaceNS, svgNS, whitespaceRegexp, wordRegexp,
     __slice = [].slice;
 
   if (this.SVGIE == null) {
@@ -117,20 +117,20 @@
 
   spaceNS = "http://www.w3.org/XML/1998/namespace";
 
-  wordRegexp = /^(\S+|\s)(.*)/;
+  wordRegexp = /^(\S+|\r\n|\s)((\r|\n|.)*)$/;
 
   whitespaceRegexp = /\s/;
 
+  newlinesRegexp = /(\r\n|\r|\n)/;
+
   controllerPrototype = {
     val: function(s) {
-      var next;
       if (s != null) {
         this.model.s = s;
-        this.model.view.textContent = s;
+        this.model.view.textContent = s.replace(newlinesRegexp, "").replace(/\t/, "    ");
         this.model.width = this.model.view.getBoundingClientRect().width;
-        next = this.next();
-        if (next != null) {
-          next("repos");
+        if (this.next() != null) {
+          this.next()("repos");
         }
       }
       return this.model.s;
@@ -165,7 +165,23 @@
       return this.model.view;
     },
     whitespace: function() {
-      return whitespaceRegexp.test(this.model.s);
+      var whitespace;
+      whitespace = false;
+      if (whitespaceRegexp.test(this.model.s)) {
+        whitespace = (function() {
+          switch (false) {
+            case this.model.s !== " ":
+              return "space";
+            case this.model.s !== "\t":
+              return "tab";
+            case !newlinesRegexp.test(this.model.s):
+              return "newline";
+            default:
+              return true;
+          }
+        }).call(this);
+      }
+      return whitespace;
     },
     firstInLine: function() {
       var prev;
@@ -187,22 +203,27 @@
       }
     },
     repos: function() {
-      var dx, prevLine;
-      dx = 0;
-      if (this.model.prev != null) {
-        if (!this.whitespace() && this.model.prev("whitespace") && this.model.prev("autoWrapped")) {
-          dx = 0;
-        } else {
-          dx = this.model.prev("dx") + this.model.prev("width");
-        }
-      }
-      prevLine = this.model.prev != null ? this.model.prev("line") : 1;
-      if (this.model.textarea("width") === null || (dx + this.model.width) < this.model.textarea("width")) {
+      var dx, prevWordLine;
+      dx = (function(_this) {
+        return function() {
+          if (_this.model.prev != null) {
+            if (!_this.whitespace() && _this.model.prev("whitespace") === "space" && _this.model.prev("autoWrapped")) {
+              return 0;
+            } else {
+              return _this.model.prev("dx") + _this.model.prev("width");
+            }
+          } else {
+            return 0;
+          }
+        };
+      })(this)();
+      prevWordLine = this.model.prev != null ? this.model.prev("line") : 1;
+      if (this.whitespace() !== "newline" && (this.model.textarea("width") === null || this.model.textarea("width") >= (dx + this.model.width))) {
         this.model.dx = dx;
-        this.model.line = prevLine;
+        this.model.line = prevWordLine;
       } else {
         this.model.dx = 0;
-        this.model.line = prevLine + 1;
+        this.model.line = prevWordLine + 1;
       }
       this.model.view.setAttributeNS(null, "x", this.model.dx);
       this.model.view.setAttributeNS(null, "y", this.model.line * this.model.textarea("lineheight"));

@@ -4,9 +4,10 @@ svgNS = 'http://www.w3.org/2000/svg'
 spaceNS = "http://www.w3.org/XML/1998/namespace"
 
 # Define how words should be split
-wordRegexp = /^(\S+|\s)(.*)/
+wordRegexp = /^(\S+|\r\n|\s)((\r|\n|.)*)$/
 # Define whitespace. Must be the same definition as in the wordsplit regexp
 whitespaceRegexp = /\s/
+newlinesRegexp = /(\r\n|\r|\n)/
 
 controllerPrototype = 
   val: (s) ->
@@ -14,11 +15,12 @@ controllerPrototype =
       #change text
       @model.s = s
       @model.view.textContent = s
+        .replace(newlinesRegexp, "")
+        .replace(/\t/, "    ")
       #recalculate width
       @model.width = @model.view.getBoundingClientRect().width
       #repos next word
-      next = @next()
-      next("repos") if next?
+      @next() "repos" if @next()?
     @model.s
   prev: (prev) ->
     if prev? 
@@ -41,7 +43,14 @@ controllerPrototype =
   view: ->
     @model.view
   whitespace: ->
-    whitespaceRegexp.test @model.s
+    whitespace = no
+    if whitespaceRegexp.test @model.s
+      whitespace = switch 
+        when @model.s is " " then "space"
+        when @model.s is "\t" then "tab"
+        when newlinesRegexp.test @model.s then "newline" #what about \r and \r\n?
+        else true
+    whitespace
   firstInLine: ->
     prev = @prev()
     if prev? 
@@ -56,21 +65,24 @@ controllerPrototype =
       return @model.prev("whitespace") isnt "linebreak"
   repos: ->
     # Get new dx value
-    dx = 0
-    if @model.prev?
-      # Ignore a single leading space
-      if not @whitespace() and @model.prev("whitespace") and @model.prev("autoWrapped")
-        dx = 0
+    dx = do =>
+      if @model.prev?
+        # Ignore a single leading space
+        if not @whitespace() and @model.prev("whitespace") is "space" and @model.prev("autoWrapped")
+          0
+        else 
+          @model.prev("dx") + @model.prev("width")
       else 
-        dx = @model.prev("dx") + @model.prev("width")
-    prevLine = if @model.prev? then @model.prev("line") else 1
-    if @model.textarea("width") is null or (dx + @model.width) < @model.textarea("width")
+        0
+    prevWordLine = if @model.prev? then @model.prev("line") else 1
+    # Can we stay on the same line? 
+    if @whitespace() isnt "newline" and (@model.textarea("width") is null or @model.textarea("width") >= (dx + @model.width))
       # This will break if word is wider than textarea
       @model.dx = dx
-      @model.line = prevLine
+      @model.line = prevWordLine
     else 
       @model.dx = 0
-      @model.line = prevLine + 1
+      @model.line = prevWordLine + 1
     @model.view.setAttributeNS null, "x", @model.dx
     @model.view.setAttributeNS null, "y", @model.line * @model.textarea("lineheight")
     if @model.next? 
