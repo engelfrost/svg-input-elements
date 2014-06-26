@@ -47,9 +47,14 @@
       } else {
         s = "";
         word = this.model.words;
-        while (word != null) {
-          s += word("val");
-          word = word("next");
+        if (word != null) {
+          while (true) {
+            s += word("val");
+            if (word("isEnd")) {
+              break;
+            }
+            word = word("next");
+          }
         }
         return s;
       }
@@ -104,12 +109,7 @@
     }
     if (el.nodeName === 'g') {
       g = el;
-      svg = (function(el) {
-        while (el.nodeName !== "svg") {
-          el = el.parentElement;
-        }
-        return el;
-      })(el);
+      svg = g.ownerSVGElement;
     } else {
       svg = el;
       g = document.createElementNS(svgNS, "g");
@@ -139,7 +139,8 @@
         return rect.height;
       })(),
       facet: controller.facet,
-      svg: svg
+      svg: svg,
+      cursor: SVGIE.cursor(null)
     };
     controller.model.words = SVGIE.word(controller.facet, null, s);
     return controller.facet;
@@ -171,8 +172,8 @@
         this.model.s = s;
         this.model.view.textContent = s.replace(newlinesRegexp, "").replace(/\t/, "    ");
         this.model.width = this.model.view.getBoundingClientRect().width;
-        if (this.next() != null) {
-          this.next()("repos");
+        if (!this.isEnd()) {
+          this.model.next("repos");
         }
       }
       return this.model.s;
@@ -190,6 +191,12 @@
       } else {
         return this.model.next;
       }
+    },
+    isBeginning: function() {
+      return this.model.beginning;
+    },
+    isEnd: function() {
+      return this.model.next("isBeginning");
     },
     dx: function() {
       return this.model.dx;
@@ -245,39 +252,38 @@
       }
     },
     repos: function() {
-      var dx, prevWordLine;
+      var dx;
       dx = (function(_this) {
         return function() {
-          if (_this.model.prev != null) {
+          if (_this.isBeginning()) {
+            return 0;
+          } else {
             if (!_this.whitespace() && _this.model.prev("whitespace") === "space" && _this.model.prev("autoWrapped")) {
               return 0;
             } else {
               return _this.model.prev("dx") + _this.model.prev("width");
             }
-          } else {
-            return 0;
           }
         };
       })(this)();
-      prevWordLine = this.model.prev != null ? this.model.prev("line") : 1;
       if (this.whitespace() !== "newline" && (this.model.textarea("width") === null || this.model.textarea("width") >= (dx + this.model.width))) {
         this.model.dx = dx;
-        this.model.line = prevWordLine;
+        this.model.line = this.model.prev("line");
       } else {
         this.model.dx = 0;
-        this.model.line = prevWordLine + 1;
+        this.model.line = this.model.prev("line") + 1;
       }
       this.model.view.setAttributeNS(null, "x", this.model.dx);
       this.model.view.setAttributeNS(null, "y", this.model.line * this.model.textarea("lineheight"));
-      if (this.model.next != null) {
+      if (!this.isEnd()) {
         this.model.next("repos");
       }
       return this.model.dx;
     },
     insert: function(s, pos) {
-      var next, parsedS, rest, words;
-      if (!((pos != null) && pos <= this.model.s.length)) {
-        pos = this.model.s.length;
+      var next, parsedS, rest;
+      if (!((pos != null) && pos <= this.model.s.length && pos >= 0)) {
+        throw "The position '" + pos + "' is not set or out of range";
       }
       s = this.model.s.substr(0, pos) + s + this.model.s.substr(pos);
       next = this.model.next;
@@ -286,24 +292,14 @@
       rest = parsedS[2];
       this.val(this.model.s);
       if (rest != null) {
-        words = SVGIE.word(this.model.textarea, this.facet, rest);
-        if (words != null) {
-          this.next(words);
-          while (words("next") != null) {
-            words = words("next");
-          }
-          words("next", next);
-          if (next != null) {
-            next("prev", words);
-          }
-        }
+        SVGIE.word(this.model.textarea, this.facet, rest);
       }
       return this.val();
     }
   };
 
   SVGIE.word = function(textarea, prev, s) {
-    var controller, next, parsedS, rest;
+    var controller, leftWord, parsedS, rest, rightWord;
     if (typeof textarea !== 'function') {
       throw "Textarea must be a textarea function";
     }
@@ -319,10 +315,13 @@
       parsedS = wordRegexp.exec(s);
       s = parsedS[1];
       rest = parsedS[2];
-      if (prev != null) {
-        next = prev("next");
-      }
       controller = Object.create(controllerPrototype);
+      if (prev != null) {
+        leftWord = prev;
+      }
+      if (prev != null) {
+        rightWord = prev("next");
+      }
       controller.facet = function() {
         var args, method;
         method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
@@ -333,8 +332,22 @@
       };
       controller.model = {
         s: s,
-        prev: prev,
-        next: next,
+        prev: (function() {
+          if (leftWord != null) {
+            leftWord("next", controller.facet);
+            return leftWord;
+          } else {
+            return controller.facet;
+          }
+        })(),
+        next: (function() {
+          if (rightWord != null) {
+            rightWord("prev", controller.facet);
+            return rightWord;
+          } else {
+            return controller.facet;
+          }
+        })(),
         dx: -1,
         line: prev == null ? 1 : prev("line"),
         view: (function() {
@@ -355,16 +368,14 @@
         textarea: textarea,
         width: 0,
         facet: controller.facet,
-        atChar: 0
+        atChar: 0,
+        beginning: prev == null
       };
       controller.val(controller.model.s);
       controller.width();
       controller.repos();
-      if (next != null) {
-        next("prev", controller.facet);
-      }
       if (rest != null) {
-        controller.model.next = SVGIE.word(textarea, controller.facet, rest);
+        SVGIE.word(textarea, controller.facet, rest);
       }
       return controller.facet;
     }

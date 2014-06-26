@@ -40,9 +40,8 @@ describe "The word controller", ->
     expect(word).toBe null
   it "has the action 'width' which returns a number", ->
     expect(word "width").toEqual jasmine.any Number
-  it "has the action 'prev' which returns null or another word object", ->
-    expect(word "prev").toBe null
-    #tests missing here...
+  it "has the action 'prev' which returns or another word function", ->
+    expect(word "prev").toEqual jasmine.any Function
   it "has the action 'line' which returns a positive integer", ->
     expect(word "line").toBeGreaterThan 0
   it "has the action 'textarea' which returns a reference to the textarea controller", ->
@@ -56,8 +55,6 @@ describe "The word controller", ->
     expect(word "val").toBe "XsXtring"
   it "has an action 'insert' that returns the new string", ->
     expect(word "insert", "X", 0).toBe "Xstring"
-  it "has an action 'insert' which inserts a character 's' at position 0 of the current string if 'pos' is unset", ->
-    expect(word "insert", "X").toBe "stringX"
   it "has an action 'insert' which can insert a string", ->
     expect(word "insert", "ABC", 1).toBe "sABCtring"
   it "has an action 'insert' that ends the word if a whitespace is inserted", ->

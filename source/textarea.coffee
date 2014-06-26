@@ -11,8 +11,9 @@ controllerPrototype =
     else 
       s = ""
       word = @model.words
-      while word?
+      if word? then loop
         s += word "val" 
+        break if word "isEnd"
         word = word "next"
       s
   width: (w) ->
@@ -51,10 +52,7 @@ SVGIE.textarea = (el, options, s) ->
   # Set the group element and svg element 
   if el.nodeName is 'g'
     g = el
-    svg = do (el) ->
-      while el.nodeName isnt "svg"
-        el = el.parentElement
-      el
+    svg = g.ownerSVGElement
   else
     svg = el
     g = document.createElementNS svgNS, "g"
@@ -80,6 +78,7 @@ SVGIE.textarea = (el, options, s) ->
       rect.height
     facet: controller.facet
     svg: svg
+    cursor: SVGIE.cursor null
 
   # controller.facet needs controller.model to be defined
   controller.model.words = SVGIE.word controller.facet, null, s
