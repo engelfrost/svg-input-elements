@@ -27,8 +27,8 @@ describe "The textarea controller", ->
     expect(textarea "height").toBe 100
   it "has a 'lineheight' action which returns a number", ->
     expect(textarea "lineheight").toEqual jasmine.any Number
-  it "has a 'words' action which returns null if no string was passed to SVGIE.textarea", ->
-    expect(textarea "words").toBe null
+  it "has a 'words' action which returns s word function even if no string was passed to SVGIE.textarea", ->
+    expect(textarea "words").not.toBe null
   it "has a 'words' action which returns a word controller if a string was passed to SVGIE.textarea", ->
     textarea = SVGIE.textarea svg(), {}, "string"
     expect(textarea "words").toEqual jasmine.any Function

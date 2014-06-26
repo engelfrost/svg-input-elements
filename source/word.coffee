@@ -38,6 +38,8 @@ controllerPrototype =
     @model.next "isBeginning"
   dx: ->
     @model.dx
+  dy: ->
+    @model.line * @model.textarea "lineheight"
   line: ->
     @model.line
   width: ->
@@ -115,66 +117,71 @@ SVGIE.word = (textarea, prev, s) ->
   unless typeof s is 'string'
     throw "Third argument must be a string"
 
-  if s.length is 0
-    null
+  if s.length is 0 and prev? 
+    return null
+  else if s.length is 0 and not prev? 
+      s = ""
+      rest = ""
   else
     parsedS = wordRegexp.exec s
     s = parsedS[1]
     rest = parsedS[2]
 
-    controller = Object.create controllerPrototype
+  controller = Object.create controllerPrototype
 
-    leftWord = prev if prev?
-    rightWord = prev("next") if prev?
+  leftWord = prev if prev?
+  rightWord = prev("next") if prev?
 
-    controller.facet = (method, args...) ->
-      if method is "facet" or method is "model" or !controller[method]?
-        return undefined
-      controller[method].apply controller, args
-    controller.model =
-      s: s
-      prev: do ->
-        if leftWord? 
-          leftWord "next", controller.facet
-          leftWord
-        else 
-          controller.facet
-      next: do ->
-        if rightWord?
-          rightWord "prev", controller.facet
-          rightWord
-        else
-          controller.facet
-      dx: -1
-      line: unless prev? then 1 else prev "line"
-      view: do ->
-        v = document.createElementNS svgNS, "text"
-        v.setAttributeNS spaceNS, "xml:space", "preserve"
-        textarea("view").appendChild v
-        v.addEventListener "click", (e) ->
-          x = e.offsetX - v.offsetLeft
-          y = v.offsetTop
-          p = textarea "svgPoint", x, y
-          clickedChar = v.getCharNumAtPosition p
-          #clickedCharRect = v.getExtentOfChar clickedChar
-          #if e.offsetX > (clickedCharRect.x + (clickedCharRect.width / 2))
-          #  clickedChar += 1
-          #closestGap = if e.offsetX < (clickedCharRect.x + (clickedCharRect.width / 2)) then clickedCharRect.x else clickedCharRect.x + clickedCharRect.width
-          console.log e
-        v
-      textarea: textarea
-      width: 0
-      facet: controller.facet
-      atChar: 0
-      beginning: not prev?
+  controller.facet = (method, args...) ->
+    if method is "facet" or method is "model" or !controller[method]?
+      return undefined
+    controller[method].apply controller, args
+  controller.model =
+    s: s
+    prev: do ->
+      if leftWord? 
+        leftWord "next", controller.facet
+        leftWord
+      else 
+        controller.facet
+    next: do ->
+      if rightWord?
+        rightWord "prev", controller.facet
+        rightWord
+      else
+        controller.facet
+    dx: -1
+    line: unless prev? then 1 else prev "line"
+    view: do ->
+      v = document.createElementNS svgNS, "text"
+      v.setAttributeNS spaceNS, "xml:space", "preserve"
+      textarea("view").appendChild v
+      v.addEventListener "click", (e) ->
+        x = e.offsetX - v.offsetLeft
+        y = v.offsetTop
+        p = textarea "svgPoint", x, y
+        clickedChar = v.getCharNumAtPosition p
+        cursor = textarea("cursor")
+        cursor("set", controller.facet, clickedChar)
+        #clickedCharRect = v.getExtentOfChar clickedChar
+        #if e.offsetX > (clickedCharRect.x + (clickedCharRect.width / 2))
+        #  clickedChar += 1
+        #closestGap = if e.offsetX < (clickedCharRect.x + (clickedCharRect.width / 2)) then clickedCharRect.x else clickedCharRect.x + clickedCharRect.width
+        #console.log e
+      v
+    textarea: textarea
+    width: 0
+    facet: controller.facet
+    atChar: 0
+    beginning: not prev?
 
-    controller.val controller.model.s
-    controller.width() # Calculate width with new "val"
-    controller.repos()
+  controller.val controller.model.s
+  controller.width() # Calculate width with new "val"
+  controller.repos()
 
-    #next("prev", controller.facet) if next?
+  #next("prev", controller.facet) if next?
 
-    if rest? 
-      SVGIE.word textarea, controller.facet, rest
+  if rest? 
+    SVGIE.word textarea, controller.facet, rest
 
-    controller.facet
+  controller.facet

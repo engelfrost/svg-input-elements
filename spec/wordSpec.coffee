@@ -20,8 +20,8 @@ describe "The SVGIE.word function", ->
   it "returns a word controller function if 's' was a non-empty string", ->
     expect(SVGIE.word(textarea, null, "string")).toEqual jasmine.any Function
     expect(SVGIE.word(textarea, word, "string")).toEqual jasmine.any Function
-  it "returns null if 's' was an empty string", ->
-    expect(SVGIE.word(textarea, null, "")).toBe null
+  it "returns null if 's' was an empty string and 'prev' was set", ->
+    expect(SVGIE.word(textarea, null, "")).not.toBe null
     expect(SVGIE.word(textarea, word, "")).toBe null
   it "can span new words, which can be referenced through the controllers 'next' action", ->
     expect(SVGIE.word(textarea, null, "many words")("val")).toBe "many"
@@ -37,7 +37,7 @@ describe "The word controller", ->
   it "has an action 'val' which returns a string", ->
     expect(word "val").toBe "string"
     word = SVGIE.word textarea, null, ""
-    expect(word).toBe null
+    expect(word).not.toBe null
   it "has the action 'width' which returns a number", ->
     expect(word "width").toEqual jasmine.any Number
   it "has the action 'prev' which returns or another word function", ->

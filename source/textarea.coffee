@@ -27,6 +27,8 @@ controllerPrototype =
     @model.lineheight
   words: ->
     @model.words
+  cursor: ->
+    @model.cursor
   view: ->
     @model.view
   height: ->
@@ -78,9 +80,9 @@ SVGIE.textarea = (el, options, s) ->
       rect.height
     facet: controller.facet
     svg: svg
-    cursor: SVGIE.cursor null
 
   # controller.facet needs controller.model to be defined
   controller.model.words = SVGIE.word controller.facet, null, s
+  controller.model.cursor = SVGIE.cursor controller.facet, controller.model.words("prev"), -1
 
   controller.facet
