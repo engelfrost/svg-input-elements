@@ -47,8 +47,8 @@ SVGIE.textarea = (el, options, s) ->
 
   controller = Object.create controllerPrototype
   controller.facet = (method, args...) ->
-    if method is "facet" or method is "model" or !@[method]?
-      undefined
+    if method is "facet" or method is "model" or not controller[method]?
+      return undefined
     controller[method].apply controller, args
 
   controller.model = 

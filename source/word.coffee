@@ -131,8 +131,8 @@ SVGIE.word = (textarea, prev, s) ->
     controller = Object.create controllerPrototype
 
     controller.facet = (method, args...) ->
-      if method is "facet" or method is "model" or !@[method]?
-        undefined
+      if method is "facet" or method is "model" or !controller[method]?
+        return undefined
       controller[method].apply controller, args
     controller.model =
       s: s
