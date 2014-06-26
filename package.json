@@ -51,6 +51,7 @@
     "karma-phantomjs-launcher": "~0.1.4",
     "karma-chrome-launcher": "~0.1.4",
     "gulp-uglify": "~0.3.0",
-    "gulp-rename": "~1.2.0"
+    "gulp-rename": "~1.2.0",
+    "gulp-connect": "~2.0.5"
   }
 }

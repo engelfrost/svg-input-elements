@@ -1,4 +1,32 @@
 (function() {
+  var controllerPrototype,
+    __slice = [].slice;
+
+  if (this.SVGIE == null) {
+    this.SVGIE = {};
+  }
+
+  controllerPrototype = {};
+
+  SVGIE.cursor = function() {
+    var controller;
+    controller = Object.create(controllerPrototype);
+    controller.facet = function() {
+      var args, method;
+      method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (method === "facet" || method === "model" || (this[method] == null)) {
+        return void 0;
+      }
+      return controller[method].apply(controller, args);
+    };
+    return controller.model = {
+      view: {}
+    };
+  };
+
+}).call(this);
+
+(function() {
   var controllerPrototype, svgNS,
     __slice = [].slice;
 
@@ -49,11 +77,18 @@
     },
     height: function() {
       return this.model.height;
+    },
+    svgPoint: function(x, y) {
+      var p;
+      p = this.model.svg.createSVGPoint();
+      p.x = x;
+      p.y = y;
+      return p;
     }
   };
 
   SVGIE.textarea = function(el, options, s) {
-    var controller, rect;
+    var controller, g, svg;
     if (!((el != null) && (el.nodeName === "svg" || el.nodeName === "g"))) {
       throw "Missing first argument, no <svg> or <g> passed";
     }
@@ -67,37 +102,44 @@
     if (s == null) {
       s = "";
     }
-    rect = null;
+    if (el.nodeName === 'g') {
+      g = el;
+      svg = (function(el) {
+        while (el.nodeName !== "svg") {
+          el = el.parentElement;
+        }
+        return el;
+      })(el);
+    } else {
+      svg = el;
+      g = document.createElementNS(svgNS, "g");
+      el.appendChild(g);
+    }
     controller = Object.create(controllerPrototype);
     controller.facet = function() {
       var args, method;
       method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      if (method === "facet" || method === "model" || (this[method] == null)) {
-        void 0;
+      if (method === "facet" || method === "model" || (controller[method] == null)) {
+        return void 0;
       }
       return controller[method].apply(controller, args);
     };
     controller.model = {
       height: options.height == null ? null : options.height,
       width: options.width == null ? null : options.width,
-      view: (function() {
-        var testTextNode, testWord, view;
-        if (el.nodeName === 'g') {
-          view = el;
-        } else {
-          view = document.createElementNS(svgNS, "g");
-          el.appendChild(view);
-        }
+      view: g,
+      lineheight: (function() {
+        var rect, testTextNode, testWord;
         testWord = document.createElementNS(svgNS, "text");
-        view.appendChild(testWord);
+        g.appendChild(testWord);
         testTextNode = document.createTextNode("SVGIE");
         testWord.appendChild(testTextNode);
         rect = testWord.getBoundingClientRect();
-        view.removeChild(testWord);
-        return view;
+        g.removeChild(testWord);
+        return rect.height;
       })(),
-      lineheight: rect.height,
-      facet: controller.facet
+      facet: controller.facet,
+      svg: svg
     };
     controller.model.words = SVGIE.word(controller.facet, null, s);
     return controller.facet;
@@ -284,8 +326,8 @@
       controller.facet = function() {
         var args, method;
         method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-        if (method === "facet" || method === "model" || (this[method] == null)) {
-          void 0;
+        if (method === "facet" || method === "model" || (controller[method] == null)) {
+          return void 0;
         }
         return controller[method].apply(controller, args);
       };
@@ -300,11 +342,20 @@
           v = document.createElementNS(svgNS, "text");
           v.setAttributeNS(spaceNS, "xml:space", "preserve");
           textarea("view").appendChild(v);
+          v.addEventListener("click", function(e) {
+            var clickedChar, p, x, y;
+            x = e.offsetX - v.offsetLeft;
+            y = v.offsetTop;
+            p = textarea("svgPoint", x, y);
+            clickedChar = v.getCharNumAtPosition(p);
+            return console.log(e);
+          });
           return v;
         })(),
         textarea: textarea,
         width: 0,
-        facet: controller.facet
+        facet: controller.facet,
+        atChar: 0
       };
       controller.val(controller.model.s);
       controller.width();

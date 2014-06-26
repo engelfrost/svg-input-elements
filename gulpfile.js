@@ -1,9 +1,10 @@
-var gulp   = require('gulp'),
-  concat   = require('gulp-concat'),
-  coffee   = require('gulp-coffee'),
-  karma    = require('karma').server,
-  uglify   = require('gulp-uglify'), 
-  rename   = require('gulp-rename');
+var gulp  = require('gulp'),
+  concat  = require('gulp-concat'),
+  coffee  = require('gulp-coffee'),
+  karma   = require('karma').server,
+  uglify  = require('gulp-uglify'), 
+  rename  = require('gulp-rename'), 
+  connect = require('gulp-connect');
 
 var karmaConf = {
   browsers: ['PhantomJS'],
@@ -33,18 +34,36 @@ var sourceGlob = [
   'source/*.coffee'
 ];
 
-gulp.task('watch', function (done) {
+var examplesGlob = [
+	'dist/svg-input-elements.js', 
+	'examples/*.html'
+];
+
+gulp.task('connect', function () {
+	connect.server({
+		root: './', 
+		livereload: true
+	})
+});
+
+gulp.task('examples', function () {
+	gulp.src(examplesGlob)
+		.pipe(connect.reload());
+});
+
+gulp.task('watch', ['connect'], function (done) {
   karma.start(karmaConf, done); 
-  var sourceWatcher = gulp.watch(sourceGlob, ['build']);
+  gulp.watch(sourceGlob, ['build']);
+  gulp.watch(examplesGlob, ['examples']);
 });
 
 gulp.task('watch:chrome', function (done) {
   karmaConf.browsers = ["Chrome"];
   karma.start(karmaConf, done); 
-  var sourceWatcher = gulp.watch(sourceGlob, ['build']);
+  gulp.watch(sourceGlob, ['build']);
 });
 
-gulp.task('minify', function () {
+gulp.task('build:minify', ['build'], function () {
   return gulp.src("dist/svg-input-elements.js")
     .pipe(rename({extname: '.min.js'}))
     .pipe(uglify())

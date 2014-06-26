@@ -16,7 +16,7 @@ controllerPrototype =
         word = word "next"
       s
   width: (w) ->
-    unless w is undefined
+    unless w is undefined # allow setting width to null
       @model.width = w 
       @model.words("repos") if @model.words?
     @model.width
@@ -30,6 +30,11 @@ controllerPrototype =
     @model.view
   height: ->
     @model.height
+  svgPoint: (x, y) ->
+    p = @model.svg.createSVGPoint()
+    p.x = x
+    p.y = y
+    p
       
 
 SVGIE.textarea = (el, options, s) ->
@@ -43,7 +48,17 @@ SVGIE.textarea = (el, options, s) ->
   unless s? 
     s = ""
 
-  rect = null
+  # Set the group element and svg element 
+  if el.nodeName is 'g'
+    g = el
+    svg = do (el) ->
+      while el.nodeName isnt "svg"
+        el = el.parentElement
+      el
+  else
+    svg = el
+    g = document.createElementNS svgNS, "g"
+    el.appendChild g
 
   controller = Object.create controllerPrototype
   controller.facet = (method, args...) ->
@@ -54,22 +69,17 @@ SVGIE.textarea = (el, options, s) ->
   controller.model = 
     height: unless options.height? then null else options.height
     width: unless options.width? then null else options.width
-    view: do ->
-      if el.nodeName is 'g'
-        view = el
-      else
-        view = document.createElementNS svgNS, "g"
-        el.appendChild view
-      # Calculate lineheight
+    view: g
+    lineheight: do ->
       testWord = document.createElementNS svgNS, "text"
-      view.appendChild testWord
+      g.appendChild testWord
       testTextNode = document.createTextNode "SVGIE"
       testWord.appendChild testTextNode
       rect = testWord.getBoundingClientRect()
-      view.removeChild testWord
-      view
-    lineheight: rect.height
+      g.removeChild testWord
+      rect.height
     facet: controller.facet
+    svg: svg
 
   # controller.facet needs controller.model to be defined
   controller.model.words = SVGIE.word controller.facet, null, s

@@ -144,13 +144,24 @@ SVGIE.word = (textarea, prev, s) ->
         v = document.createElementNS svgNS, "text"
         v.setAttributeNS spaceNS, "xml:space", "preserve"
         textarea("view").appendChild v
+        v.addEventListener "click", (e) ->
+          x = e.offsetX - v.offsetLeft
+          y = v.offsetTop
+          p = textarea "svgPoint", x, y
+          clickedChar = v.getCharNumAtPosition p
+          #clickedCharRect = v.getExtentOfChar clickedChar
+          #if e.offsetX > (clickedCharRect.x + (clickedCharRect.width / 2))
+          #  clickedChar += 1
+          #closestGap = if e.offsetX < (clickedCharRect.x + (clickedCharRect.width / 2)) then clickedCharRect.x else clickedCharRect.x + clickedCharRect.width
+          console.log e
         v
       textarea: textarea
       width: 0
       facet: controller.facet
+      atChar: 0
 
     controller.val controller.model.s
-    controller.width()
+    controller.width() # Calculate width with new "val"
     controller.repos()
 
     next("prev", controller.facet) if next?
