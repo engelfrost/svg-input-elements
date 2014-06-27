@@ -157,16 +157,22 @@ SVGIE.word = (textarea, prev, s) ->
       v.setAttributeNS spaceNS, "xml:space", "preserve"
       textarea("view").appendChild v
       v.addEventListener "click", (e) ->
-        x = e.offsetX - v.offsetLeft
-        y = v.offsetTop
+        x = e.clientX - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
+        y = e.clientY - v.ownerSVGElement.offsetTop
         p = textarea "svgPoint", x, y
-        clickedChar = v.getCharNumAtPosition p
+        char = v.getCharNumAtPosition p
+        charRect = v.getExtentOfChar char
+        if x < (charRect.x + (charRect.width / 2))
+          cursorPoint = v.getStartPositionOfChar char
+        else
+          cursorPoint = v.getEndPositionOfChar char
+          char += 1
         cursor = textarea("cursor")
-        cursor("set", controller.facet, clickedChar)
-        #clickedCharRect = v.getExtentOfChar clickedChar
-        #if e.offsetX > (clickedCharRect.x + (clickedCharRect.width / 2))
-        #  clickedChar += 1
-        #closestGap = if e.offsetX < (clickedCharRect.x + (clickedCharRect.width / 2)) then clickedCharRect.x else clickedCharRect.x + clickedCharRect.width
+        cursor("set", controller.facet, char, cursorPoint)
+        
+        #if e.offsetX > (charRect.x + (charRect.width / 2))
+        #  char += 1
+        #closestGap = if e.offsetX < (charRect.x + (charRect.width / 2)) then clickedCharRect.x else clickedCharRect.x + clickedCharRect.width
         #console.log e
       v
     textarea: textarea

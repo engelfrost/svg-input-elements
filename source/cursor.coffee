@@ -3,10 +3,10 @@ this.SVGIE ?= {}
 svgNS = 'http://www.w3.org/2000/svg'
 
 controllerPrototype = 
-	set: (word, char) ->
+	set: (word, char, cursorPoint) ->
 		@model.word = word
 		@model.char = char
-		@model.view.setAttributeNS null, "transform", "translate(" + word("dx") + ", " + word("dy") + ")"
+		@model.view.setAttributeNS null, "transform", "translate(" + cursorPoint.x + ", " + word("dy") + ")"
 	word: ->
 		@model.word
 	char: ->
@@ -27,9 +27,9 @@ SVGIE.cursor = (textarea, word, char) ->
       v.setAttributeNS null, "y1", 0
       v.setAttributeNS null, "x2", 0
       v.setAttributeNS null, "y2", -1 * textarea("lineheight")
-      v.setAttributeNS null, "stroke-width", 2
+      v.setAttributeNS null, "stroke-width", 1.5
       v.setAttributeNS null, "stroke", "black"
-      v.setAttributeNS null, "transform", "translate(" + word("dx") + ", " + word("dy") + ")"
+      v.setAttributeNS null, "transform", "translate(" + (word("dx") + word("width")) + ", " + word("dy") + ")"
       textarea("view").appendChild v
       v
   controller.facet

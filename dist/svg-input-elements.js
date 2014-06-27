@@ -9,10 +9,10 @@
   svgNS = 'http://www.w3.org/2000/svg';
 
   controllerPrototype = {
-    set: function(word, char) {
+    set: function(word, char, cursorPoint) {
       this.model.word = word;
       this.model.char = char;
-      return this.model.view.setAttributeNS(null, "transform", "translate(" + word("dx") + ", " + word("dy") + ")");
+      return this.model.view.setAttributeNS(null, "transform", "translate(" + cursorPoint.x + ", " + word("dy") + ")");
     },
     word: function() {
       return this.model.word;
@@ -44,9 +44,9 @@
           v.setAttributeNS(null, "y1", 0);
           v.setAttributeNS(null, "x2", 0);
           v.setAttributeNS(null, "y2", -1 * textarea("lineheight"));
-          v.setAttributeNS(null, "stroke-width", 2);
+          v.setAttributeNS(null, "stroke-width", 1.5);
           v.setAttributeNS(null, "stroke", "black");
-          v.setAttributeNS(null, "transform", "translate(" + word("dx") + ", " + word("dy") + ")");
+          v.setAttributeNS(null, "transform", "translate(" + (word("dx") + word("width")) + ", " + word("dy") + ")");
           textarea("view").appendChild(v);
           return v;
         };
@@ -397,13 +397,20 @@
         v.setAttributeNS(spaceNS, "xml:space", "preserve");
         textarea("view").appendChild(v);
         v.addEventListener("click", function(e) {
-          var clickedChar, cursor, p, x, y;
-          x = e.offsetX - v.offsetLeft;
-          y = v.offsetTop;
+          var char, charRect, cursor, cursorPoint, p, x, y;
+          x = e.clientX - v.ownerSVGElement.offsetLeft;
+          y = e.clientY - v.ownerSVGElement.offsetTop;
           p = textarea("svgPoint", x, y);
-          clickedChar = v.getCharNumAtPosition(p);
+          char = v.getCharNumAtPosition(p);
+          charRect = v.getExtentOfChar(char);
+          if (x < (charRect.x + (charRect.width / 2))) {
+            cursorPoint = v.getStartPositionOfChar(char);
+          } else {
+            cursorPoint = v.getEndPositionOfChar(char);
+            char += 1;
+          }
           cursor = textarea("cursor");
-          return cursor("set", controller.facet, clickedChar);
+          return cursor("set", controller.facet, char, cursorPoint);
         });
         return v;
       })(),
