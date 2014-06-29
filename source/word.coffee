@@ -160,15 +160,15 @@ SVGIE.word = (textarea, prev, s) ->
         x = e.clientX - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
         y = e.clientY - v.ownerSVGElement.offsetTop
         p = textarea "svgPoint", x, y
-        char = v.getCharNumAtPosition p
-        charRect = v.getExtentOfChar char
+        charNum = v.getCharNumAtPosition p
+        charRect = v.getExtentOfChar charNum
         if x < (charRect.x + (charRect.width / 2))
-          cursorPoint = v.getStartPositionOfChar char
+          cursorPoint = v.getStartPositionOfChar charNum
         else
-          cursorPoint = v.getEndPositionOfChar char
-          char += 1
+          cursorPoint = v.getEndPositionOfChar charNum
+          charNum += 1
         cursor = textarea("cursor")
-        cursor("set", controller.facet, char, cursorPoint)
+        cursor("set", controller.facet, charNum, cursorPoint)
         
         #if e.offsetX > (charRect.x + (charRect.width / 2))
         #  char += 1

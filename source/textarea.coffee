@@ -65,7 +65,6 @@ SVGIE.textarea = (el, options, s) ->
     if method is "facet" or method is "model" or not controller[method]?
       return undefined
     controller[method].apply controller, args
-
   controller.model = 
     height: unless options.height? then null else options.height
     width: unless options.width? then null else options.width
@@ -80,9 +79,9 @@ SVGIE.textarea = (el, options, s) ->
       rect.height
     facet: controller.facet
     svg: svg
-
-  # controller.facet needs controller.model to be defined
+  # Watch out with dependencies! controller.facet needs controller.model to be defined
   controller.model.words = SVGIE.word controller.facet, null, s
   controller.model.cursor = SVGIE.cursor controller.facet, controller.model.words("prev"), -1
+  controller.model.keyboard = SVGIE.keyboard controller.facet, controller.model.cursor
 
   controller.facet

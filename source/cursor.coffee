@@ -3,16 +3,19 @@ this.SVGIE ?= {}
 svgNS = 'http://www.w3.org/2000/svg'
 
 controllerPrototype = 
-	set: (word, char, cursorPoint) ->
+	set: (word, charNum, cursorPoint) ->
 		@model.word = word
-		@model.char = char
+		@model.charNum = charNum
 		@model.view.setAttributeNS null, "transform", "translate(" + cursorPoint.x + ", " + word("dy") + ")"
 	word: ->
 		@model.word
-	char: ->
-		@model.char
+	charNum: ->
+		@model.charNum
+	char: (char) ->
+		console.log char
+		@model.word("insert", char, @model.charNum)
 
-SVGIE.cursor = (textarea, word, char) ->
+SVGIE.cursor = (textarea, word, charNum) ->
   controller = Object.create controllerPrototype
   controller.facet = (method, args...) ->
     if method is "facet" or method is "model" or not controller[method]?
@@ -20,7 +23,7 @@ SVGIE.cursor = (textarea, word, char) ->
     controller[method].apply controller, args
   controller.model = 
   	word: word
-  	char: char
+  	charNum: charNum
   	view: do =>
       v = document.createElementNS svgNS, "line"
       v.setAttributeNS null, "x1", 0

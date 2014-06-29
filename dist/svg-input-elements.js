@@ -9,20 +9,24 @@
   svgNS = 'http://www.w3.org/2000/svg';
 
   controllerPrototype = {
-    set: function(word, char, cursorPoint) {
+    set: function(word, charNum, cursorPoint) {
       this.model.word = word;
-      this.model.char = char;
+      this.model.charNum = charNum;
       return this.model.view.setAttributeNS(null, "transform", "translate(" + cursorPoint.x + ", " + word("dy") + ")");
     },
     word: function() {
       return this.model.word;
     },
-    char: function() {
-      return this.model.char;
+    charNum: function() {
+      return this.model.charNum;
+    },
+    char: function(char) {
+      console.log(char);
+      return this.model.word("insert", char, this.model.charNum);
     }
   };
 
-  SVGIE.cursor = function(textarea, word, char) {
+  SVGIE.cursor = function(textarea, word, charNum) {
     var controller;
     controller = Object.create(controllerPrototype);
     controller.facet = function() {
@@ -35,7 +39,7 @@
     };
     controller.model = {
       word: word,
-      char: char,
+      charNum: charNum,
       view: (function(_this) {
         return function() {
           var v;
@@ -52,6 +56,49 @@
         };
       })(this)()
     };
+    return controller.facet;
+  };
+
+}).call(this);
+
+(function() {
+  var controllerPrototype, svgNS,
+    __slice = [].slice;
+
+  if (this.SVGIE == null) {
+    this.SVGIE = {};
+  }
+
+  svgNS = 'http://www.w3.org/2000/svg';
+
+  controllerPrototype = {};
+
+  SVGIE.keyboard = function(textarea, cursor) {
+    var controller;
+    controller = Object.create(controllerPrototype);
+    controller.facet = function() {
+      var args, method;
+      method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (method === "facet" || method === "model" || (controller[method] == null)) {
+        return void 0;
+      }
+      return controller[method].apply(controller, args);
+    };
+    controller.model = {
+      cursor: cursor
+    };
+    window.addEventListener("keypress", function(e) {
+      var s;
+      if (e.which != null) {
+        s = String.fromCharCode(e.keyCode);
+      } else if (e.which !== 0 && e.charCode !== 0) {
+        s = String.fromCharCode(e.which);
+      } else {
+        s = "";
+      }
+      console.log(e);
+      return controller.model.cursor("char", s);
+    });
     return controller.facet;
   };
 
@@ -177,6 +224,7 @@
     };
     controller.model.words = SVGIE.word(controller.facet, null, s);
     controller.model.cursor = SVGIE.cursor(controller.facet, controller.model.words("prev"), -1);
+    controller.model.keyboard = SVGIE.keyboard(controller.facet, controller.model.cursor);
     return controller.facet;
   };
 
@@ -397,20 +445,20 @@
         v.setAttributeNS(spaceNS, "xml:space", "preserve");
         textarea("view").appendChild(v);
         v.addEventListener("click", function(e) {
-          var char, charRect, cursor, cursorPoint, p, x, y;
+          var charNum, charRect, cursor, cursorPoint, p, x, y;
           x = e.clientX - v.ownerSVGElement.offsetLeft;
           y = e.clientY - v.ownerSVGElement.offsetTop;
           p = textarea("svgPoint", x, y);
-          char = v.getCharNumAtPosition(p);
-          charRect = v.getExtentOfChar(char);
+          charNum = v.getCharNumAtPosition(p);
+          charRect = v.getExtentOfChar(charNum);
           if (x < (charRect.x + (charRect.width / 2))) {
-            cursorPoint = v.getStartPositionOfChar(char);
+            cursorPoint = v.getStartPositionOfChar(charNum);
           } else {
-            cursorPoint = v.getEndPositionOfChar(char);
-            char += 1;
+            cursorPoint = v.getEndPositionOfChar(charNum);
+            charNum += 1;
           }
           cursor = textarea("cursor");
-          return cursor("set", controller.facet, char, cursorPoint);
+          return cursor("set", controller.facet, charNum, cursorPoint);
         });
         return v;
       })(),
