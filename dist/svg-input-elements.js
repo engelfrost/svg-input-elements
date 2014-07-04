@@ -9,24 +9,26 @@
   svgNS = 'http://www.w3.org/2000/svg';
 
   controllerPrototype = {
-    set: function(word, charNum, cursorPoint) {
+    set: function(word, pos, cursorPoint) {
       this.model.word = word;
-      this.model.charNum = charNum;
-      return this.model.view.setAttributeNS(null, "transform", "translate(" + cursorPoint.x + ", " + word("dy") + ")");
+      this.model.pos = pos;
+      if (cursorPoint != null) {
+        this.model.point = cursorPoint;
+      }
+      this.model.view.setAttributeNS(null, "transform", "translate(" + cursorPoint.x + ", " + word("dy") + ")");
+      return this.facet;
     },
     word: function() {
-      return this.model.word;
+      this.model.word;
+      return this.facet;
     },
-    charNum: function() {
-      return this.model.charNum;
-    },
-    char: function(char) {
-      console.log(char);
-      return this.model.word("insert", char, this.model.charNum);
+    pos: function() {
+      this.model.pos;
+      return this.facet;
     }
   };
 
-  SVGIE.cursor = function(textarea, word, charNum) {
+  SVGIE.cursor = function(textarea, word, pos) {
     var controller;
     controller = Object.create(controllerPrototype);
     controller.facet = function() {
@@ -39,7 +41,8 @@
     };
     controller.model = {
       word: word,
-      charNum: charNum,
+      pos: pos,
+      point: null,
       view: (function(_this) {
         return function() {
           var v;
@@ -62,7 +65,12 @@
 }).call(this);
 
 (function() {
-  var controllerPrototype, svgNS,
+
+
+}).call(this);
+
+(function() {
+  var controllerPrototype, focusedTextarea, svgNS,
     __slice = [].slice;
 
   if (this.SVGIE == null) {
@@ -71,24 +79,11 @@
 
   svgNS = 'http://www.w3.org/2000/svg';
 
-  controllerPrototype = {};
+  focusedTextarea = null;
 
-  SVGIE.keyboard = function(textarea, cursor) {
-    var controller;
-    controller = Object.create(controllerPrototype);
-    controller.facet = function() {
-      var args, method;
-      method = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      if (method === "facet" || method === "model" || (controller[method] == null)) {
-        return void 0;
-      }
-      return controller[method].apply(controller, args);
-    };
-    controller.model = {
-      cursor: cursor
-    };
-    window.addEventListener("keypress", function(e) {
-      var s;
+  window.addEventListener("keypress", function(e) {
+    var char, s, word;
+    if (focusedTextarea != null) {
       if (e.which != null) {
         s = String.fromCharCode(e.keyCode);
       } else if (e.which !== 0 && e.charCode !== 0) {
@@ -96,23 +91,13 @@
       } else {
         s = "";
       }
-      console.log(e);
-      return controller.model.cursor("char", s);
-    });
-    return controller.facet;
-  };
-
-}).call(this);
-
-(function() {
-  var controllerPrototype, svgNS,
-    __slice = [].slice;
-
-  if (this.SVGIE == null) {
-    this.SVGIE = {};
-  }
-
-  svgNS = 'http://www.w3.org/2000/svg';
+      word = focusedTextarea("cursor", "word");
+      char = focusedTextarea("cursor", "char");
+      word("insert", s, char);
+      char += 1;
+      return focusedTextarea("cursor", word, char);
+    }
+  });
 
   controllerPrototype = {
     val: function(s) {
@@ -140,14 +125,26 @@
     width: function(w) {
       if (w !== void 0) {
         this.model.width = w;
+        this.model.background.setAttributeNS(null, "width", w);
         if (this.model.words != null) {
           this.model.words("repos");
         }
       }
       return this.model.width;
     },
-    height: function() {
+    height: function(h) {
+      if (h !== void 0) {
+        this.model.height = h;
+        this.model.background.setAttributeNS(null, "height", h);
+      }
       return this.model.height;
+    },
+    focus: function(textarea) {
+      focusedTextarea = textarea;
+      return this.facet === focusedTextarea;
+    },
+    focused: function() {
+      return this.facet === focusedTextarea;
     },
     lineheight: function() {
       return this.model.lineheight;
@@ -158,11 +155,14 @@
     cursor: function() {
       return this.model.cursor;
     },
+    insert: function(s) {
+      var pos, word;
+      word = this.facet("cursor")("word");
+      pos = this.facet("cursor")("pos");
+      return word("insert", s, pos);
+    },
     view: function() {
       return this.model.view;
-    },
-    height: function() {
-      return this.model.height;
     },
     svgPoint: function(x, y) {
       var p;
@@ -174,7 +174,7 @@
   };
 
   SVGIE.textarea = function(el, options, s) {
-    var controller, g, svg;
+    var background, controller, g, svg;
     if (!((el != null) && (el.nodeName === "svg" || el.nodeName === "g"))) {
       throw "Missing first argument, no <svg> or <g> passed";
     }
@@ -196,6 +196,15 @@
       g = document.createElementNS(svgNS, "g");
       el.appendChild(g);
     }
+    if (options.width == null) {
+      options.width = svg.getBoundingClientRect().width;
+    }
+    background = document.createElementNS(svgNS, "rect");
+    background.setAttributeNS(null, "x", 0);
+    background.setAttributeNS(null, "y", 0);
+    background.setAttributeNS(null, "width", options.width);
+    background.setAttributeNS(null, "fill", "white");
+    g.appendChild(background);
     controller = Object.create(controllerPrototype);
     controller.facet = function() {
       var args, method;
@@ -209,6 +218,7 @@
       height: options.height == null ? null : options.height,
       width: options.width == null ? null : options.width,
       view: g,
+      background: background,
       lineheight: (function() {
         var rect, testTextNode, testWord;
         testWord = document.createElementNS(svgNS, "text");
@@ -224,7 +234,23 @@
     };
     controller.model.words = SVGIE.word(controller.facet, null, s);
     controller.model.cursor = SVGIE.cursor(controller.facet, controller.model.words("prev"), -1);
-    controller.model.keyboard = SVGIE.keyboard(controller.facet, controller.model.cursor);
+    background.addEventListener("click", function(e) {
+      var cursorPoint, pos, word;
+      focusedTextarea = controller.facet;
+      word = controller.facet("words");
+      while (true) {
+        if (word("isEnd")) {
+          break;
+        }
+        if ((word("next")("dy") - focusedTextarea("lineheight")) > e.offsetY) {
+          break;
+        }
+        word = word("next");
+      }
+      pos = word("wordLength") - 1;
+      cursorPoint = word("view").getEndPositionOfChar(pos);
+      return focusedTextarea("cursor")("set", word, pos, cursorPoint);
+    });
     return controller.facet;
   };
 
@@ -259,6 +285,9 @@
         }
       }
       return this.model.s;
+    },
+    wordLength: function() {
+      return this.model.s.length;
     },
     prev: function(prev) {
       if (prev != null) {
@@ -360,7 +389,9 @@
       }
       this.model.view.setAttributeNS(null, "x", this.model.dx);
       this.model.view.setAttributeNS(null, "y", this.model.line * this.model.textarea("lineheight"));
-      if (!this.isEnd()) {
+      if (this.isEnd()) {
+        this.model.textarea("height", this.facet("dy"));
+      } else {
         this.model.next("repos");
       }
       return this.model.dx;

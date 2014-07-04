@@ -22,6 +22,8 @@ controllerPrototype =
       # Repos next word unless next word is the first word
       @model.next("repos") unless @isEnd()
     @model.s
+  wordLength: ->
+    @model.s.length
   prev: (prev) ->
     if prev? 
       @model.prev = prev
@@ -84,17 +86,21 @@ controllerPrototype =
     if @whitespace() isnt "newline" and (@model.textarea("width") is null or @model.textarea("width") >= (dx + @model.width))
       # This will break if word is wider than textarea
       @model.dx = dx
-      @model.line = @model.prev("line")
+      @model.line = @model.prev "line"
     else 
       # Start a new line
       @model.dx = 0
       @model.line = @model.prev("line") + 1
     @model.view.setAttributeNS null, "x", @model.dx
     @model.view.setAttributeNS null, "y", @model.line * @model.textarea("lineheight")
-    unless @isEnd()
+    if @isEnd()
+      @model.textarea "height", @facet "dy"
+    else
       @model.next("repos")
     @model.dx
   insert: (s, pos) ->
+    #TODO: Reposition cursor
+    #TODO: Handele out of range pos values
     unless pos? and pos <= @model.s.length and pos >= 0
       throw "The position '" + pos + "' is not set or out of range"
     s = @model.s.substr(0, pos) + s + @model.s.substr(pos)
@@ -108,6 +114,7 @@ controllerPrototype =
     if rest? 
       SVGIE.word @model.textarea, @facet, rest
     @val()
+
 
 SVGIE.word = (textarea, prev, s) ->
   unless typeof textarea is 'function'

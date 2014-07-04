@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG Input Elements</title>
+    <meta charset="UTF-8">
+    <script src="dist/svg-input-elements.js"></script>
+    <style>
+      html, body {
+        cursor: default !important;
+        padding: 20px;
+      }
+    </style>
+</head>
+<body>
+  <h1>SVG Input Elements (SVGIE)</h1>
+  <p>
+    SVGIE aims to implement an SVG textarea in JavaScript for SVG images embedded in HTML. It is currently a work in progress. 
+  </p>
+  <p>
+    Visit <a href="https://github.com/engelfrost/svg-input-elements">the project on GitHub</a> and look at the issues to get an idea of the current progress.
+  </p>
+  <h2>Example:</h2>
+  <svg id="svg" version="1.1" width="600px" height="600px" xmlns="http://www.w3.org/2000/svg">
+  </svg>
+  <script type="text/javascript">
+    var svg = document.getElementById("svg")
+    var textarea = SVGIE.textarea(svg, { width: 600 }, "This is a textarea in SVG.\nIt supports line breaks. \rEven line breaks for different systems. \r\n\tIt supposts tabs. It even supports keyboard input, but currently places characters on the wrong side of the cursor...");
+  </script>
+</body>
+</html>

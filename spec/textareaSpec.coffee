@@ -8,12 +8,13 @@ describe "The textarea controller", ->
     svgElement.setAttributeNS null, "version", "1.1"
     svgElement.setAttributeNS null, "width", "100px"
     svgElement.setAttributeNS null, "height", "100px"
+    # document.appendChild svgElement
     svgElement
   beforeEach ->
     textarea = SVGIE.textarea svg(), {}, ""
 
-  it "has a 'width' action which returns null if no width was set", ->
-    expect(textarea "width").toBe null
+  it "has a 'width' action which returns the svg width if no width was set", ->
+    expect(textarea "width").toBe 0 # this is a useless test at the moment
   it "has a 'width' action which returns a numer if a width was set", ->
     textarea2 = SVGIE.textarea svg(), { width: 100 }
     expect(textarea2 "width").toBe 100
@@ -38,3 +39,9 @@ describe "The textarea controller", ->
   it "has a 'val' action which can set the value of the textarea", ->
     textarea "val", "one two three"
     expect(textarea "val").toBe "one two three"
+  it "has a 'focus' action which sets the focused textarea to textarea", ->
+  	expect(textarea "focus", textarea).toBe true
+  it "has a 'focused' action which returns true or false if the textarea is focused", ->
+  	expect(textarea "focused").toEqual false
+  	textarea "focus", textarea
+  	expect(textarea "focused").toEqual true
