@@ -164,6 +164,9 @@ SVGIE.word = (textarea, prev, s) ->
       v.setAttributeNS spaceNS, "xml:space", "preserve"
       textarea("view").appendChild v
       v.addEventListener "click", (e) ->
+        # Make this textarea "focused"
+        textarea "focus"
+
         x = e.clientX - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
         y = e.clientY - v.ownerSVGElement.offsetTop
         p = textarea "svgPoint", x, y

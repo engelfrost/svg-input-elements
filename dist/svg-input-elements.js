@@ -19,12 +19,10 @@
       return this.facet;
     },
     word: function() {
-      this.model.word;
-      return this.facet;
+      return this.model.word;
     },
     pos: function() {
-      this.model.pos;
-      return this.facet;
+      return this.model.pos;
     }
   };
 
@@ -82,7 +80,7 @@
   focusedTextarea = null;
 
   window.addEventListener("keypress", function(e) {
-    var char, s, word;
+    var s;
     if (focusedTextarea != null) {
       if (e.which != null) {
         s = String.fromCharCode(e.keyCode);
@@ -91,11 +89,7 @@
       } else {
         s = "";
       }
-      word = focusedTextarea("cursor", "word");
-      char = focusedTextarea("cursor", "char");
-      word("insert", s, char);
-      char += 1;
-      return focusedTextarea("cursor", word, char);
+      return focusedTextarea("insert", s);
     }
   });
 
@@ -139,8 +133,8 @@
       }
       return this.model.height;
     },
-    focus: function(textarea) {
-      focusedTextarea = textarea;
+    focus: function() {
+      focusedTextarea = this.facet;
       return this.facet === focusedTextarea;
     },
     focused: function() {
@@ -477,6 +471,7 @@
         textarea("view").appendChild(v);
         v.addEventListener("click", function(e) {
           var charNum, charRect, cursor, cursorPoint, p, x, y;
+          textarea("focus");
           x = e.clientX - v.ownerSVGElement.offsetLeft;
           y = e.clientY - v.ownerSVGElement.offsetTop;
           p = textarea("svgPoint", x, y);

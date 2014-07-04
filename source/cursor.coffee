@@ -11,10 +11,10 @@ controllerPrototype =
     @facet
   word: ->
     @model.word
-    @facet
+    #@facet
   pos: ->
     @model.pos
-    @facet
+    #@facet
   # char: (char) ->
   #   console.log char
   #   @model.word("insert", char, @model.pos)

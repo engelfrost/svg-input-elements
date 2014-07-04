@@ -13,11 +13,12 @@ window.addEventListener "keypress", (e) ->
       s = String.fromCharCode e.which 
     else 
       s = ""
-    word = focusedTextarea "cursor", "word"
-    char = focusedTextarea "cursor", "char"
-    word "insert", s, char
-    char += 1
-    focusedTextarea "cursor", word, char
+    focusedTextarea "insert", s
+    # word = focusedTextarea "cursor", "word"
+    # char = focusedTextarea "cursor", "char"
+    # word "insert", s, char
+    # char += 1
+    # focusedTextarea "cursor", word, char
 
 controllerPrototype =
   val: (s) ->
@@ -44,8 +45,8 @@ controllerPrototype =
       @model.height = h
       @model.background.setAttributeNS null, "height", h
     @model.height
-  focus: (textarea) ->
-    focusedTextarea = textarea
+  focus: ->
+    focusedTextarea = @facet
     @facet is focusedTextarea
   focused: ->
     @facet is focusedTextarea
