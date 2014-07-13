@@ -1,30 +1,68 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>SVG Input Elements</title>
+<html land="en">
+  <head>
+    <title>SVG Input Elements, an SVG textarea</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-    <script src="dist/svg-input-elements.js"></script>
-    <style>
-      html, body {
-        cursor: default !important;
-        padding: 20px;
-      }
-    </style>
-</head>
-<body>
-  <h1>SVG Input Elements (SVGIE)</h1>
-  <p>
-    SVGIE aims to implement an SVG textarea in JavaScript for SVG images embedded in HTML. It is currently a work in progress. 
-  </p>
-  <p>
-    Visit <a href="https://github.com/engelfrost/svg-input-elements">the project on GitHub</a> and look at the issues to get an idea of the current progress.
-  </p>
-  <h2>Example:</h2>
-  <svg id="svg" version="1.1" width="600px" height="600px" xmlns="http://www.w3.org/2000/svg">
-  </svg>
-  <script type="text/javascript">
-    var svg = document.getElementById("svg")
-    var textarea = SVGIE.textarea(svg, { width: 600 }, "This is a textarea in SVG.\nIt supports line breaks. \rEven line breaks for different systems. \r\n\tIt supposts tabs. It even supports keyboard input, but currently places characters on the wrong side of the cursor...");
-  </script>
-</body>
+    <meta name="description" content="SVG Input Elements, a javascript implementation of a textarea in SVG">
+    <meta name="author" content="Josef Engelfrost">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="svg-input-elements.js"></script>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h1>SVG Input Elements </h1>
+        <p>An SVG textarea implemented in JavaScript. This is a work in progress.</p>
+
+        <a class="btn btn-primary btn-lg" href="https://github.com/engelfrost/svg-input-elements">View the project on GitHub</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Example</h2>
+          <svg id="svg" version="1.1" width="400px" height="200px" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="col-md-6">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Rough roadmap to v 1.0</h2>
+          <dl class="dl-horizontal">
+            <dt class="text-warning">Basic text input</dt>
+            <dd>Get the basic structures in place and get line wrapping, the cursor and basic text input working.</dd>
+            <dt class="text-danger">Advanced text input</dt>
+            <dd>Select text and copy, cut, delete and replace it. Select text with keyboard. </dd>
+            <dt class="text-danger">Horizontal scrolling</dt>
+            <dd>Vertical scrolling and other necessary features to manage area constraints.</dd>
+            <dt class="text-danger">Touch compatible</dt>
+            <dd>Make sure text input, selection, scrolling etc. works on touch devices.</dd>
+          </dl>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <p class="text-center"><a href="https://github.com/engelfrost/svg-input-elements">View the source on GitHub</a></p>
+      </footer>
+    </div>
+
+    <script type="text/javascript">
+      var svg = document.getElementById("svg")
+      var textarea = SVGIE.textarea(svg, { width: 600 }, "This is a textarea in SVG.\nIt supports line breaks. \rEven line breaks for different systems. \r\n\tIt supposts tabs. It even supports keyboard input, but currently places characters on the wrong side of the cursor...");
+    </script>
+  </body>
 </html>
