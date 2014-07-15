@@ -217,5 +217,5 @@ ready to be put in use.
 Development
 -----------
 Feel free to join in and develop, if you want to contact us please e-mail 
-Tim at [info@sypreme.se](mailto:info@sypreme.se) or Josef at 
+Tim (@timbrandin) at [info@sypreme.se](mailto:info@sypreme.se) or Josef (@engelfrost) at 
 [josef.ottosson@josf.se](mailto:josef.ottosson@josf.se). 
