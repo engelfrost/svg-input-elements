@@ -8,3 +8,5 @@ test/bower_components
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
+SVGIE.sublime-project
+SVGIE.sublime-workspace
