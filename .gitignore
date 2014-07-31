@@ -1,24 +1,13 @@
-.DS_Store
-.com.apple.timemachine.supported
-.DS_Store
-node_modules/
-bower_components/
-_notes/
-*.kate-swp
-*.orig
-sites/all/modules/custom/persona/js/libs/jquery-1.7.2.js
-sites/all/modules/custom/persona/js/libs/README.md
-sites/all/modules/custom/persona/js/libs/jquery.svg.input.min.js
-sites/all/modules/custom/persona/js/libs/license.txt
-sites/all/modules/custom/persona/js/libs/tools
-sites/all/modules/custom/persona/js/libs/src
-sites/all/modules/custom/persona/js/libs/examples
-jquery.svg.js
-underscore.js
-jquery.transit.min.js
-jquery-1.7.2.js
-backbone.js
-jqdialog.min.js
+node_modules
+dist
+.tmp
+.sass-cache
+bower_components
+test/bower_components
 
 *.sublime-project
 *.sublime-workspace
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
