@@ -6,12 +6,12 @@ focusedTextarea = null
 
 # Keyboard events
 window.addEventListener "keypress", (e) ->
-  if focusedTextarea? 
-    if e.which? 
+  if focusedTextarea?
+    if e.which?
       s = String.fromCharCode e.keyCode
     else if e.which isnt 0 and e.charCode isnt 0
-      s = String.fromCharCode e.which 
-    else 
+      s = String.fromCharCode e.which
+    else
       s = ""
     focusedTextarea "insert", s
     # word = focusedTextarea "cursor", "word"
@@ -26,17 +26,17 @@ controllerPrototype =
       while @model.view.firstChild
         @model.view.removeChild @model.view.firstChild
       @model.words = SVGIE.word @facet, null, s
-    else 
+    else
       s = ""
       word = @model.words
       if word? then loop
-        s += word "val" 
+        s += word "val"
         break if word "isEnd"
         word = word "next"
       s
   width: (w) ->
     unless w is undefined # allow setting width to null
-      @model.width = w 
+      @model.width = w
       @model.background.setAttributeNS null, "width", w
       @model.words("repos") if @model.words?
     @model.width
@@ -76,10 +76,10 @@ SVGIE.textarea = (el, options, s) ->
       options = {}
     else
       throw "Options object must be of type object"
-  unless s? 
+  unless s?
     s = ""
 
-  # Set the group element and svg element 
+  # Set the group element and svg element
   if el.nodeName is 'g'
     g = el
     svg = g.ownerSVGElement
@@ -89,7 +89,7 @@ SVGIE.textarea = (el, options, s) ->
     el.appendChild g
 
   # Make sure a width is set
-  unless options.width? 
+  unless options.width?
     options.width = svg.getBoundingClientRect().width
 
   background = document.createElementNS svgNS, "rect"
@@ -105,7 +105,7 @@ SVGIE.textarea = (el, options, s) ->
     if method is "facet" or method is "model" or not controller[method]?
       return undefined
     controller[method].apply controller, args
-  controller.model = 
+  controller.model =
     height: unless options.height? then null else options.height
     width: unless options.width? then null else options.width
     view: g

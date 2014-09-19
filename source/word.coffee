@@ -9,9 +9,9 @@ wordRegexp = /^(\S+|\r\n|\s)((\r|\n|.)*)$/
 whitespaceRegexp = /\s/
 newlinesRegexp = /(\r\n|\r|\n)/
 
-controllerPrototype = 
+controllerPrototype =
   val: (s) ->
-    if s? 
+    if s?
       # Change text
       @model.s = s
       @model.view.textContent = s
@@ -25,12 +25,12 @@ controllerPrototype =
   wordLength: ->
     @model.s.length
   prev: (prev) ->
-    if prev? 
+    if prev?
       @model.prev = prev
-    else 
+    else
       @model.prev
   next: (next) ->
-    if next? 
+    if next?
       @model.next = next
     else
       @model.next
@@ -53,7 +53,7 @@ controllerPrototype =
   whitespace: ->
     whitespace = no
     if whitespaceRegexp.test @model.s
-      whitespace = switch 
+      whitespace = switch
         when @model.s is " " then "space"
         when @model.s is "\t" then "tab"
         when newlinesRegexp.test @model.s then "newline" #what about \r and \r\n?
@@ -61,11 +61,11 @@ controllerPrototype =
     whitespace
   firstInLine: ->
     prev = @prev()
-    if prev? 
+    if prev?
       prev("line") < @line()
     true
   autoWrapped: ->
-    unless @model.prev? 
+    unless @model.prev?
     	return false
     unless @model.textarea("width") isnt null
     	return false
@@ -80,14 +80,14 @@ controllerPrototype =
         # Ignore a single leading space
         if not @whitespace() and @model.prev("whitespace") is "space" and @model.prev("autoWrapped")
           0
-        else 
+        else
           @model.prev("dx") + @model.prev("width")
-    # Can we stay on the same line? 
+    # Can we stay on the same line?
     if @whitespace() isnt "newline" and (@model.textarea("width") is null or @model.textarea("width") >= (dx + @model.width))
       # This will break if word is wider than textarea
       @model.dx = dx
       @model.line = @model.prev "line"
-    else 
+    else
       # Start a new line
       @model.dx = 0
       @model.line = @model.prev("line") + 1
@@ -109,9 +109,9 @@ controllerPrototype =
     @model.s = parsedS[1]
     rest = parsedS[2]
 
-    @val @model.s 
+    @val @model.s
 
-    if rest? 
+    if rest?
       SVGIE.word @model.textarea, @facet, rest
     @val()
 
@@ -124,9 +124,9 @@ SVGIE.word = (textarea, prev, s) ->
   unless typeof s is 'string'
     throw "Third argument must be a string"
 
-  if s.length is 0 and prev? 
+  if s.length is 0 and prev?
     return null
-  else if s.length is 0 and not prev? 
+  else if s.length is 0 and not prev?
       s = ""
       rest = ""
   else
@@ -146,10 +146,10 @@ SVGIE.word = (textarea, prev, s) ->
   controller.model =
     s: s
     prev: do ->
-      if leftWord? 
+      if leftWord?
         leftWord "next", controller.facet
         leftWord
-      else 
+      else
         controller.facet
     next: do ->
       if rightWord?
@@ -179,7 +179,7 @@ SVGIE.word = (textarea, prev, s) ->
           charNum += 1
         cursor = textarea("cursor")
         cursor("set", controller.facet, charNum, cursorPoint)
-        
+
         #if e.offsetX > (charRect.x + (charRect.width / 2))
         #  char += 1
         #closestGap = if e.offsetX < (charRect.x + (charRect.width / 2)) then clickedCharRect.x else clickedCharRect.x + clickedCharRect.width
@@ -197,7 +197,7 @@ SVGIE.word = (textarea, prev, s) ->
 
   #next("prev", controller.facet) if next?
 
-  if rest? 
+  if rest?
     SVGIE.word textarea, controller.facet, rest
 
   controller.facet
