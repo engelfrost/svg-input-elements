@@ -94,7 +94,8 @@ controllerPrototype =
     @model.view.setAttributeNS null, "x", @model.dx
     @model.view.setAttributeNS null, "y", @model.line * @model.textarea("lineheight")
     if @isEnd()
-      @model.textarea "height", @facet "dy"
+      # Extend textarea's height if necessary
+      @model.textarea "height", Math.max @facet("dy"), @model.textarea("height")
     else
       @model.next("repos")
     @model.dx
@@ -167,10 +168,12 @@ SVGIE.word = (textarea, prev, s) ->
         # Make this textarea "focused"
         textarea "focus"
 
-        x = e.clientX # - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
-        y = e.clientY # - v.ownerSVGElement.offsetTop
+        x = e.clientX - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
+        y = e.clientY - v.ownerSVGElement.offsetTop
         p = textarea "svgPoint", x, y
         charNum = v.getCharNumAtPosition p
+        console.log x, y
+        # console.log e
         charRect = v.getExtentOfChar charNum
         if x < (charRect.x + (charRect.width / 2))
           cursorPoint = v.getStartPositionOfChar charNum

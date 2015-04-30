@@ -56,7 +56,7 @@ gulp.task('browser-sync', function () {
 
 gulp.task('watch', ['browser-sync'], function (done) {
   karma.start(karmaConf, done);
-  gulp.watch(sourceGlob, ['build:minify']);
+  gulp.watch(sourceGlob, ['build']);
   // gulp.watch(examplesGlob, ['examples']);
 });
 

@@ -22,8 +22,8 @@ describe "The textarea controller", ->
     textarea "width", 200
     expect(textarea "width").toBe 200
   it "has a 'height' action which returns null if no height was set", ->
-    expect(textarea "height").toBe null
-  it "has a 'height' action which returns a numer if a height was set", ->
+    expect(textarea "height").toBe 0
+  it "has a 'height' action which returns a number if a height was set", ->
     textarea = SVGIE.textarea svg(), { height: 100 }
     expect(textarea "height").toBe 100
   it "has a 'lineheight' action which returns a number", ->
