@@ -2,15 +2,15 @@ var gulp = require('gulp'),
   concat = require('gulp-concat'),
   coffee = require('gulp-coffee'),
   karma  = require('karma').server,
-  uglify = require('gulp-uglify'), 
-  rename = require('gulp-rename'), 
+  uglify = require('gulp-uglify'),
+  rename = require('gulp-rename'),
   browserSync = require('browser-sync');
 
 var karmaConf = {
   browsers: ['PhantomJS'],
   //browsers: ['Chrome'],
   preprocessors: {
-    '**/*.coffee': ['coffee'], 
+    '**/*.coffee': ['coffee'],
   },
   frameworks: ['jasmine'],
   coffeePreprocessor: {
@@ -35,13 +35,13 @@ var sourceGlob = [
 ];
 
 // var examplesGlob = [
-// 	'dist/svg-input-elements.js', 
+// 	'dist/svg-input-elements.js',
 // 	'examples/*.html'
 // ];
 
 // gulp.task('connect', function () {
 // 	connect.server({
-// 		root: './', 
+// 		root: './',
 // 		livereload: true
 // 	})
 // });
@@ -55,14 +55,14 @@ gulp.task('browser-sync', function () {
 });
 
 gulp.task('watch', ['browser-sync'], function (done) {
-  karma.start(karmaConf, done); 
-  gulp.watch(sourceGlob, ['build']);
+  karma.start(karmaConf, done);
+  gulp.watch(sourceGlob, ['build:minify']);
   // gulp.watch(examplesGlob, ['examples']);
 });
 
 gulp.task('watch:chrome', function (done) {
   karmaConf.browsers = ["Chrome"];
-  karma.start(karmaConf, done); 
+  karma.start(karmaConf, done);
   gulp.watch(sourceGlob, ['build']);
 });
 

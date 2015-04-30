@@ -167,8 +167,8 @@ SVGIE.word = (textarea, prev, s) ->
         # Make this textarea "focused"
         textarea "focus"
 
-        x = e.clientX - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
-        y = e.clientY - v.ownerSVGElement.offsetTop
+        x = e.clientX # - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
+        y = e.clientY # - v.ownerSVGElement.offsetTop
         p = textarea "svgPoint", x, y
         charNum = v.getCharNumAtPosition p
         charRect = v.getExtentOfChar charNum

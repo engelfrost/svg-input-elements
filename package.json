@@ -40,7 +40,7 @@
     "url": "https://github.com/silence150/SVG-Input-Elements/issues"
   },
   "devDependencies": {
-    "gulp": "~3.6.2",
+    "gulp": "^3.6.2",
     "gulp-concat": "~2.2.0",
     "gulp-cached": "~0.0.3",
     "gulp-remember": "~0.2.0",

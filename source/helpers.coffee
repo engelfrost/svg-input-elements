@@ -1,3 +1,5 @@
+#@SVGIE ?= {}
+
 window.addEventListener "click", (e) ->
   paintPoint(e.clientX, e.clientY)
 paintPoint = (x, y) ->

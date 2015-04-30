@@ -66,6 +66,11 @@ controllerPrototype =
     p = @model.svg.createSVGPoint()
     p.x = x
     p.y = y
+    # visualPoint = @model.svg.createElementNS svgNS, "rect"
+    # visualPoint.style.position = "absolute"
+    # visualPoint.style.width = "2"
+    # visualPoint.style.height = "2"
+    # visualPoint.style.
     p
 
 SVGIE.textarea = (el, options, s) ->
@@ -125,6 +130,7 @@ SVGIE.textarea = (el, options, s) ->
   controller.model.cursor = SVGIE.cursor controller.facet, controller.model.words("prev"), -1
   #controller.model.keyboard = SVGIE.keyboard controller.facet, controller.model.cursor
 
+  console.log(JSON.stringify controller.model.height)
   # Set this textarea to focused when the background is clicked
   background.addEventListener "click", (e) ->
     focusedTextarea = controller.facet
