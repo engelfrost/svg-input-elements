@@ -160,6 +160,11 @@ SVGIE.word = (textarea, prev, s) ->
         controller.facet
     dx: -1
     line: unless prev? then 1 else prev "line"
+    textarea: textarea
+    width: 0
+    facet: controller.facet
+    atChar: 0
+    beginning: not prev?
     view: do ->
       v = document.createElementNS svgNS, "text"
       v.setAttributeNS spaceNS, "xml:space", "preserve"
@@ -190,11 +195,6 @@ SVGIE.word = (textarea, prev, s) ->
         #closestGap = if e.offsetX < (charRect.x + (charRect.width / 2)) then clickedCharRect.x else clickedCharRect.x + clickedCharRect.width
         #console.log e
       v
-    textarea: textarea
-    width: 0
-    facet: controller.facet
-    atChar: 0
-    beginning: not prev?
 
   controller.val controller.model.s
   controller.width() # Calculate width with new "val"

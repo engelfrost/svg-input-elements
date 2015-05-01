@@ -13,6 +13,7 @@ window.addEventListener "keypress", (e) ->
       s = String.fromCharCode e.which
     else
       s = ""
+
     focusedTextarea "insert", s
     # word = focusedTextarea "cursor", "word"
     # char = focusedTextarea "cursor", "char"
@@ -58,8 +59,10 @@ controllerPrototype =
     @model.cursor
   insert: (s) ->
     word = @facet("cursor")("word")
-    pos  = @facet("cursor")("pos")
+    pos = @facet("cursor")("pos")
     word "insert", s, pos
+
+    # @facet("cursor")("")
   view: ->
     @model.view
   svgPoint: (x, y) ->
@@ -103,6 +106,7 @@ SVGIE.textarea = (el, options, s) ->
   background.setAttributeNS null, "width", options.width
   background.setAttributeNS null, "fill", "white"
   # set height later, since we only support "auto-height" at the moment
+
   g.appendChild background
 
   controller = Object.create controllerPrototype
@@ -125,6 +129,7 @@ SVGIE.textarea = (el, options, s) ->
       rect.height
     facet: controller.facet
     svg: svg
+
   # Watch out with dependencies! controller.facet needs controller.model to be defined
   controller.model.words = SVGIE.word controller.facet, null, s
   controller.model.cursor = SVGIE.cursor controller.facet, controller.model.words("prev"), -1

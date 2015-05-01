@@ -2,7 +2,7 @@ this.SVGIE ?= {}
 
 svgNS = 'http://www.w3.org/2000/svg'
 
-controllerPrototype = 
+controllerPrototype =
   set: (word, pos, cursorPoint) ->
     @model.word = word
     @model.pos = pos
@@ -25,7 +25,7 @@ SVGIE.cursor = (textarea, word, pos) ->
     if method is "facet" or method is "model" or not controller[method]?
       return undefined
     controller[method].apply controller, args
-  controller.model = 
+  controller.model =
     word: word
     pos: pos
     point: null
@@ -41,4 +41,3 @@ SVGIE.cursor = (textarea, word, pos) ->
       textarea("view").appendChild v
       v
   controller.facet
-

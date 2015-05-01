@@ -25,7 +25,7 @@ var karmaConf = {
     }
   },
   files: [
-    'dist/*.js',
+    'gh/*.js',
     'spec/*.coffee'
   ]
 };
@@ -33,18 +33,6 @@ var karmaConf = {
 var sourceGlob = [
   'source/*.coffee'
 ];
-
-// var examplesGlob = [
-// 	'dist/svg-input-elements.js',
-// 	'examples/*.html'
-// ];
-
-// gulp.task('connect', function () {
-// 	connect.server({
-// 		root: './',
-// 		livereload: true
-// 	})
-// });
 
 gulp.task('browser-sync', function() {
   browserSync.init(null, {
@@ -56,30 +44,7 @@ gulp.task('browser-sync', function() {
 
 gulp.task('watch', ['browser-sync'], function(done) {
   karma.start(karmaConf, done);
-  gulp.watch(sourceGlob, ['build']);
-  // gulp.watch(examplesGlob, ['examples']);
-});
-
-gulp.task('watch:chrome', function(done) {
-  karmaConf.browsers = ['Chrome'];
-  karma.start(karmaConf, done);
-  gulp.watch(sourceGlob, ['build']);
-});
-
-gulp.task('build:minify', ['build'], function() {
-  return gulp.src('dist/svg-input-elements.js')
-    .pipe(rename({extname: '.min.js'}))
-    .pipe(uglify())
-    .pipe(gulp.dest('dist/'))
-    .pipe(browserSync.reload({stream: true, once: true}));
-});
-
-gulp.task('build', function() {
-  return gulp.src(sourceGlob)
-    .pipe(coffee())
-    .pipe(concat('svg-input-elements.js'))
-    .pipe(gulp.dest('dist/'))
-    .pipe(browserSync.reload({stream: true, once: true}));
+  gulp.watch(sourceGlob, ['gh']);
 });
 
 gulp.task('gh', function() {
