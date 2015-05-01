@@ -128,7 +128,7 @@ SVGIE.textarea = (el, options, s) ->
   # Watch out with dependencies! controller.facet needs controller.model to be defined
   controller.model.words = SVGIE.word controller.facet, null, s
   controller.model.cursor = SVGIE.cursor controller.facet, controller.model.words("prev"), -1
-  controller.model.keyboard = SVGIE.keyboard controller.facet, controller.model.cursor
+  # controller.model.keyboard = SVGIE.keyboard controller.facet, controller.model.cursor
 
   # Set this textarea to focused when the background is clicked
   background.addEventListener "click", (e) ->
