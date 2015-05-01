@@ -11,3 +11,4 @@ paintPoint = (x, y) ->
   div.style.top = y + "px"
   div.style.backgroundColor = "red"
   document.body.appendChild(div)
+  console.log "red dot at", x, y

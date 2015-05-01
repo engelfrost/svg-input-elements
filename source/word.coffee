@@ -168,11 +168,17 @@ SVGIE.word = (textarea, prev, s) ->
         # Make this textarea "focused"
         textarea "focus"
 
-        x = e.clientX - v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
-        y = e.clientY - v.ownerSVGElement.offsetTop
+        textareaDimensions = textarea("view").getBoundingClientRect()
+
+        x = e.clientX - textareaDimensions.left #- v.ownerSVGElement.offsetLeft # clientX, pageX, x, offsetX <-relative to <text>
+        y = e.clientY - textareaDimensions.top #- v.ownerSVGElement.offsetTop
         p = textarea "svgPoint", x, y
         charNum = v.getCharNumAtPosition p
-        console.log x, y
+        console.log "word coords", dimensions.left, dimensions.top
+        console.log "textarea coords", textareaDimensions.left, textareaDimensions.top
+        console.log "x, y", x, y
+        console.log "charNum", charNum
+        console.log "v", v
         # console.log e
         charRect = v.getExtentOfChar charNum
         if x < (charRect.x + (charRect.width / 2))
