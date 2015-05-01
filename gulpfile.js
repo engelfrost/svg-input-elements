@@ -1,10 +1,10 @@
-var gulp = require('gulp'),
-  concat = require('gulp-concat'),
-  coffee = require('gulp-coffee'),
-  karma  = require('karma').server,
-  uglify = require('gulp-uglify'),
-  rename = require('gulp-rename'),
-  browserSync = require('browser-sync');
+var gulp = require('gulp');
+var concat = require('gulp-concat');
+var coffee = require('gulp-coffee');
+var karma  = require('karma').server;
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+var browserSync = require('browser-sync');
 
 var karmaConf = {
   browsers: ['PhantomJS'],
@@ -46,40 +46,47 @@ var sourceGlob = [
 // 	})
 // });
 
-gulp.task('browser-sync', function () {
+gulp.task('browser-sync', function() {
   browserSync.init(null, {
     server: {
-      baseDir: "./"
+      baseDir: './'
     }
   });
 });
 
-gulp.task('watch', ['browser-sync'], function (done) {
+gulp.task('watch', ['browser-sync'], function(done) {
   karma.start(karmaConf, done);
   gulp.watch(sourceGlob, ['build']);
   // gulp.watch(examplesGlob, ['examples']);
 });
 
-gulp.task('watch:chrome', function (done) {
-  karmaConf.browsers = ["Chrome"];
+gulp.task('watch:chrome', function(done) {
+  karmaConf.browsers = ['Chrome'];
   karma.start(karmaConf, done);
   gulp.watch(sourceGlob, ['build']);
 });
 
-gulp.task('build:minify', ['build'], function () {
-  return gulp.src("dist/svg-input-elements.js")
+gulp.task('build:minify', ['build'], function() {
+  return gulp.src('dist/svg-input-elements.js')
     .pipe(rename({extname: '.min.js'}))
     .pipe(uglify())
     .pipe(gulp.dest('dist/'))
     .pipe(browserSync.reload({stream: true, once: true}));
 });
 
-gulp.task('build', function () {
+gulp.task('build', function() {
   return gulp.src(sourceGlob)
     .pipe(coffee())
     .pipe(concat('svg-input-elements.js'))
     .pipe(gulp.dest('dist/'))
     .pipe(browserSync.reload({stream: true, once: true}));
+});
+
+gulp.task('gh', function() {
+  return gulp.src(sourceGlob)
+    .pipe(coffee())
+    .pipe(concat('svg-input-elements.js'))
+    .pipe(gulp.dest('gh/'));
 });
 
 gulp.task('default', ['watch']);
