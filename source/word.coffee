@@ -9,6 +9,7 @@ wordRegexp = /^(\S+|\r\n|\s)((\r|\n|.)*)$/
 whitespaceRegexp = /\s/
 newlinesRegexp = /(\r\n|\r|\n)/
 
+
 controllerPrototype =
   val: (s) ->
     if s?
@@ -115,7 +116,6 @@ controllerPrototype =
     if rest?
       SVGIE.word @model.textarea, @facet, rest
     @val()
-
 
 SVGIE.word = (textarea, prev, s) ->
   unless typeof textarea is 'function'
