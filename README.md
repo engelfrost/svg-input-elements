@@ -156,7 +156,7 @@ parameter.
  
 You should now have a working text area!
 
-###Binding Events
+### Binding Events
 SVG Input Elements trigger events that you can bind: 
 ```
 textArea.bind("change", function(e, text) {
@@ -186,30 +186,30 @@ two parameters:
 
 Versions
 --------
-###v1.0
+### v1.0
 __Scheduled early June.__ This release will provide several text related input
 elements and should be stable on all major browsers except perhaps for 
 Internet Explorer, which seems to have very poor SVG support even in verion 9. 
 
-###v0.3
+### v0.3
 __Released 30 May 2012.__ Features a list item. It places bullets in front of 
 each new paragraph, styling the textbox like a list. Nothing fancy, but 
 convenient. 
 
-###v0.2.2
+### v0.2.2
 __Released 30 May 2012.__ Minor enhancements, bugfixes and useable events. 
 
-###v0.2.1
+### v0.2.1
 __Released 16 May 2012.__ Minor enhancements, bugfixes and support for 
 @import. No longer requires support for the xml:space attribute. 
 
-###v0.2
+### v0.2
 __Released 15 May 2012.__ This release provides bugfixes and several 
 improvements and should also work on Firefox. Additional input elements are 
 postponed to the next release. The documentation is still lacking, contact us 
 if you want help. 
 
-###v0.1
+### v0.1
 __Released 9 May 2012.__ This is a rather limited release which is only 
 properly tested in Chrome/Chromium. It should not be seen as something that is
 ready to be put in use.
